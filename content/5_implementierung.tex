@@ -1,0 +1,437 @@
+% ============================================================
+% KAPITEL 5 — IMPLEMENTIERUNG  (Gesamtstand)
+% ------------------------------------------------------------
+% ZIELDATEI: content/5_implementierung.tex
+% Einbindung in document.tex: \include{content/5_implementierung}
+%
+% BENOETIGTE PAKETE (im Preamble): booktabs, csquotes (geladen);
+%   fuer Code-Listings spaeter: minted (bereits eingerichtet);
+%   fuer Grafiken: graphicx (in ohm-Klasse i.d.R. vorhanden) bzw. svg.
+%
+% STAND DER ABSCHNITTE:
+%   5.1 Systemueberblick ......... AUSFORMULIERT (kein Code, Architekturdiagramm als Platzhalter)
+%   5.2 Szenenanbindung .......... NOCH OFFEN (Kommentar)
+%   5.3 Agent und Werkzeuge ...... NOCH OFFEN (Kommentar)
+%   5.4 Repraesentationsvarianten  NOCH OFFEN (Kommentar)
+%   5.5 VR-Demonstrator .......... NOCH OFFEN (Kommentar)
+%
+% CODE-TIEFE (Konvention IT-BA): Code illustriert, dominiert nicht.
+%   Kurze Ausschnitte (5-20 Zeilen) nur wo erkenntnisbringend; ganze Dateien
+%   in den Anhang. Diagramme bevorzugt vor Listings.
+% ============================================================
+
+\chapter{Implementierung}
+\label{ch:implementierung}
+
+Das Konzept aus dem vorigen Kapitel beschreibt, welche Repräsentationen verglichen werden und wie sie sich unterscheiden.
+Dieses Kapitel zeigt, wie sich dieses Konzept in ein lauffähiges System übersetzt.
+Es beschreibt zuerst den Aufbau im Überblick und geht anschließend auf die Anbindung der Szene, den Agenten mit seinen Werkzeugen, die konkrete Umsetzung der fünf Repräsentationsvarianten und schließlich auf den VR-Demonstrator ein.
+
+
+% ------------------------------------------------------------
+\section{Systemüberblick}
+\label{sec:impl-overview}
+
+Das System verbindet einen natürlichsprachlichen Befehl mit einer sichtbaren Veränderung der 3D-Szene.
+Es besteht aus drei lose gekoppelten Schichten, die über festgelegte Schnittstellen kommunizieren.
+Diese Trennung erlaubt es, die Umgebung auszutauschen, ohne die übrigen Schichten zu verändern, und ist der Grund, warum dieselbe Kette sowohl am Desktop für die Messung als auch in der immersiven Umgebung für den Demonstrator läuft.
+
+\subsection*{Die drei Schichten}
+
+Die oberste Schicht übernimmt das Interpretieren und Entscheiden.
+Hier deutet ein Agent den Befehl und wählt die nötige Manipulation.
+Der Agent wird von einem lokal betriebenen Sprachmodell angetrieben und greift für die visuelle Wahrnehmung auf ein lokales visuelles Modell zurück.
+
+Die mittlere Schicht verbindet die oberste Schicht mit der Umgebung.
+Ein Server nach dem Model Context Protocol (MCP) stellt die Manipulationsoperationen als aufrufbare Werkzeuge bereit und übersetzt jeden Aufruf in eine Nachricht an die Umgebung.
+Eine WebSocket-Verbindung transportiert diese Nachrichten und liefert den Szenenzustand sowie gerenderte Bilder zurück.
+
+Die unterste Schicht ist die Umgebung selbst.
+Sie hält die Szene, stellt sie dar und führt die Manipulationen aus.
+In der Evaluation läuft diese Schicht am Desktop, im Demonstrator auf der Meta Quest.
+
+\subsection*{Ablauf einer Manipulation}
+
+Ein Durchlauf beginnt mit dem natürlichsprachlichen Befehl an den Agenten.
+Der Agent verschafft sich zunächst ein Bild der Szene, indem er über die Werkzeuge den strukturellen Zustand oder eine gerenderte Ansicht anfordert.
+Auf dieser Grundlage entscheidet er, welche Operation auszuführen ist, und ruft das entsprechende Werkzeug auf.
+Der MCP-Server leitet den Aufruf über die WebSocket-Verbindung an die Umgebung weiter, die die Manipulation ausführt.
+Anschließend liest die Auswertung den neuen Szenenzustand aus und bestimmt daraus den Erfolg.
+Abbildung~\ref{fig:architektur} stellt diesen Aufbau und den Nachrichtenfluss dar.
+
+% ------------------------------------------------------------------
+% ABBILDUNG: Architekturdiagramm (TikZ)
+% Benoetigt im Preamble:
+%   \usepackage{tikz}
+%   \usetikzlibrary{positioning, arrows.meta, fit, backgrounds}
+%   \usepackage{graphicx}   % fuer \resizebox (in ohm-Klasse meist vorhanden)
+% Falls das Bild zu klein/gross wirkt: \resizebox entfernen und Groesse ueber
+% node distance steuern.
+% ------------------------------------------------------------------
+\begin{figure}[htbp]
+  \centering
+  \resizebox{\linewidth}{!}{%
+  \begin{tikzpicture}[
+      font=\small,
+      box/.style={draw, rounded corners, align=center, inner sep=6pt,
+                  minimum height=11mm, minimum width=27mm, fill=white},
+      lbl/.style={font=\footnotesize, fill=white, inner sep=1.5pt},
+      layer/.style={draw, dashed, rounded corners, inner sep=9pt},
+      flow/.style={-{Latex[length=2.5mm]}, thick},
+      back/.style={-{Latex[length=2.5mm]}, thick, dashed},
+      exch/.style={{Latex[length=2mm]}-{Latex[length=2mm]}, thick},
+      node distance=26mm and 30mm
+    ]
+
+    % --- Knoten ---
+    \node[box] (user) {Nutzer\\{\footnotesize natürlichsprachlicher Befehl}};
+    \node[box, below=of user] (agent) {Agent\\{\footnotesize (smolagents)}};
+    \node[box, left=of agent]  (vlm) {Visuelles Modell\\{\footnotesize Qwen2.5-VL-7B}};
+    \node[box, right=of agent] (llm) {Sprachmodell\\{\footnotesize Qwen2.5-7B}};
+    \node[box, below=of agent] (mcp) {MCP-Server\\{\footnotesize (FastMCP)}};
+    \node[box, below=of mcp]   (unity) {Unity-Umgebung\\{\footnotesize Szene, Rendering, Set-of-Mark}};
+
+    % --- Nutzer -> Agent ---
+    \draw[flow] (user) -- node[lbl, right]{Befehl} (agent);
+
+    % --- Agent <-> Modelle (horizontal, laengere Kanten) ---
+    \draw[exch] (agent) -- node[lbl, above]{Wahrnehmung} (vlm);
+    \draw[exch] (agent) -- node[lbl, above]{Inferenz} (llm);
+
+    % --- Agent <-> MCP (parallele Pfeile, Beschriftung aussen) ---
+    \draw[flow] ([xshift=8mm]agent.south) -- node[lbl, right]{Werkzeugaufruf} ([xshift=8mm]mcp.north);
+    \draw[back] ([xshift=-8mm]mcp.north)  -- node[lbl, left]{Ergebnis} ([xshift=-8mm]agent.south);
+
+    % --- MCP <-> Unity (parallele Pfeile, Beschriftung aussen) ---
+    \draw[flow] ([xshift=8mm]mcp.south)   -- node[lbl, right]{Kommando} ([xshift=8mm]unity.north);
+    \draw[back] ([xshift=-8mm]unity.north)-- node[lbl, left, align=center]{Zustand /\\Bild} ([xshift=-8mm]mcp.south);
+
+    % --- Schichten (Hintergrund) ---
+    \begin{scope}[on background layer]
+      \node[layer, fit=(vlm)(agent)(llm)] (L1) {};
+      \node[layer, fit=(mcp)]   (L2) {};
+      \node[layer, fit=(unity)] (L3) {};
+    \end{scope}
+
+    % --- Schicht-Beschriftungen: links neben der Schicht, vertikal zentriert,
+    %     alle auf gleicher x-Linie (kollidieren nicht mit den zentralen Pfeilen) ---
+    \node[font=\footnotesize\itshape, anchor=east, xshift=-4mm] at (L1.west) {Agentenschicht};
+    \node[font=\footnotesize\itshape, anchor=east, xshift=-4mm] at (L1.west |- L2) {Vermittlungsschicht};
+    \node[font=\footnotesize\itshape, anchor=east, xshift=-4mm] at (L1.west |- L3) {Umgebungsschicht};
+
+  \end{tikzpicture}%
+  }
+  \caption{Aufbau des Systems in drei Schichten und Nachrichtenfluss einer Manipulation. Durchgezogene Pfeile zeigen den Vorwärtsfluss, gestrichelte Pfeile den Rückkanal. Die Verbindung zwischen MCP-Server und Umgebung wird über WebSocket übertragen.}
+  \label{fig:architektur}
+\end{figure}
+
+
+% ------------------------------------------------------------
+\section{Szenenanbindung}
+\label{sec:impl-scene}
+
+Damit der Agent eine Szene bearbeiten kann, muss die Umgebung sie in einer verarbeitbaren Form bereitstellen.
+Die Umgebung liefert dazu zwei Sichten auf dieselbe Szene, eine strukturelle und eine visuelle.
+
+\subsection*{Der strukturelle Zustand}
+
+Die Umgebung führt intern ein Verzeichnis aller manipulierbaren Objekte.
+Auf Anfrage serialisiert sie dieses Verzeichnis in eine JSON-Struktur.
+Sie enthält eine Liste der Objekte mit jeweils einer eindeutigen Kennung, dem Objekttyp, der Farbe, der Größe und der Position sowie zusätzlich die Pose der Kamera.
+Listing~\ref{lst:state} zeigt ein Beispiel dieser Ausgabe.
+Die Kamerapose ist Teil des Zustands, damit sich auch Aufgaben lösen lassen, die einen Bezug zum Betrachter herstellen.
+Nicht enthalten sind Eigenschaften, die allein das Aussehen betreffen und über die Grundfarbe hinausgehen, etwa eine Oberflächentextur.
+Genau diese Lücke ist der Grund, warum rein perzeptuelle Referenzen über den strukturellen Zustand nicht auflösbar sind.
+
+% HINWEIS: Falls die Vorlage kein 'listing'-Float kennt, den minted-Block in
+% \begin{figure}...\end{figure} setzen oder ohne Float verwenden.
+\begin{listing}[htbp]
+\begin{minted}{json}
+{
+  "type": "state",
+  "objects": [
+    {"id": "obj_1", "type": "cube",   "color": "red",  "x": 0.0, "y": 0.0, "z": 0.0, "scale": 1.0},
+    {"id": "obj_2", "type": "sphere", "color": "blue", "x": 2.0, "y": 0.0, "z": 0.0, "scale": 1.0}
+  ],
+  "camera": {
+    "position": [0.0, 1.6, -6.0],
+    "forward":  [0.0, 0.0, 1.0],
+    "up":       [0.0, 1.0, 0.0]
+  }
+}
+\end{minted}
+\caption{Beispiel des strukturellen Szenenzustands als JSON-Ausgabe der Umgebung.}
+\label{lst:state}
+\end{listing}
+
+\subsection*{Die visuelle Sicht und die Objektmarkierung}
+
+Für die visuelle Sicht rendert die Umgebung die Szene aus der Kamera und übergibt das Bild.
+Ein Bild allein erlaubt dem visuellen Modell jedoch nicht, ein erkanntes Objekt für einen Werkzeugaufruf zu benennen.
+Deshalb wird jedes sichtbare Objekt im Bild mit einer Marke versehen, die seine Kennung trägt.
+Dieses Vorgehen entspricht dem Set-of-Mark-Prinzip.
+Das visuelle Modell kann ein Objekt damit über dieselbe Kennung ansprechen, die auch die Werkzeuge verwenden.
+
+\subsection*{Sichtbarkeit und Verdeckung}
+
+Eine Marke wird nur gesetzt, wenn das Objekt tatsächlich sichtbar ist.
+Ein Sichtstrahl von der Kamera zum Objekt prüft, ob ein anderes Objekt die Sichtlinie unterbricht.
+Ist das der Fall, gilt das Objekt als verdeckt und erhält keine Marke.
+Ein verdecktes Objekt fehlt damit in der visuellen Sicht vollständig, bleibt im strukturellen Zustand aber unverändert verzeichnet.
+Diese Asymmetrie ist die Grundlage der verdeckten Referenzen aus Kategorie E.
+
+\subsection*{Das gemeinsame id-Substrat}
+
+Beide Sichten verweisen auf dieselben Kennungen.
+Die strukturelle Sicht führt sie ohnehin, und die visuelle Sicht verknüpft ihre Marken mit denselben Werten.
+Dadurch spricht der Agent Objekte unabhängig von der Repräsentationsform über ein einheitliches Interface an.
+Dieses id-Substrat ist die Voraussetzung dafür, dass der Vergleich der Repräsentationen fair bleibt, wie in Abschnitt~\ref{sec:eval-design} begründet.
+
+
+% ------------------------------------------------------------
+\section{Agent und Werkzeuge}
+\label{sec:impl-agent}
+
+Der Agent bildet die oberste Schicht des Systems.
+Er nimmt den Befehl entgegen, verschafft sich ein Bild der Szene und entscheidet, welche Operation auszuführen ist.
+Dieser Abschnitt beschreibt, wie der Agent aufgebaut ist und über welche Werkzeuge er die Szene verändert.
+
+\subsection*{Der Agent und das Sprachmodell}
+
+Als Agent dient ein werkzeugaufrufender Agent aus dem Framework smolagents.
+Angetrieben wird er von einem lokal betriebenen Sprachmodell, das über eine OpenAI-kompatible Schnittstelle angesprochen wird, die LM Studio auf dem Rechner bereitstellt.
+Der Agent arbeitet in einer Schleife.
+In jedem Schritt entscheidet das Sprachmodell anhand des aktuellen Kontexts, welches Werkzeug mit welchen Argumenten aufgerufen wird, bis es die Aufgabe als abgeschlossen meldet.
+Die Modelle werden dabei nicht nachtrainiert.
+Der einzige Hebel zur Steuerung ihres Verhaltens ist die Gestaltung des Kontexts, was den Ansatzpunkt der zweiten Forschungsfrage bildet.
+
+\subsection*{Die Werkzeuge}
+
+Die eigentlichen Operationen stellt der MCP-Server als aufrufbare Werkzeuge bereit.
+Sie lassen sich in zwei Gruppen einteilen.
+Die manipulierenden Werkzeuge erzeugen, verschieben und entfernen Objekte oder setzen die Szene zurück.
+Die wahrnehmenden Werkzeuge liefern den strukturellen Zustand oder eine gerenderte Ansicht der Szene.
+Jedes Werkzeug trägt eine kurze Beschreibung in Form eines Dokumentationskommentars, und genau diese Beschreibung sieht der Agent, wenn er über den nächsten Aufruf entscheidet.
+Listing~\ref{lst:tool} zeigt am Beispiel des Verschiebens, wie ein solches Werkzeug aufgebaut ist.
+
+% HINWEIS: Listing bewusst gekuerzt (Versand an Unity in send_to_unity(...) gekapselt).
+\begin{listing}[htbp]
+\begin{minted}{python}
+@mcp.tool()
+def move_object(object_id: str, x: float, y: float, z: float) -> str:
+    """Move an existing object (id from get_scene_state) to a new position."""
+    global _last_op
+    key = ("move", object_id, x, y, z)
+    if key == _last_op:                 # Schutz gegen doppelte Ausfuehrung
+        return f"Skipped: identical move already applied to {object_id}."
+    _last_op = key
+    send_to_unity({"action": "move", "id": object_id, "x": x, "y": y, "z": z})
+    return f"Done: {object_id} moved to ({x}, {y}, {z})."
+\end{minted}
+\caption{Beispiel einer Werkzeugdefinition (gekürzt). Der Dokumentationskommentar dient dem Agenten als Beschreibung des Werkzeugs.}
+\label{lst:tool}
+\end{listing}
+
+\subsection*{Erfolgsmessung und Terminierungsschutz}
+
+Der Erfolg einer Manipulation wird nicht aus der Antwort des Agenten abgeleitet, sondern aus dem tatsächlichen Folgezustand der Szene, wie in Abschnitt~\ref{sec:eval-metrics} beschrieben.
+Ein Detail der Werkzeuge hängt unmittelbar damit zusammen.
+Das lokale Modell bündelte gelegentlich einen Manipulations- und einen Abschlussaufruf so, dass dieselbe Manipulation zweimal ausgeführt wurde.
+Um dieses Verhalten des Frameworks zu neutralisieren, vergleicht jedes manipulierende Werkzeug den aktuellen Aufruf mit dem unmittelbar vorangegangenen und überspringt eine identische Wiederholung, sichtbar an der Abfrage von \texttt{\_last\_op} in Listing~\ref{lst:tool}.
+Die Auswirkung dieses Schutzes auf die Ergebnisse wird in Abschnitt~\ref{sec:eval-validity} eingeordnet.
+
+
+% ------------------------------------------------------------
+\section{Die fünf Repräsentationsvarianten}
+\label{sec:impl-variants}
+
+Die fünf Varianten teilen denselben Agenten und dieselbe Grundinstruktion.
+Diese Grundinstruktion verlangt, vor jeder Manipulation zunächst die Szene wahrzunehmen, niemals eine Kennung zu erfinden, die Aufgabe mit genau einem Manipulationsaufruf zu lösen und danach abzuschließen.
+Woran sich die Varianten unterscheiden, ist allein das Wahrnehmungswerkzeug, das dem Agenten zur Verfügung steht.
+Jedes Wahrnehmungswerkzeug trägt einen Dokumentationskommentar, und dieser Kommentar ist die Beschreibung, die der Agent bei der Wahl des nächsten Aufrufs liest.
+Zusätzlich rahmt der zurückgegebene Text die beiden Schichten, indem er sie benennt und ordnet.
+Über diese Beschreibung und diese Rahmung wird gesteuert, wie der Agent strukturelle und visuelle Information gegeneinander gewichtet.
+
+\subsection*{Die beiden Einzelrepräsentationen}
+
+Die strukturelle Variante erhält ausschließlich Zugriff auf den strukturellen Zustand.
+Sie sieht die Szene als JSON mit Kennungen, Typen, Farben, Größen und Positionen, jedoch kein Bild.
+Die visuelle Variante erhält ausschließlich eine Beschreibung der gerenderten und markierten Ansicht.
+Sie kennt die Objekte nur über ihre Marken und deren sichtbare Eigenschaften, jedoch keine exakten Koordinaten.
+
+\subsection*{Die naive Kombination}
+
+Die naive hybride Variante stellt beide Schichten nebeneinander.
+Sie gibt zuerst den strukturellen Zustand und danach die visuelle Beschreibung aus und benennt nur grob, wofür welche Schicht gedacht ist.
+Eine verbindliche Zuständigkeitsregel fehlt.
+
+\begin{listing}[htbp]
+\begin{minted}{python}
+@tool
+def get_scene_hybrid() -> str:
+    """Perceive the scene using BOTH exact structural data (ids, positions,
+    colors, sizes, camera) and a visual description. Use exact data for
+    geometry, visual data for semantics."""
+\end{minted}
+\caption{Wahrnehmungswerkzeug der naiven hybriden Variante.}
+\label{lst:hybrid}
+\end{listing}
+
+\subsection*{Priorisierung}
+
+Die geführte Variante ändert die Rahmung.
+Sie stellt die visuelle Beschreibung voran und erklärt sie für das Aussehen als maßgeblich, während die strukturelle Schicht ausdrücklich als rein geometrisch und frei von Aussehens-Information gekennzeichnet wird.
+Damit verschiebt sie das Gewicht zugunsten des Bildes.
+
+\begin{listing}[htbp]
+\begin{minted}{python}
+@tool
+def get_scene_hybrid_guided() -> str:
+    """Perceive the scene using a visual description AND exact structural
+    data. The visual description is authoritative for how objects LOOK
+    (texture, pattern, whether something stands out). The structural data
+    contains ONLY geometry (positions, sizes, base colors) and does NOT
+    encode any visual surface property."""
+\end{minted}
+\caption{Wahrnehmungswerkzeug der geführten Variante (Priorisierung des Bildes).}
+\label{lst:guided}
+\end{listing}
+
+\subsection*{Kompetenztrennung}
+
+Die kompetenzgetrennte Variante ordnet die Schichten nicht neu, sondern weist ihnen klar getrennte Aufgaben zu.
+Wie die naive Variante gibt sie den strukturellen Zustand zuerst aus.
+Der Unterschied liegt in der ausdrücklichen Arbeitsteilung.
+Die visuelle Beschreibung dient allein dazu, zu bestimmen, welches Objekt gemeint ist, wenn die Referenz vom Aussehen abhängt.
+Die strukturelle Schicht liefert alles Numerische, also sämtliche Koordinaten, Größen, Abstände und die Kamerageometrie.
+Der Unterschied zur Priorisierung ist damit nicht die Reihenfolge, sondern die enge, gegenseitig ausschließende Zuweisung der Zuständigkeiten.
+
+\begin{listing}[htbp]
+\begin{minted}{python}
+@tool
+def get_scene_hybrid_surgical() -> str:
+    """Perceive the scene using a visual description AND exact structural
+    data, with a clear division of labor. Use the VISUAL description ONLY
+    to identify WHICH object is meant when the reference depends on
+    appearance (texture, pattern, 'striped', 'stands out', 'most salient').
+    Use the STRUCTURAL data for EVERYTHING numerical: all coordinates,
+    positions, sizes, distances, camera geometry, and to compute where to
+    move things. Every object id appears in both - match them by id.
+    Never take coordinates from the visual description; never resolve an
+    appearance-based reference from the structural data alone."""
+\end{minted}
+\caption{Wahrnehmungswerkzeug der kompetenzgetrennten Variante (klare Arbeitsteilung).}
+\label{lst:surgical}
+\end{listing}
+
+\subsection*{Übersicht der Varianten}
+
+Tabelle~\ref{tab:variants} fasst zusammen, welche Information die Varianten im Kontext erhalten und nach welcher Regel sie die Schichten gewichten.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Die fünf Repräsentationsvarianten im Vergleich.}
+  \label{tab:variants}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{@{}p{3.1cm} p{4.0cm} p{5.3cm}@{}}
+    \toprule
+    Variante & Im Kontext & Regel zur Gewichtung \\
+    \midrule
+    strukturell & nur struktureller Zustand & entfällt, keine visuelle Schicht \\
+    visuell & nur visuelle Beschreibung & entfällt, keine strukturelle Schicht \\
+    naiv hybrid & Struktur, dann Bild & grobe Zuordnung ohne verbindliche Regel \\
+    priorisierend & Bild, dann Struktur & Bild maßgeblich fürs Aussehen, Struktur nur Geometrie \\
+    kompetenzgetrennt & Struktur, dann Bild & Bild nur zur Objektwahl, Struktur für alles Numerische \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+% ------------------------------------------------------------
+\section{Der VR-Demonstrator}
+\label{sec:impl-demonstrator}
+
+Die Evaluation lief am Desktop unter kontrollierten Bedingungen.
+Um zu zeigen, dass der Ansatz auch in der eigentlichen Zielumgebung trägt, überführt ein Demonstrator die gesamte Kette in die immersive Umgebung.
+Er nutzt die kompetenzgetrennte Variante, also die in Kapitel~\ref{ch:evaluation} als am zuverlässigsten ermittelte Repräsentation.
+Dieser Abschnitt beschreibt die Ergänzungen, die für den Betrieb in der Brille nötig waren.
+
+\subsection*{Sprachsteuerung}
+
+Der Nutzer spricht einen Befehl.
+Ein lokal betriebenes Spracherkennungsmodell wandelt die Aufnahme in Text um.
+Dieser Text wird in dieselbe Kommando-Warteschlange gegeben, die auch in der Evaluation den Agenten antreibt.
+Ein gesprochener Befehl durchläuft damit genau dieselbe Kette wie ein Befehl im Experiment, ergänzt lediglich um die vorgeschaltete Spracherkennung.
+Abbildung~\ref{fig:voicechain} zeigt diesen Ablauf.
+
+\subsection*{Rollentrennung von Renderer und Commander}
+
+Über dieselbe Verbindung treten zwei Arten von Clients auf.
+Die Brille ist der Renderer, der die Manipulationen ausführt und die Szene darstellt.
+Die Sprachsteuerung ist der Commander, der ausschließlich Befehle einspeist.
+Eine Anmeldenachricht unterscheidet beide Rollen, damit die Befehlsquelle die Verbindung der Brille nicht verdrängt.
+
+\subsection*{Wahrnehmung in der Brille}
+
+Die visuelle Wahrnehmung setzt ein gerendertes Bild der Szene voraus.
+In der Brille rendert die Hauptkamera jedoch stereoskopisch für beide Augen, was kein brauchbares flaches Bild liefert.
+Eine dedizierte Aufnahmekamera löst das Problem.
+Sie folgt der Kopfpose, rendert aber einfach statt stereoskopisch und liefert so das Bild, das das visuelle Modell benötigt.
+
+\subsection*{Netzwerkkette}
+
+Die Modelle laufen aus Ressourcengründen auf einem entfernten Rechner, den die Brille nicht direkt erreicht.
+Die Brille verbindet sich deshalb mit einem lokalen Vermittler, der die Nachrichten über ein virtuelles privates Netz an den entfernten Rechner weiterleitet.
+Ein mobiler Zugangspunkt umgeht dabei die Isolation gemeinsam genutzter Netze, die eine direkte Verbindung sonst unterbindet.
+Diese Kette ist reine Demonstrationsinfrastruktur und nicht Gegenstand der Untersuchung.
+
+\subsection*{Ablauf und Rückmeldung}
+
+Sobald ein Befehl in die Warteschlange gelangt, arbeitet ein Worker den Agentenlauf ab und meldet der Brille den Beginn und den Abschluss der Verarbeitung.
+Die Brille zeigt diesen Status an, sodass für den Nutzer erkennbar ist, dass ein Befehl gerade bearbeitet wird.
+Ein früher erprobtes Bedienmenü in der Szene wurde zugunsten der Sprachsteuerung ersetzt, nutzte aber bereits dieselbe Kommando-Warteschlange.
+
+% ------------------------------------------------------------------
+% ABBILDUNG: Ablaufdiagramm der Sprach->VR-Kette (TikZ)
+% Benoetigt: tikz, positioning, arrows.meta, fit, backgrounds, graphicx
+% ------------------------------------------------------------------
+\begin{figure}[htbp]
+  \centering
+  \resizebox{0.9\linewidth}{!}{%
+  \begin{tikzpicture}[
+      font=\small,
+      box/.style={draw, rounded corners, align=center, inner sep=5pt,
+                  minimum height=11mm, minimum width=44mm, fill=white},
+      band/.style={draw, dashed, rounded corners, inner sep=8pt},
+      flow/.style={-{Latex[length=2.5mm]}, thick},
+      node distance=9mm
+    ]
+    \node[box] (user) {Nutzer spricht Befehl};
+    \node[box, below=of user] (whisper) {Spracherkennung\\{\footnotesize Sprache zu Text}};
+    \node[box, below=16mm of whisper] (queue) {Kommando-Warteschlange};
+    \node[box, below=of queue] (agent) {Worker-Agent\\{\footnotesize (kompetenzgetrennt)}};
+    \node[box, below=of agent] (mcp) {MCP-Server};
+    \node[box, below=16mm of mcp] (quest) {Meta Quest (Renderer)\\{\footnotesize sichtbare Manipulation, Status}};
+
+    \draw[flow] (user) -- node[right, font=\footnotesize]{Sprache} (whisper);
+    \draw[flow] (whisper) -- node[right, font=\footnotesize]{Text (Commander-Nachricht)} (queue);
+    \draw[flow] (queue) -- node[right, font=\footnotesize]{Befehl} (agent);
+    \draw[flow] (agent) -- node[right, font=\footnotesize]{Werkzeugaufruf} (mcp);
+    \draw[flow] (mcp) -- node[right, font=\footnotesize, align=left]{Kommando und Status\\(WebSocket über Relay und VPN)} (quest);
+
+    \begin{scope}[on background layer]
+      \node[band, fit=(user)(whisper)] (b1) {};
+      \node[band, fit=(queue)(agent)(mcp)] (b2) {};
+      \node[band, fit=(quest)] (b3) {};
+    \end{scope}
+    \node[font=\footnotesize\itshape, anchor=east, xshift=-4mm] at (b2.west |- b1) {Lokaler PC};
+    \node[font=\footnotesize\itshape, anchor=east, xshift=-4mm] at (b2.west) {Remote-Server};
+    \node[font=\footnotesize\itshape, anchor=east, xshift=-4mm] at (b2.west |- b3) {Meta Quest};
+
+  \end{tikzpicture}%
+  }
+  \caption{Ablauf eines gesprochenen Befehls im Demonstrator. Der lokale Rechner erkennt die Sprache und leitet den Text als Commander-Nachricht weiter, der entfernte Rechner arbeitet den Agentenlauf ab, und die Brille führt die Manipulation aus und zeigt den Verarbeitungsstatus an.}
+  \label{fig:voicechain}
+\end{figure}

@@ -12,3 +12,61 @@
 	name=library,
 	description={A collection of pre-compiled routines that a program can use}
 }
+
+
+
+% --- Akronyme ---
+\newacronym{ki}{KI}{Künstliche Intelligenz}
+\newacronym{llm}{LLM}{Large Language Model}
+\newacronym{vlm}{VLM}{Vision-Language-Modell}
+\newacronym{vr}{VR}{Virtual Reality}
+\newacronym{mcp}{MCP}{Model Context Protocol}
+\newacronym{som}{SoM}{Set-of-Mark}
+\newacronym{rq}{RQ}{Research Question}
+\newacronym{ga}{GA}{Grounding-Accuracy}
+\newacronym{pe}{PE}{Position Error}
+\newacronym{cs}{CS}{Constraint Satisfaction}
+\newacronym{es}{ES}{Execution Success}
+
+% --- Glossarbegriffe ---
+\newglossaryentry{strukturelle-repraesentation}{
+  name={strukturelle Repräsentation},
+  description={Bereitstellung der Szene als exakte Laufzeitdaten der Engine
+  (Objekt-ids, Typen, Positionen, Größen) in textueller Form}
+}
+\newglossaryentry{visuelle-repraesentation}{
+  name={visuelle Repräsentation},
+  description={Bereitstellung der Szene über ein \gls{vlm}, das die gerenderte
+  Ansicht mit Set-of-Mark-Markern interpretiert}
+}
+\newglossaryentry{naive-hybride-repraesentation}{
+  name={naive hybride Repräsentation},
+  description={Kombination aus struktureller und visueller Schicht ohne
+  Instruktion zur Zuständigkeit der Quellen}
+}
+\newglossaryentry{priorisierende-hybride-repraesentation}{
+  name={priorisierende hybride Repräsentation},
+  description={Hybride Repräsentation mit vorangestellter visueller Beschreibung,
+  die als maßgeblich für das Aussehen deklariert wird}
+}
+\newglossaryentry{kompetenzgetrennte-hybride-repraesentation}{
+  name={kompetenzgetrennte hybride Repräsentation},
+  description={Hybride Repräsentation mit expliziter Aufgabenteilung: das Bild
+  bestimmt, welches Objekt gemeint ist, die strukturelle Schicht liefert alle
+  Koordinaten}
+}
+\newglossaryentry{id-substrat}{
+  name={id-Substrat},
+  description={Geteiltes Interface, über das alle Repräsentationsvarianten
+  Objekte anhand derselben ids ansprechen}
+}
+\newglossaryentry{grounding}{
+  name={Grounding},
+  description={Auflösung einer sprachlichen Referenz auf ein konkretes
+  Szenenobjekt}
+}
+\newglossaryentry{folgezustand}{
+  name={Folgezustand},
+  description={Tatsächlicher Zustand der Szene nach einer Manipulation, aus dem
+  der Ausführungserfolg unabhängig von der Agenten-Antwort bestimmt wird}
+}

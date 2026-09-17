@@ -1,0 +1,172 @@
+% ============================================================
+% KAPITEL 3 — ANFORDERUNGEN  (Gesamtstand, erweitert)
+% ------------------------------------------------------------
+% ZIELDATEI: content/3_anforderungen.tex
+% BENOETIGTE PAKETE: booktabs, csquotes (geladen)
+%
+% STAND: 3.1 Herleitung | 3.2 Funktional | 3.3 Nicht-funktional |
+%        3.4 Spannungen | 3.5 Abgrenzung  -> alle AUSFORMULIERT
+% Form: Mischform (begruendende Prosa + nummerierte Tabellen).
+% ============================================================
+
+\chapter{Anforderungen}
+\label{ch:anforderungen}
+
+Die Anforderungen an das System ergeben sich nicht aus einem vorgegebenen Lastenheft, sondern aus dem wissenschaftlichen Ziel der Arbeit und den Bedingungen, unter denen sie entsteht.
+Dieses Kapitel legt zunächst offen, aus welchen Quellen die Anforderungen abgeleitet werden.
+Darauf aufbauend beschreibt es die funktionalen und die nicht-funktionalen Anforderungen, benennt die Spannungen zwischen ihnen und grenzt am Ende ab, was bewusst nicht gefordert ist.
+
+
+% ------------------------------------------------------------
+\section{Herleitung der Anforderungen}
+\label{sec:anf-herleitung}
+
+Da die Arbeit kein Auftragsprojekt mit externem Auftraggeber ist, gibt es keinen klassischen Anforderungskatalog.
+Formale Anforderungen wurden mit der Betreuung nicht im Einzelnen festgelegt.
+Die Anforderungen leiten sich daher analytisch aus vier Quellen ab, die im Folgenden benannt werden.
+
+Die erste Quelle sind die Forschungsfragen.
+Das System existiert, um den Einfluss der Repräsentationsform auf die natürlichsprachliche Szenenmanipulation messbar zu machen.
+Daraus folgt unmittelbar, dass das System mehrere Repräsentationsformen bereitstellen und ihren Einfluss unter fairen Bedingungen sichtbar machen muss.
+
+Die zweite Quelle ist die Zielumgebung.
+Die Arbeit ist auf eine immersive Anwendung ausgerichtet, in der Datenschutz, geringe Latenz und Unabhängigkeit von einer Netzverbindung eine Rolle spielen.
+Diese Ausrichtung legt den Betrieb lokaler Modelle nahe und verlangt, dass sich die Verarbeitungskette bis in die Brille übertragen lässt.
+
+Die dritte Quelle ist die wissenschaftliche Methodik.
+Damit die Ergebnisse belastbar sind, müssen die Messungen reproduzierbar und die Erfolgsbewertung objektiv sein.
+Dies stellt Anforderungen an die Kontrolle der Szenen und an die Art der Erfolgsmessung.
+
+Die vierte Quelle ist die verfügbare Hardware.
+Für die Arbeit stand ein vom Institut bereitgestellter Arbeitsplatzrechner mit einer einzelnen Grafikkarte zur Verfügung.
+Diese Ausstattung ist eine feste Randbedingung und keine freie Entwurfsentscheidung.
+Sie begrenzt die Größe der einsetzbaren Modelle und prägt damit mehrere der folgenden Anforderungen.
+
+
+% ------------------------------------------------------------
+\section{Funktionale Anforderungen}
+\label{sec:anf-funktional}
+
+Die funktionalen Anforderungen beschreiben, was das System leisten muss.
+
+Zunächst muss das System einen natürlichsprachlichen Befehl entgegennehmen und in eine Veränderung der Szene umsetzen.
+Die dafür nötigen Operationen beschränken sich auf das Erzeugen, Verschieben und Entfernen von Objekten.
+Diese Beschränkung ist bewusst gewählt, da sich mit diesen wenigen Operationen bereits alle für die Untersuchung nötigen Arten von Referenzen abdecken lassen, ohne den Funktionsumfang unnötig auszuweiten.
+
+Um die zentrale Frage untersuchen zu können, muss das System die Szene in den drei zu vergleichenden Repräsentationsformen bereitstellen, also strukturell, visuell und hybrid.
+Dies ist die Kernanforderung, ohne die der Vergleich nicht möglich wäre.
+
+Damit der Vergleich fair bleibt, müssen alle Varianten Objekte über dasselbe Interface ansprechen.
+Diese Anforderung ist weniger selbstverständlich, als sie zunächst wirkt.
+Eine rein visuelle Variante hätte ohne ein gemeinsames Kennungssystem kein Handle, über das sie ein erkanntes Objekt für einen Werkzeugaufruf benennen könnte, und wäre damit nicht wegen ihrer Repräsentation im Nachteil, sondern wegen eines fehlenden Zugriffs.
+Ein gemeinsames Kennungssystem stellt daher sicher, dass gemessene Unterschiede auf die Repräsentation zurückgehen.
+
+Der Erfolg einer Manipulation muss zudem objektiv bestimmbar sein.
+Das System muss dazu den tatsächlichen Zustand der Szene nach einer Manipulation auslesen, sodass sich der Erfolg unabhängig von der Selbstauskunft des Agenten ermitteln lässt.
+Diese Anforderung folgt aus der Beobachtung, dass ein kleines Modell einen Erfolg melden kann, den es nicht erreicht hat, was eine Messung anhand seiner eigenen Antwort unzuverlässig machen würde.
+Schließlich muss sich jedes Testszenario reproduzierbar aufbauen und zurücksetzen lassen, damit Messungen unter identischen Bedingungen wiederholbar sind.
+
+Tabelle~\ref{tab:fa} fasst die funktionalen Anforderungen zusammen.
+Die Spalte Herkunft verweist darauf, ob eine Anforderung aus den Forschungsfragen oder aus methodischen Gründen folgt.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Funktionale Anforderungen.}
+  \label{tab:fa}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{@{}l p{9.4cm} l@{}}
+    \toprule
+    Nr. & Anforderung & Herkunft \\
+    \midrule
+    FA1 & Natürlichsprachliche Befehle in Szenenmanipulationen umsetzen, beschränkt auf Erzeugen, Verschieben und Entfernen von Objekten & RQ1, RQ2 \\
+    FA2 & Die Szene in struktureller, visueller und hybrider Repräsentation bereitstellen & RQ1 \\
+    FA3 & Objekte über ein gemeinsames Kennungssystem ansprechen, unabhängig von der Repräsentationsform & Validität \\
+    FA4 & Den Erfolg einer Manipulation aus dem tatsächlichen Szenenzustand bestimmen & Validität \\
+    FA5 & Testszenarien reproduzierbar aufbauen und zurücksetzen & Methodik \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+% ------------------------------------------------------------
+\section{Nicht-funktionale Anforderungen}
+\label{sec:anf-nichtfunktional}
+
+Die nicht-funktionalen Anforderungen beschreiben keine einzelnen Funktionen, sondern Eigenschaften und Randbedingungen, die das System als Ganzes erfüllen muss.
+
+Aus der Zielumgebung folgt, dass die Modelle lokal betrieben werden.
+Datenschutz, geringe Latenz und die Unabhängigkeit von einer Netzverbindung sprechen in einer immersiven Anwendung für eine lokale Ausführung ohne Cloud.
+Damit verbunden ist die Beschränkung auf begrenzte Hardware.
+Da für die Arbeit eine feste Ausstattung mit einer einzelnen Grafikkarte vorgegeben war, muss das System mit deren Grafikspeicher auskommen.
+Diese Vorgabe legt die Wahl auf Modelle geringer Größe fest, die neben dem Sprachmodell auch das visuelle Modell gleichzeitig im Speicher halten können.
+
+Für die Aussagekraft der Untersuchung muss die Messung reproduzierbar sein.
+Unter identischer Konfiguration müssen sich vergleichbare Ergebnisse einstellen, was kontrollierte und wiederholbar aufgebaute Szenen voraussetzt.
+Da die eigentliche Zielumgebung die immersive Anwendung ist, muss sich dieselbe Verarbeitungskette sowohl am Desktop für die Messung als auch in der Brille betreiben lassen, ohne dass ihr Kern verändert wird.
+Schließlich muss der Vergleich so aufgebaut sein, dass die Repräsentationsform die einzige zwischen den Varianten variierende Größe ist.
+Nur dann lassen sich Unterschiede eindeutig auf die Repräsentation zurückführen.
+
+Tabelle~\ref{tab:nfa} fasst die nicht-funktionalen Anforderungen zusammen.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Nicht-funktionale Anforderungen.}
+  \label{tab:nfa}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{@{}l p{9.4cm} l@{}}
+    \toprule
+    Nr. & Anforderung & Herkunft \\
+    \midrule
+    NFA1 & Modelle lokal ohne Cloud betreiben & Zielumgebung \\
+    NFA2 & Mit der vorgegebenen Hardware, einer einzelnen Grafikkarte, und Modellen geringer Größe auskommen & Hardware \\
+    NFA3 & Messungen unter identischer Konfiguration reproduzierbar halten & Methodik \\
+    NFA4 & Dieselbe Verarbeitungskette am Desktop und in der immersiven Umgebung betreiben & Zielumgebung \\
+    NFA5 & Die Repräsentationsform als einzige zwischen den Varianten variierende Größe sicherstellen & Validität \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+% ------------------------------------------------------------
+\section{Spannungen zwischen den Anforderungen}
+\label{sec:anf-spannungen}
+
+Die genannten Anforderungen lassen sich nicht widerspruchsfrei zugleich maximieren.
+Zwischen ihnen bestehen Spannungen, deren bewusste Auflösung den Charakter der Arbeit prägt.
+
+Eine erste Spannung besteht zwischen der Leistungsfähigkeit und der Ressourcenbeschränkung.
+Die Anforderung, natürlichsprachliche Befehle zuverlässig umzusetzen, wäre mit großen Modellen leichter zu erfüllen.
+Die Vorgabe lokaler Modelle geringer Größe begrenzt jedoch die Fähigkeiten des Systems.
+Diese Spannung wird nicht aufgelöst, sondern angenommen, da gerade das Verhalten unter dieser Beschränkung Gegenstand der Untersuchung ist.
+
+Eine zweite Spannung besteht zwischen der Fairness des Vergleichs und der Praxisnähe.
+Das gemeinsame Kennungssystem und die kontrolliert aufgebauten Szenen sind für einen sauberen Vergleich notwendig, entfernen die Aufgabe aber ein Stück weit von einer realistischen Anwendung.
+Hier wird der wissenschaftlichen Kontrolle der Vorrang gegeben, da die Arbeit eine Vergleichsstudie und keine Produktentwicklung ist.
+
+Eine dritte Spannung besteht zwischen der Reproduzierbarkeit und dem Realismus der Szenen.
+Reproduzierbare Messungen verlangen einfache, kontrolliert aufgebaute Szenen, während die Zielumgebung komplexe, reale Szenen nahelegt.
+Auch hier wird zugunsten der Reproduzierbarkeit entschieden, und die Übertragung in die reale Umgebung bleibt dem Demonstrator vorbehalten.
+
+Diese Entscheidungen folgen einem einheitlichen Grundsatz.
+Wo eine wissenschaftliche und eine anwendungsnahe Anforderung in Konflikt geraten, erhält die wissenschaftliche den Vorrang, weil das Ziel der Arbeit eine belastbare Erkenntnis und kein fertiges Produkt ist.
+
+
+% ------------------------------------------------------------
+\section{Abgrenzung des Funktionsumfangs}
+\label{sec:anf-abgrenzung}
+
+Ebenso wichtig wie das, was das System leisten muss, ist die Abgrenzung dessen, was bewusst nicht gefordert ist.
+Diese Abgrenzung entspricht der Nicht-Reichweite der Zielsetzung und hält den Rahmen der Arbeit klar.
+
+Das System muss keine Produktreife erreichen.
+Es genügt, die untersuchten Repräsentationen und die Kette bis in die immersive Umgebung funktionsfähig zu machen, ohne dass Robustheit unter Dauerlast oder eine ausgereifte Bedienung gefordert ist.
+Der Umfang der Manipulationen bleibt bewusst auf das Erzeugen, Verschieben und Entfernen von Objekten beschränkt.
+Weitere Operationen wie das Drehen oder Skalieren zur Laufzeit sind nicht Teil der Untersuchung.
+Ebenso wenig muss das System beliebige oder mehrdeutige natürlichsprachliche Formulierungen zuverlässig auflösen.
+Die Befehle sind für die Untersuchung klar formuliert, und die Robustheit gegenüber umgangssprachlicher Vielfalt ist kein Ziel.
+Eine Nutzerstudie ist nicht vorgesehen, da die Bewertung rein systembasiert aus dem Szenenzustand erfolgt.
+Schließlich wird keine Übertragbarkeit auf andere Modelle oder auf reale, komplexe Szenen gefordert, da die Untersuchung auf ein Modellpaar und kontrolliert aufgebaute Szenen begrenzt ist.

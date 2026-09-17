@@ -1,0 +1,112 @@
+% ============================================================
+% KAPITEL 1 — EINLEITUNG  (Gesamtstand, erweitert)
+% ------------------------------------------------------------
+% ZIELDATEI: content/1_einleitung.tex
+% BENOETIGTE PAKETE: csquotes (geladen)
+% STAND: 1.1 Motivation/Problemstellung | 1.2 Relevanz |
+%        1.3 Zielsetzung + Forschungsfragen (RQ-Bloecke) |
+%        1.4 Methodisches Vorgehen (NEU) | 1.5 Aufbau (erzaehlend) -> AUSFORMULIERT
+% Prinzip: offene Frage vorne (kein Ergebnis vorwegnehmen).
+% ============================================================
+
+\chapter{Einleitung}
+\label{ch:einleitung}
+
+% ------------------------------------------------------------
+\section{Motivation und Problemstellung}
+\label{sec:ein-motivation}
+
+Ein Nutzer steht in einer virtuellen Szene und sagt einen einfachen Satz: Heb den gestreiften Würfel an.
+Für einen Menschen ist die Aufgabe trivial.
+Für einen KI-Agenten beginnt hier das eigentliche Problem.
+Bevor er den Würfel anheben kann, muss er die Szene verstehen, und dazu muss ihm die Szene in einer Form vorliegen, die er verarbeiten kann.
+
+Für diese Form gibt es zwei grundverschiedene Wege.
+Der eine Weg beschreibt die Szene strukturell, als exakte Daten über Objekte, ihre Typen, Positionen und Größen.
+Der andere Weg beschreibt die Szene visuell, als gerendertes Bild, das ein visuelles Modell interpretiert.
+Beide Wege haben offensichtliche Stärken und ebenso offensichtliche blinde Flecken.
+Die strukturellen Daten kennen jede Koordinate, aber nicht das Aussehen eines Objekts.
+Das Bild zeigt das Aussehen, aber keine exakten Zahlen.
+
+Der gestreifte Würfel aus dem Beispiel macht den ersten blinden Fleck sichtbar.
+Er lässt sich nur über das Bild bestimmen, denn das Streifenmuster steht in keinen strukturellen Daten.
+Der umgekehrte Fall ist ebenso denkbar.
+Ein Objekt, das hinter einem anderen verborgen ist, erscheint im Bild überhaupt nicht, bleibt in den strukturellen Daten aber vollständig verzeichnet.
+Ein Befehl, der sich auf ein solches verdecktes Objekt bezieht, lässt sich nur über die strukturelle Schicht auflösen.
+Beide Wege haben also nicht nur unterschiedliche Stärken, sondern jeweils einen Bereich, den der andere Weg grundsätzlich nicht abdeckt.
+
+Damit stellt sich eine Frage, die am Anfang jedes solchen Systems steht und bisher ohne empirische Grundlage beantwortet werden musste.
+In welcher Form sollte einem lokal betriebenen Agenten eine Szene bereitgestellt werden, und lässt sich eine Kombination beider Wege so gestalten, dass sie die Stärken beider vereint?
+Gerade in immersiven Umgebungen, in denen ein Nutzer über natürliche Sprache mit einer Szene interagiert, ist diese Frage praktisch bedeutsam.
+Und gerade für lokal betreibbare Modelle, die aus Gründen des Datenschutzes, der Latenz und der Offline-Fähigkeit in solchen Umgebungen naheliegen, fehlt ein systematischer Vergleich dieser Wege.
+
+
+% ------------------------------------------------------------
+\section{Relevanz}
+\label{sec:ein-relevanz}
+
+Die Wahl der Repräsentationsform ist keine technische Nebensache.
+Sie entscheidet mit darüber, welche sprachlichen Anweisungen ein Agent überhaupt zuverlässig umsetzen kann.
+Eine Repräsentation, die eine ganze Klasse von Referenzen nicht abbildet, lässt die zugehörigen Befehle scheitern, unabhängig davon, wie gut der Agent im Übrigen arbeitet.
+
+Bei großen, cloudbasierten Modellen lässt sich eine schwache Repräsentation teilweise durch schiere Modellgröße ausgleichen.
+Bei lokal betreibbaren Modellen geringer Größe entfällt dieser Ausgleich.
+Hier wird die Repräsentation zum eigentlichen Hebel für den Erfolg.
+Wer ein solches System entwirft, trifft die Entscheidung über die Repräsentationsform früh und mit weitreichenden Folgen, bislang jedoch ohne belastbare Grundlage.
+Genau diese Grundlage zu schaffen, ist das praktische Anliegen der Arbeit.
+
+Über den praktischen Nutzen hinaus berührt die Frage ein allgemeineres Problem.
+Wie sich strukturierte und visuelle Information in einem Agenten verbinden lassen, betrifft jede Anwendung, die beide Arten von Information kombiniert.
+Ob eine solche Kombination ihre Bestandteile ergänzt oder ob eine Informationsart die andere verdrängt, ist eine offene Frage mit Bedeutung über den hier untersuchten Fall hinaus.
+
+
+% ------------------------------------------------------------
+\section{Zielsetzung und Forschungsfragen}
+\label{sec:ein-ziele}
+
+Das zentrale Ziel der Arbeit ist eine empirisch fundierte Erkenntnis darüber, welche Repräsentationsform einen lokal betriebenen Agenten bei der natürlichsprachlichen Szenenmanipulation am zuverlässigsten unterstützt.
+Die Arbeit verfolgt dieses Ziel anhand zweier Forschungsfragen.
+
+\begin{quote}
+\textbf{Forschungsfrage~1 (RQ1).}
+Welchen Einfluss hat die Form der Szenenrepräsentation, strukturell, visuell oder hybrid, auf die räumliche Korrektheit und den Ausführungserfolg der natürlichsprachlichen Szenenmanipulation durch einen lokal betriebenen Agenten?
+
+\vspace{6pt}
+\textbf{Forschungsfrage~2 (RQ2).}
+Lässt sich das Zusammenspiel der strukturellen und der visuellen Schicht allein durch die Gestaltung der Instruktion so steuern, dass die hybride Repräsentation die Stärken beider Schichten vereint?
+\end{quote}
+
+Über diese beiden Fragen hinaus entsteht ein Demonstrator, der die als am zuverlässigsten ermittelte Variante in die immersive Zielumgebung überträgt und ihre Übertragbarkeit nachweist.
+Er beantwortet keine eigene Forschungsfrage, sondern dient dem Nachweis der praktischen Machbarkeit.
+
+Die Arbeit grenzt ihren Anspruch bewusst ab.
+Sie beansprucht keine Generalisierung auf andere Modelle oder auf reale, komplexe Szenen, keine global optimale Lösung und keine Produktreife des Demonstrators.
+Die Ergebnisse gelten für ein lokales Modellpaar in kontrolliert aufgebauten Szenen.
+
+
+% ------------------------------------------------------------
+\section{Methodisches Vorgehen}
+\label{sec:ein-vorgehen}
+
+Zur Beantwortung der Forschungsfragen verfolgt die Arbeit einen empirischen Ansatz.
+Grundlage ist ein prototypisches System, das dieselbe Szene in den drei zu vergleichenden Repräsentationsformen bereitstellt und über ein gemeinsames Interface manipulierbar macht.
+Auf dieser Grundlage werden die Formen unter gleichen Bedingungen an einer Reihe kontrolliert aufgebauter Szenarien gegeneinander gemessen.
+Der Erfolg jeder Manipulation wird dabei aus dem tatsächlichen Zustand der Szene bestimmt und nicht aus der Selbstauskunft des Agenten, und jede Messung wird wiederholt, um belastbare von zufälligen Unterschieden trennen zu können.
+
+Aus diesem Vorgehen ergeben sich drei Beiträge.
+Der erste Beitrag ist ein kontrollierter, nach der Art der sprachlichen Referenz aufgeschlüsselter Vergleich der drei Repräsentationsformen für einen lokal betriebenen Agenten.
+Der zweite Beitrag ist die Untersuchung, ob sich das Zusammenspiel der Schichten allein über die Gestaltung der Instruktion steuern lässt.
+Der dritte Beitrag ist ein lauffähiger Demonstrator, der die Erkenntnis in die immersive Zielumgebung überträgt.
+
+
+% ------------------------------------------------------------
+\section{Aufbau der Arbeit}
+\label{sec:ein-aufbau}
+
+Der Aufbau der Arbeit zeichnet den Weg von der offenen Frage zur belastbaren Antwort nach.
+Kapitel~\ref{ch:grundlagen} legt die begrifflichen Grundlagen und ordnet die Arbeit in den Stand der Technik ein, um die Forschungslücke genau zu bestimmen, die sie schließt.
+Aus dieser Lücke leitet Kapitel~\ref{ch:anforderungen} ab, was ein System leisten muss, damit sich die Frage überhaupt beantworten lässt.
+Kapitel~\ref{ch:konzept} entwickelt daraus das Lösungskonzept, insbesondere den Entwurfsraum der drei Repräsentationsformen und die Entscheidungen, die einen fairen Vergleich ermöglichen.
+Wie dieses Konzept in ein lauffähiges System übersetzt wird, beschreibt Kapitel~\ref{ch:implementierung}.
+Kapitel~\ref{ch:evaluation} führt den Vergleich durch und berichtet die Ergebnisse zu beiden Forschungsfragen.
+Kapitel~\ref{ch:zusammenfassung} fasst die Erkenntnisse zusammen, ordnet ihre Grenzen ein und zeigt, welche Fragen offen bleiben.

@@ -6,27 +6,30 @@
 \documentclass[
     ieee, % Bibliography style: ieee, wmaainf
     bachelor, % Type of thesis: master, bachelor, report
-    english, % Language: german, english
+    german, % Language: german, english
     singlepage % Cover Layout: singlepage, doublepage
 ]{ohm}
-%----------------------------------------------------------------------
+\nocite{*} % TODO: nur vorübergehend
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, fit, backgrounds}%----------------------------------------------------------------------
 % Meta data section
 %----------------------------------------------------------------------
-\title{My very fancy thesis title}
-\author{Muster Masterstudent}
-\studentid{1234567}
+\title{Szenenverständnis und -manipulation in immersiven Umgebungen mittels Künstlicher Intelligenz}
+\author{Sandro Jäger}
+\studentid{3683886}
 \date{\today}
 %----------------------------------------------------------------------
-\examiner{Prof.\,Dr.\,Max Mustermann}
-\examiner{Prof.\,Dr.\,Monica Musterfrau}
+\examiner{Prof.\,Dr.\,Uwe Wienkop}
+\examiner{Louis Burk}
 %----------------------------------------------------------------------
 % \subject{Artificial Intelligence and Specific Processor Architecture: TPUs, GPUs} % Optional for reports
 %----------------------------------------------------------------------
 % \company{Example AG} % Optional
 % \supervisor{Dr.\,rer.\,nat.\,Muster Betreuerin} % Optional, multiple supported
 %----------------------------------------------------------------------
-\keyword{Container Image}
-\keyword{Software Supply Chain Security}
+
 %----------------------------------------------------------------------
 \repository{https://git.informatik.fh-nuernberg.de/maxmu123/thesis} % Optional
 %----------------------------------------------------------------------
@@ -68,12 +71,14 @@
 %----------------------------------------------------------------------
 \mainmatter
 %----------------------------------------------------------------------
-\include{content/1_intro}
-\include{content/2_data}
-\include{content/3_method}
-\include{content/4_experiments}
-\include{content/5_outlook}
-\include{content/6_summary}
+\include{content/1_einleitung}
+\include{content/2_grundlagen}
+\include{content/3_anforderungen}
+\include{content/4_konzept}
+\include{content/5_implementierung}
+\include{content/6_evaluation}
+\include{content/7_zusammenfassung}
+\include{content/ki_erklaerung}
 %----------------------------------------------------------------------
 % \backmatter
 %----------------------------------------------------------------------
