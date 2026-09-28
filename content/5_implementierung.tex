@@ -43,7 +43,7 @@ Hier deutet ein Agent den Befehl und wählt die nötige Manipulation.
 Der Agent wird von einem lokal betriebenen Sprachmodell angetrieben und greift für die visuelle Wahrnehmung auf ein lokales visuelles Modell zurück.
 
 Die mittlere Schicht verbindet die oberste Schicht mit der Umgebung.
-Ein Server nach dem Model Context Protocol (MCP) stellt die Manipulationsoperationen als aufrufbare Werkzeuge bereit und übersetzt jeden Aufruf in eine Nachricht an die Umgebung.
+Ein Server nach dem Model Context Protocol (MCP)~\cite{mcp} stellt die Manipulationsoperationen als aufrufbare Werkzeuge bereit und übersetzt jeden Aufruf in eine Nachricht an die Umgebung.
 Eine WebSocket-Verbindung transportiert diese Nachrichten und liefert den Szenenzustand sowie gerenderte Bilder zurück.
 
 Die unterste Schicht ist die Umgebung selbst.
@@ -169,8 +169,29 @@ Genau diese Lücke ist der Grund, warum rein perzeptuelle Referenzen über den s
 Für die visuelle Sicht rendert die Umgebung die Szene aus der Kamera und übergibt das Bild.
 Ein Bild allein erlaubt dem visuellen Modell jedoch nicht, ein erkanntes Objekt für einen Werkzeugaufruf zu benennen.
 Deshalb wird jedes sichtbare Objekt im Bild mit einer Marke versehen, die seine Kennung trägt.
-Dieses Vorgehen entspricht dem Set-of-Mark-Prinzip.
+Dieses Vorgehen entspricht dem Set-of-Mark-Prinzip~\cite{yang2023}.
 Das visuelle Modell kann ein Objekt damit über dieselbe Kennung ansprechen, die auch die Werkzeuge verwenden.
+Abbildung~\ref{fig:setofmark} zeigt beide Ansichten derselben Szene im Vergleich.
+
+% ------------------------------------------------------------------
+% ABBILDUNG: Set-of-Mark (zwei Screenshots nebeneinander)
+% Dateien: figures/scene.png (rohe Ansicht), figures/scene_marked.png (markiert)
+% Dependency-frei (nur graphicx); fuer echte Teilabbildungen (a)/(b) waere
+% subcaption noetig - hier bewusst per minipage geloest.
+% ------------------------------------------------------------------
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/scene}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/scene_marked}
+  \end{minipage}
+  \caption{Die visuelle Repräsentation am Beispiel einer einfachen Szene. Links die gerenderte Ansicht, wie sie die Kamera liefert. Rechts dieselbe Ansicht nach dem Set-of-Mark-Verfahren, bei dem jedes sichtbare Objekt eine nummerierte Marke trägt, über die das visuelle Modell es benennen kann. Die Marken sind reine Bezeichner. Die Farbe einer Marke ist bedeutungslos und wird bei der Auswertung ignoriert.}
+  \label{fig:setofmark}
+\end{figure}
 
 \subsection*{Sichtbarkeit und Verdeckung}
 
@@ -198,12 +219,55 @@ Dieser Abschnitt beschreibt, wie der Agent aufgebaut ist und über welche Werkze
 
 \subsection*{Der Agent und das Sprachmodell}
 
-Als Agent dient ein werkzeugaufrufender Agent aus dem Framework smolagents.
+Als Agent dient ein werkzeugaufrufender Agent aus dem Framework smolagents~\cite{smolagents}.
 Angetrieben wird er von einem lokal betriebenen Sprachmodell, das über eine OpenAI-kompatible Schnittstelle angesprochen wird, die LM Studio auf dem Rechner bereitstellt.
 Der Agent arbeitet in einer Schleife.
 In jedem Schritt entscheidet das Sprachmodell anhand des aktuellen Kontexts, welches Werkzeug mit welchen Argumenten aufgerufen wird, bis es die Aufgabe als abgeschlossen meldet.
+Abbildung~\ref{fig:zyklus} stellt diesen Ablauf einer einzelnen Manipulation dar, von der Wahrnehmung bis zur Erfolgsbestimmung aus dem Folgezustand.
 Die Modelle werden dabei nicht nachtrainiert.
 Der einzige Hebel zur Steuerung ihres Verhaltens ist die Gestaltung des Kontexts, was den Ansatzpunkt der zweiten Forschungsfrage bildet.
+
+% ------------------------------------------------------------------
+% ABBILDUNG: Manipulationszyklus (TikZ) - neue Fassung
+% Benoetigt: tikz (positioning, arrows.meta, fit, backgrounds), graphicx
+% ------------------------------------------------------------------
+\begin{figure}[htbp]
+  \centering
+  \resizebox{\linewidth}{!}{%
+  \begin{tikzpicture}[
+      font=\small,
+      box/.style={draw, rounded corners, align=center, inner sep=5pt,
+                  minimum height=11mm, minimum width=26mm, fill=white},
+      lbl/.style={font=\footnotesize, fill=white, inner sep=1.5pt},
+      flow/.style={-{Latex[length=2.5mm]}, thick},
+      node distance=14mm
+    ]
+    \node[box] (wahr) {Szene abfragen};
+    \node[box, right=of wahr] (entsch) {Operation wählen};
+    \node[box, right=of entsch] (aus) {Objekt manipulieren};
+    \node[box, right=26mm of aus] (pruef) {Zustand auslesen};
+
+    % Eintritt
+    \draw[flow] ([xshift=-16mm]wahr.west) -- node[lbl, above]{Befehl} (wahr.west);
+    % lineare Kette
+    \draw[flow] (wahr) -- (entsch);
+    \draw[flow] (entsch) -- (aus);
+    \draw[flow] (aus) -- node[lbl, above]{Aufgabe abgeschlossen} (pruef);
+    % Austritt
+    \draw[flow] (pruef.east) -- node[lbl, above]{Erfolg bewerten} ([xshift=18mm]pruef.east);
+    % Schleife oberhalb der drei Agentenschritte
+    \draw[flow] (aus.north) to[out=120, in=60] node[lbl]{nächster Schritt, bis erledigt} (wahr.north);
+
+    % Agentenschleife als gestrichelte Gruppe
+    \begin{scope}[on background layer]
+      \node[draw, dashed, rounded corners, inner sep=10pt, fit=(wahr)(entsch)(aus)] (loopbox) {};
+    \end{scope}
+    \node[font=\footnotesize\itshape, anchor=north] at (loopbox.south) {Agentenschleife};
+  \end{tikzpicture}%
+  }
+  \caption{Ablauf einer einzelnen Manipulation. In der Agentenschleife fragt der Agent die Szene über ein Wahrnehmungswerkzeug ab, das Sprachmodell wählt daraufhin die passende Operation, und das gewählte Werkzeug manipuliert das Objekt. Diese Schritte wiederholen sich, bis der Agent die Aufgabe abschließt. Erst danach liest die Auswertung den tatsächlichen Szenenzustand aus und bewertet den Erfolg daraus, nicht aus der Selbstauskunft des Agenten.}
+  \label{fig:zyklus}
+\end{figure}
 
 \subsection*{Die Werkzeuge}
 
@@ -392,6 +456,11 @@ Diese Kette ist reine Demonstrationsinfrastruktur und nicht Gegenstand der Unter
 Sobald ein Befehl in die Warteschlange gelangt, arbeitet ein Worker den Agentenlauf ab und meldet der Brille den Beginn und den Abschluss der Verarbeitung.
 Die Brille zeigt diesen Status an, sodass für den Nutzer erkennbar ist, dass ein Befehl gerade bearbeitet wird.
 Ein früher erprobtes Bedienmenü in der Szene wurde zugunsten der Sprachsteuerung ersetzt, nutzte aber bereits dieselbe Kommando-Warteschlange.
+Abbildung~\ref{fig:demo} zeigt diese frühe Ausbaustufe im Betrieb, aufgenommen aus der Sicht der Brille.
+Die Szene enthält drei Objekte, einen roten Würfel, einen gestreiften Würfel und eine blaue Kugel.
+In der Aufzeichnung werden die vordefinierten Befehle nacheinander ausgelöst, und die zugehörigen Manipulationen sind jeweils unmittelbar in der Szene sichtbar.
+Der gestreifte Würfel hebt sich an, die blaue Kugel wandert nach links neben den roten Würfel, und der gestreifte Würfel wird schließlich entfernt.
+Das Video belegt damit anschaulich, dass die vollständige Kette von der Befehlsauswahl bis zur ausgeführten Manipulation in der immersiven Umgebung funktioniert.
 
 % ------------------------------------------------------------------
 % ABBILDUNG: Ablaufdiagramm der Sprach->VR-Kette (TikZ)
@@ -434,4 +503,19 @@ Ein früher erprobtes Bedienmenü in der Szene wurde zugunsten der Sprachsteueru
   }
   \caption{Ablauf eines gesprochenen Befehls im Demonstrator. Der lokale Rechner erkennt die Sprache und leitet den Text als Commander-Nachricht weiter, der entfernte Rechner arbeitet den Agentenlauf ab, und die Brille führt die Manipulation aus und zeigt den Verarbeitungsstatus an.}
   \label{fig:voicechain}
+\end{figure}
+
+
+% ------------------------------------------------------------------
+% ABBILDUNG: Standbild aus dem Demonstrator-Video (Platzhalter)
+% Datei: figures/demo_still.png (repraesentatives Einzelbild aus dem Video)
+% Video selbst nicht ins PDF einbettbar -> Standbild + Verweis (Link/QR).
+% [VIDEO-LINK] durch die tatsaechliche URL (z. B. Uni-Cloud) ersetzen,
+% optional zusaetzlich einen QR-Code als figures/demo_qr einbinden.
+% ------------------------------------------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/demo_still}
+  \caption{Eine frühe Ausbaustufe des Demonstrators in Betrieb. In dieser Fassung werden die Befehle noch nicht gesprochen, sondern über ein Menü in der Szene ausgewählt, das vordefinierte Anweisungen bereitstellt. Das Standbild stammt aus einer Aufzeichnung, in der auf diese Weise unter anderem \enquote{move the striped cube up}, \enquote{put the blue sphere left of the red cube} und \enquote{delete the striped cube} ausgelöst werden. Die vollständige Aufzeichnung ist als Begleitmaterial in Anhang~\ref{anh:video} verlinkt.}
+  \label{fig:demo}
 \end{figure}

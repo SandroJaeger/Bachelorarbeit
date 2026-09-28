@@ -73,7 +73,7 @@ Wie es konkret realisiert ist, beschreibt Kapitel~\ref{ch:implementierung}.
 
 
 % ------------------------------------------------------------
-\section{Szenenrepräsentation für Sprachmodelle}
+\section[Szenenrepräsentation]{Szenenrepräsentation für Sprachmodelle}
 \label{sec:grundlagen-repraesentation}
 
 Damit ein Sprachmodell eine Szene verändern kann, muss es die Szene zunächst erfassen.
@@ -89,7 +89,7 @@ Diese Darstellung erfasst das Aussehen der Szene, wie es sich einem Betrachter z
 
 Der visuelle Ansatz bringt eine zusätzliche Anforderung mit sich.
 Ein Modell muss ein im Bild erkanntes Objekt benennen können, um es anschließend gezielt anzusprechen.
-Eine verbreitete Technik dafür ist das Set-of-Mark-Prompting, bei dem sichtbare Objekte im Bild mit nummerierten Marken versehen werden~\cite{yang2023a}.
+Eine verbreitete Technik dafür ist das Set-of-Mark-Prompting, bei dem sichtbare Objekte im Bild mit nummerierten Marken versehen werden~\cite{yang2023}.
 Das Modell kann sich dann auf eine Marke beziehen, und die Nummer lässt sich eindeutig einem Objekt zuordnen.
 
 Unabhängig von der Repräsentationsform hängt die Schwierigkeit einer Aufgabe davon ab, wie im Befehl auf ein Objekt verwiesen wird.
@@ -120,12 +120,24 @@ SeeGround stellt eine Szene als Kombination aus einer gerenderten Ansicht und ei
 Dieser Ansatz ist der vorliegenden Arbeit konzeptionell am nächsten, verfolgt aber ein anderes Ziel.
 Er dient dem Auffinden eines Objekts und nicht seiner Manipulation, setzt ein großes Modell ein und stellt die Repräsentationsformen nicht als gleichwertige Bedingungen einander gegenüber.
 
+Einen verwandten Weg beschreitet SceneGraphGrounder, das das Auffinden eines Objekts als strukturiertes Graph-Matching formuliert~\cite{sun2026}.
+Dabei leitet ein visuelles Modell über eine Marker-Strategie die Beziehungen zwischen Objekten aus zweidimensionalen Ansichten ab, die anschließend in einen persistenten Szenengraphen überführt werden.
+Die Arbeit berichtet, dass eine explizite strukturelle Repräsentation die Grounding-Genauigkeit verbessert.
+Damit bestätigt sie, dass die Verbindung von struktureller und visueller Information ein aktiv verfolgter Ansatz ist.
+Wie SeeGround bleibt sie jedoch beim Auffinden von Objekten und behandelt nicht deren Manipulation.
+Zudem betrachtet sie die strukturelle und die visuelle Information nicht als getrennte, gegeneinander geprüfte Repräsentationsformen, sondern setzt sie von vornherein gemeinsam ein.
+
 \subsection{Modalitäts-Ablationen und Modalitäts-Dominanz}
 
 Ein drittes Feld untersucht, wie sich verschiedene Eingabemodalitäten auf die Leistung auswirken.
 Die Arbeit zum Embodied Agent Interface vergleicht unter anderem eine rein strukturelle, eine rein visuelle und eine kombinierte Eingabe und zeigt, dass strukturierter Input reine Bildeingabe deutlich übertrifft~\cite{li2025a}.
 Dieser Vergleich betrifft jedoch die Handlungsplanung und nicht die Szenenmanipulation und schlüsselt die Aufgaben nicht nach Referenztypen auf.
-Eng verwandt sind zwei Arbeiten zur Modalitäts-Dominanz.
+In eine ähnliche Richtung weist SIRI-Bench, ein Benchmark für räumliches Schließen~\cite{song2026}.
+In einer kontrollierten Ablation werden dort baugleiche Modelle einmal mit einer textuellen und einmal mit einer visuellen Eingabe derselben Aufgabe verglichen.
+Die textbasierten Varianten übertreffen ihre videobasierten Gegenstücke deutlich, und die Untersuchung stellt fest, dass die Modelle sich übermäßig auf textuelle Hinweise stützen und räumliche Information nur schwer aus dem visuellen Eingang gewinnen.
+Dieser Befund stützt aus einer anderen Domäne die auch in der vorliegenden Arbeit beobachtete Tendenz, dass strukturierte gegenüber rein visueller Information bei räumlichen Aufgaben im Vorteil ist.
+Er betrifft allerdings abstrakte Reasoning-Aufgaben und nicht die Manipulation einer 3D-Szene und nimmt keine Aufschlüsselung nach Referenztypen vor.
+Eng verwandt sind darüber hinaus zwei Arbeiten zur Modalitäts-Dominanz.
 Sie zeigen, dass Sprach-Bild-Modelle textuelle Information gegenüber visueller Information übergewichten und bei widersprüchlichen Eingaben dem Text mehr vertrauen~\cite{deng2025, wu2025}.
 Eine dieser Arbeiten untersucht dieses Verhalten unter anderem an genau dem visuellen Modell, das auch in der vorliegenden Arbeit eingesetzt wird~\cite{wu2025}.
 Diese Beobachtung liefert die theoretische Grundlage für die Erwartung, dass eine naive Kombination beider Schichten die strukturelle Information überbewerten könnte.

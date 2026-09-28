@@ -53,7 +53,7 @@ Die strukturelle Variante übergibt die Szene als exakte Laufzeitdaten der Engin
 Die visuelle Variante übergibt eine gerenderte Ansicht, deren Objekte mit Markern versehen sind.
 Die naive hybride Variante stellt beide Schichten ohne weitere Anweisung nebeneinander.
 Die geführte und die kompetenzgetrennte Variante ergänzen die hybride Repräsentation um eine Instruktion zur Zuständigkeit der beiden Schichten.
-Der genaue Aufbau der Varianten ist in \ref{sec:impl-variants} beschrieben.
+Der genaue Aufbau der Varianten ist in [Kapitel X] beschrieben.
 
 \subsection*{Ein gemeinsames Interface für alle Varianten}
 
@@ -195,6 +195,7 @@ Jedes Szenario ist so aufgebaut, dass es genau eine Kompetenz isoliert und ander
 
 \subsection*{Ausführungserfolg als primäre Kennzahl}
 
+Die verwendeten Erfolgs- und Genauigkeitsmaße orientieren sich an etablierten Metriken aus der Literatur zum sprachlichen Auffinden von Objekten in 3D-Szenen~\cite{chen2020, achlioptas2020}.
 Als primäre Kennzahl berichtet diese Arbeit den Ausführungserfolg.
 Er ist je Lauf binär und ergibt sich allein aus dem Folgezustand der Szene, den die Auswertung nach der Manipulation mit der Soll-Vorgabe des Szenarios vergleicht.
 Ein Lauf gilt genau dann als Erfolg, wenn der Folgezustand die Vorgabe erfüllt.
@@ -216,7 +217,7 @@ Ein Lauf zählt nur dann als Erfolg, wenn das jeweils maßgebliche Kriterium vol
 
 
 % ------------------------------------------------------------
-\section{Ergebnisse: Einfluss der Repräsentationsform (RQ1)}
+\section[Ergebnisse zu RQ1]{Ergebnisse: Einfluss der Repräsentationsform (RQ1)}
 \label{sec:eval-rq1}
 
 Die Ergebnisse berichtet diese Arbeit je Szenario und Kategorie als Mittelwert über drei Durchläufe mit der Spanne [Minimum--Maximum].
@@ -405,7 +406,7 @@ Damit ist der Ausgangspunkt der zweiten Forschungsfrage erreicht.
 
 
 % ------------------------------------------------------------
-\section{Ergebnisse: Gezielte Verbesserung des hybriden Ansatzes (RQ2)}
+\section[Ergebnisse zu RQ2]{Ergebnisse: Gezielte Verbesserung des hybriden Ansatzes (RQ2)}
 \label{sec:eval-rq2}
 
 Die erste Forschungsfrage endete mit einem offenen Punkt.
@@ -453,7 +454,40 @@ In Kategorie D erreicht die kompetenzgetrennte Variante 19,7 von 20 und liegt da
 In D1 löst sie 9,7 von 10 bei einer Spanne von [9--10], wo die naive Variante mit 0,7 scheiterte.
 Zugleich hält sie D2 bei 10 von 10, wo die geführte Variante auf 7,3 zurückfiel.
 Sie vereint damit, woran die Priorisierung scheiterte: den visuellen Zugriff aus D1 und die strukturelle Präzision aus D2.
+Abbildung~\ref{fig:kategorieD} veranschaulicht diese Entwicklung über die fünf Varianten hinweg.
 In den übrigen Kategorien bleibt sie auf dem besten erreichten Niveau, 30 von 30 in A und B, gleichauf an der Spitze in C und 10 von 10 in E1.
+
+% ------------------------------------------------------------------
+% ABBILDUNG: Balkendiagramm Kategorie D (pgfplots)
+% Benoetigt im Preamble:
+%   \usepackage{pgfplots}
+%   \pgfplotsset{compat=1.18}
+% ------------------------------------------------------------------
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+        ybar,
+        width=0.92\linewidth,
+        height=6.5cm,
+        ymin=0, ymax=23,
+        ytick={0,5,10,15,20},
+        ylabel={Erfolge (von 20)},
+        symbolic x coords={strukturell, visuell, naiv, priorisierend, kompetenzgetrennt},
+        xtick=data,
+        x tick label style={rotate=18, anchor=east, font=\footnotesize},
+        nodes near coords,
+        nodes near coords style={font=\footnotesize},
+        bar width=18pt,
+        enlarge x limits=0.14,
+        ymajorgrids=true,
+      ]
+      \addplot coordinates {(strukturell,0.3) (visuell,20.0) (naiv,10.7) (priorisierend,15.6) (kompetenzgetrennt,19.7)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Erfolg in der rein visuellen Kategorie D über die fünf Varianten. Die rein visuelle Variante bildet die Obergrenze, die rein strukturelle scheitert nahezu vollständig. Die naive Kombination erreicht nur etwa die Hälfte, die Priorisierung verbessert dies, und erst die Kompetenztrennung erreicht nahezu das Niveau der reinen Bildvariante.}
+  \label{fig:kategorieD}
+\end{figure}
 
 Eine Ausnahme ist zu benennen.
 Im Mehrschritt-Szenario E2 liegt die rein strukturelle Variante mit 10 von 10 vor allen hybriden Varianten, die dort nahezu vollständig scheitern.
