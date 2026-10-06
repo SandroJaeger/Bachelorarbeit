@@ -56,10 +56,8 @@ Diese Beschränkung ist bewusst gewählt, da sich mit diesen wenigen Operationen
 Um die zentrale Frage untersuchen zu können, muss das System die Szene in den drei zu vergleichenden Repräsentationsformen bereitstellen, also strukturell, visuell und hybrid.
 Dies ist die Kernanforderung, ohne die der Vergleich nicht möglich wäre.
 
-Damit der Vergleich fair bleibt, müssen alle Varianten Objekte über dasselbe Interface ansprechen.
-Diese Anforderung ist weniger selbstverständlich, als sie zunächst wirkt.
-Eine rein visuelle Variante hätte ohne ein gemeinsames Kennungssystem kein Handle, über das sie ein erkanntes Objekt für einen Werkzeugaufruf benennen könnte, und wäre damit nicht wegen ihrer Repräsentation im Nachteil, sondern wegen eines fehlenden Zugriffs.
-Ein gemeinsames Kennungssystem stellt daher sicher, dass gemessene Unterschiede auf die Repräsentation zurückgehen.
+Damit der Vergleich fair bleibt, müssen alle Varianten Objekte über dasselbe Interface ansprechen, also über ein gemeinsames Kennungssystem.
+Diese Anforderung ist weniger selbstverständlich, als sie zunächst wirkt; Abschnitt~\ref{sec:konz-fairness} begründet sie im Zusammenhang der übrigen Entwurfsentscheidungen für einen fairen Vergleich.
 
 Der Erfolg einer Manipulation muss zudem objektiv bestimmbar sein.
 Das System muss dazu den tatsächlichen Zustand der Szene nach einer Manipulation auslesen, sodass sich der Erfolg unabhängig von der Selbstauskunft des Agenten ermitteln lässt.
@@ -96,8 +94,8 @@ Die Spalte Herkunft verweist darauf, ob eine Anforderung aus den Forschungsfrage
 
 Die nicht-funktionalen Anforderungen beschreiben keine einzelnen Funktionen, sondern Eigenschaften und Randbedingungen, die das System als Ganzes erfüllen muss.
 
-Aus der Zielumgebung folgt, dass die Modelle lokal betrieben werden.
-Datenschutz, geringe Latenz und die Unabhängigkeit von einer Netzverbindung sprechen in einer immersiven Anwendung für eine lokale Ausführung ohne Cloud.
+Aus der Zielumgebung folgt, dass die Modelle lokal betrieben werden, im Sinne der in Abschnitt~\ref{sec:ein-motivation} festgelegten Definition: selbst gehostet auf eigener Hardware und ohne Cloud-Dienst, nicht notwendigerweise auf dem Endgerät.
+Datenschutz, geringe Latenz und die Unabhängigkeit von einer externen Netzverbindung sprechen in einer immersiven Anwendung für eine solche Ausführung.
 Damit verbunden ist die Beschränkung auf begrenzte Hardware.
 Da für die Arbeit eine feste Ausstattung mit einer einzelnen Grafikkarte vorgegeben war, muss das System mit deren Grafikspeicher auskommen.
 Diese Vorgabe legt die Wahl auf Modelle geringer Größe fest, die neben dem Sprachmodell auch das visuelle Modell gleichzeitig im Speicher halten können.
@@ -121,14 +119,19 @@ Tabelle~\ref{tab:nfa} fasst die nicht-funktionalen Anforderungen zusammen.
     \toprule
     Nr. & Anforderung & Herkunft \\
     \midrule
-    NFA1 & Modelle lokal ohne Cloud betreiben & Zielumgebung \\
+    NFA1 & Modelle lokal, das heißt selbst gehostet und ohne Cloud, betreiben & Zielumgebung \\
     NFA2 & Mit der vorgegebenen Hardware, einer einzelnen Grafikkarte, und Modellen geringer Größe auskommen & Hardware \\
-    NFA3 & Messungen unter identischer Konfiguration reproduzierbar halten & Methodik \\
+    NFA3 & Messungen unter identischer Konfiguration reproduzierbar halten und die Konfiguration vollständig dokumentieren & Methodik \\
     NFA4 & Dieselbe Verarbeitungskette am Desktop und in der immersiven Umgebung betreiben & Zielumgebung \\
     NFA5 & Die Repräsentationsform als einzige zwischen den Varianten variierende Größe sicherstellen & Validität \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+Zu NFA5 ist eine Einschränkung vorwegzunehmen, die sich erst in der Umsetzung zeigte und in Abschnitt~\ref{sec:eval-validity} ausgeführt wird.
+Die drei hybriden Varianten unterscheiden sich nicht ausschließlich in ihrer Instruktion, sondern zusätzlich in der Reihenfolge, in der die strukturelle und die visuelle Schicht im Kontext erscheinen.
+Instruktion und Reihenfolge sind damit konfundiert, sodass NFA5 für den Vergleich der hybriden Varianten untereinander nur eingeschränkt erfüllt ist.
+Für den Vergleich der drei Repräsentationsformen im engeren Sinne, strukturell gegen visuell gegen hybrid, bleibt die Anforderung unberührt.
 
 
 % ------------------------------------------------------------

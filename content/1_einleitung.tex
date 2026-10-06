@@ -40,6 +40,11 @@ In welcher Form sollte einem lokal betriebenen Agenten eine Szene bereitgestellt
 Gerade in immersiven Umgebungen, in denen ein Nutzer über natürliche Sprache mit einer Szene interagiert, ist diese Frage praktisch bedeutsam.
 Und gerade für lokal betreibbare Modelle, die aus Gründen des Datenschutzes, der Latenz und der Offline-Fähigkeit in solchen Umgebungen naheliegen, fehlt ein systematischer Vergleich dieser Wege.
 
+Der Begriff \emph{lokal} wird in dieser Arbeit durchgängig in einem festgelegten Sinn verwendet und sei hier einmal definiert.
+Lokal heißt: selbst gehostet auf eigener Hardware, ohne Nutzung eines Cloud-Dienstes, sodass keine Szenen- oder Sprachdaten das eigene Netz verlassen.
+Lokal heißt ausdrücklich nicht, dass die Modelle auf dem Endgerät selbst rechnen.
+Sowohl in der Messung als auch im Demonstrator laufen sie auf einem Arbeitsplatzrechner; die Brille erreicht diesen im Demonstrator über eine Netzverbindung innerhalb des Institutsnetzes (Abschnitt~\ref{sec:impl-demonstrator}).
+
 
 % ------------------------------------------------------------
 \section{Relevanz}
@@ -53,7 +58,7 @@ Bei großen, cloudbasierten Modellen lässt sich eine schwache Repräsentation t
 Bei lokal betreibbaren Modellen geringer Größe entfällt dieser Ausgleich.
 Hier wird die Repräsentation zum eigentlichen Hebel für den Erfolg.
 Wer ein solches System entwirft, trifft die Entscheidung über die Repräsentationsform früh und mit weitreichenden Folgen, bislang jedoch ohne belastbare Grundlage.
-Genau diese Grundlage zu schaffen, ist das praktische Anliegen der Arbeit.
+Diese Grundlage zu schaffen, ist das praktische Anliegen der Arbeit.
 
 Über den praktischen Nutzen hinaus berührt die Frage ein allgemeineres Problem.
 Wie sich strukturierte und visuelle Information in einem Agenten verbinden lassen, betrifft jede Anwendung, die beide Arten von Information kombiniert.
@@ -69,19 +74,24 @@ Die Arbeit verfolgt dieses Ziel anhand zweier Forschungsfragen.
 
 \begin{quote}
 \textbf{Forschungsfrage~1 (RQ1).}
-Welchen Einfluss hat die Form der Szenenrepräsentation, strukturell, visuell oder hybrid, auf die räumliche Korrektheit und den Ausführungserfolg der natürlichsprachlichen Szenenmanipulation durch einen lokal betriebenen Agenten?
+Welchen Einfluss hat die Form der Szenenrepräsentation, strukturell, visuell oder hybrid, auf den Ausführungserfolg der natürlichsprachlichen Szenenmanipulation durch einen lokal betriebenen Agenten, und zwar aufgeschlüsselt nach der Art der sprachlichen Referenz?
 
 \vspace{6pt}
 \textbf{Forschungsfrage~2 (RQ2).}
 Lässt sich das Zusammenspiel der strukturellen und der visuellen Schicht allein durch die Gestaltung der Instruktion so steuern, dass die hybride Repräsentation die Stärken beider Schichten vereint?
 \end{quote}
 
-Über diese beiden Fragen hinaus entsteht ein Demonstrator, der die als am zuverlässigsten ermittelte Variante in die immersive Zielumgebung überträgt und ihre Übertragbarkeit nachweist.
-Er beantwortet keine eigene Forschungsfrage, sondern dient dem Nachweis der praktischen Machbarkeit.
+Der Ausführungserfolg ist dabei die einzige Zielgröße der Arbeit.
+Er wird binär je Lauf aus dem tatsächlichen Szenenzustand bestimmt und umfasst zwei Bedingungen, die beide erfüllt sein müssen: Es muss das gemeinte Objekt betroffen sein, und das geforderte Ergebnis muss eintreten, bei Positionsaufgaben innerhalb einer festen Toleranz.
+Ein separat berichteter, kontinuierlicher Lagefehler ist nicht Teil der Zielgröße; Abschnitt~\ref{sec:eval-metrics} legt das Maß im Einzelnen fest.
+
+Über diese beiden Fragen hinaus entsteht ein Demonstrator, der die auf dem untersuchten Szenarioset als am zuverlässigsten ermittelte Variante in die immersive Zielumgebung überträgt.
+Er beantwortet keine eigene Forschungsfrage und wird nicht eigenständig evaluiert, sondern dient dem Nachweis der praktischen Machbarkeit.
 
 Die Arbeit grenzt ihren Anspruch bewusst ab.
 Sie beansprucht keine Generalisierung auf andere Modelle oder auf reale, komplexe Szenen, keine global optimale Lösung und keine Produktreife des Demonstrators.
 Die Ergebnisse gelten für ein lokales Modellpaar in kontrolliert aufgebauten Szenen.
+Die gesamte Messung fand am Desktop statt; die immersive Umgebung ist Zielumgebung des Demonstrators, nicht Gegenstand der Messung.
 
 
 % ------------------------------------------------------------
@@ -93,10 +103,10 @@ Grundlage ist ein prototypisches System, das dieselbe Szene in den drei zu vergl
 Auf dieser Grundlage werden die Formen unter gleichen Bedingungen an einer Reihe kontrolliert aufgebauter Szenarien gegeneinander gemessen.
 Der Erfolg jeder Manipulation wird dabei aus dem tatsächlichen Zustand der Szene bestimmt und nicht aus der Selbstauskunft des Agenten, und jede Messung wird wiederholt, um belastbare von zufälligen Unterschieden trennen zu können.
 
-Aus diesem Vorgehen ergeben sich drei Beiträge.
-Der erste Beitrag ist ein kontrollierter, nach der Art der sprachlichen Referenz aufgeschlüsselter Vergleich der drei Repräsentationsformen für einen lokal betriebenen Agenten.
-Der zweite Beitrag ist die Untersuchung, ob sich das Zusammenspiel der Schichten allein über die Gestaltung der Instruktion steuern lässt.
-Der dritte Beitrag ist ein lauffähiger Demonstrator, der die Erkenntnis in die immersive Zielumgebung überträgt.
+Aus diesem Vorgehen ergeben sich drei Beiträge, die in Abschnitt~\ref{sec:zus-beitrag} wieder aufgegriffen und in ihrer Reichweite eingeordnet werden.
+Der erste Beitrag ist inhaltlicher Art: der Befund, dass die Verbindung struktureller und visueller Information kein Automatismus ist, sondern ein Gestaltungsproblem, an einem kontrollierten Fall gezeigt.
+Der zweite Beitrag ist methodischer Art: eine nach der Art der sprachlichen Referenz aufgeschlüsselte Betrachtung, die den Erfolg getrennt nach Referenztypen misst und so exklusive Zuständigkeiten sichtbar macht, die ein pauschaler Vergleich verdeckt.
+Der dritte Beitrag ist praktischer Art: ein lauffähiger Demonstrator, der die gesamte Kette bis in die immersive Zielumgebung überträgt und deren Machbarkeit belegt.
 
 
 % ------------------------------------------------------------

@@ -141,7 +141,7 @@ Sie enthält eine Liste der Objekte mit jeweils einer eindeutigen Kennung, dem O
 Listing~\ref{lst:state} zeigt ein Beispiel dieser Ausgabe.
 Die Kamerapose ist Teil des Zustands, damit sich auch Aufgaben lösen lassen, die einen Bezug zum Betrachter herstellen.
 Nicht enthalten sind Eigenschaften, die allein das Aussehen betreffen und über die Grundfarbe hinausgehen, etwa eine Oberflächentextur.
-Genau diese Lücke ist der Grund, warum rein perzeptuelle Referenzen über den strukturellen Zustand nicht auflösbar sind.
+Diese Lücke ist der Grund, warum rein perzeptuelle Referenzen über den strukturellen Zustand nicht auflösbar sind.
 
 % HINWEIS: Falls die Vorlage kein 'listing'-Float kennt, den minted-Block in
 % \begin{figure}...\end{figure} setzen oder ohne Float verwenden.
@@ -196,17 +196,22 @@ Abbildung~\ref{fig:setofmark} zeigt beide Ansichten derselben Szene im Vergleich
 \subsection*{Sichtbarkeit und Verdeckung}
 
 Eine Marke wird nur gesetzt, wenn das Objekt tatsächlich sichtbar ist.
-Ein Sichtstrahl von der Kamera zum Objekt prüft, ob ein anderes Objekt die Sichtlinie unterbricht.
+Ein einzelner Sichtstrahl von der Kamera zum Objektmittelpunkt prüft, ob ein anderes Objekt die Sichtlinie unterbricht.
 Ist das der Fall, gilt das Objekt als verdeckt und erhält keine Marke.
 Ein verdecktes Objekt fehlt damit in der visuellen Sicht vollständig, bleibt im strukturellen Zustand aber unverändert verzeichnet.
-Diese Asymmetrie ist die Grundlage der verdeckten Referenzen aus Kategorie E.
+Diese Asymmetrie ist die Grundlage derjenigen Testfälle, in denen ein Befehl auf ein im Bild unsichtbares Objekt verweist; Abschnitt~\ref{sec:eval-taxonomy} führt sie als eigenen Referenztyp ein.
+
+Der Test ist bewusst einfach gehalten und arbeitet binär.
+Ein Objekt gilt als sichtbar oder als verdeckt, eine Teilverdeckung kennt er nicht.
+Für die hier verwendeten Szenen, in denen ein Objekt entweder frei steht oder vollständig hinter einer großen Wand liegt, genügt diese Unterscheidung.
+In dichteren Szenen wäre sie unzureichend, was Abschnitt~\ref{sec:eval-validity} als Grenze aufgreift.
 
 \subsection*{Das gemeinsame id-Substrat}
 
 Beide Sichten verweisen auf dieselben Kennungen.
 Die strukturelle Sicht führt sie ohnehin, und die visuelle Sicht verknüpft ihre Marken mit denselben Werten.
 Dadurch spricht der Agent Objekte unabhängig von der Repräsentationsform über ein einheitliches Interface an.
-Dieses id-Substrat ist die Voraussetzung dafür, dass der Vergleich der Repräsentationen fair bleibt, wie in Abschnitt~\ref{sec:eval-design} begründet.
+Warum dieses id-Substrat für die Fairness des Vergleichs unverzichtbar ist, begründet Abschnitt~\ref{sec:konz-fairness}.
 
 
 % ------------------------------------------------------------
@@ -302,7 +307,12 @@ Der Erfolg einer Manipulation wird nicht aus der Antwort des Agenten abgeleitet,
 Ein Detail der Werkzeuge hängt unmittelbar damit zusammen.
 Das lokale Modell bündelte gelegentlich einen Manipulations- und einen Abschlussaufruf so, dass dieselbe Manipulation zweimal ausgeführt wurde.
 Um dieses Verhalten des Frameworks zu neutralisieren, vergleicht jedes manipulierende Werkzeug den aktuellen Aufruf mit dem unmittelbar vorangegangenen und überspringt eine identische Wiederholung, sichtbar an der Abfrage von \texttt{\_last\_op} in Listing~\ref{lst:tool}.
-Die Auswirkung dieses Schutzes auf die Ergebnisse wird in Abschnitt~\ref{sec:eval-validity} eingeordnet.
+
+Dieser Schutz ist eine grobe Maßnahme mit einer Nebenwirkung, die offen zu benennen ist.
+Er kann nicht unterscheiden, ob eine identische Wiederholung ein Artefakt des Frameworks oder eine vom Befehl geforderte Handlung ist.
+Ein Befehl, der dieselbe Operation absichtlich zweimal verlangt, würde dadurch ebenso blockiert.
+Für die hier ausgewerteten Szenarien tritt dieser Fall nicht auf, da kein Soll-Ergebnis zwei identische Aufrufe erfordert.
+Bei Mehrschritt-Befehlen ist er jedoch nicht mehr auszuschließen; Abschnitt~\ref{sec:eval-validity} greift das als Grenze auf.
 
 
 % ------------------------------------------------------------
@@ -316,12 +326,53 @@ Jedes Wahrnehmungswerkzeug trägt einen Dokumentationskommentar, und dieser Komm
 Zusätzlich rahmt der zurückgegebene Text die beiden Schichten, indem er sie benennt und ordnet.
 Über diese Beschreibung und diese Rahmung wird gesteuert, wie der Agent strukturelle und visuelle Information gegeneinander gewichtet.
 
+Die Vorgabe genau eines Manipulationsaufrufs ist eine Vereinfachung, die zu einem Teil der Szenarien in Spannung steht.
+Zwei der ausgewerteten Szenarien verlangen ihrem Soll-Ergebnis nach mehr als eine Manipulation, weil mehrere Objekte betroffen sind.
+Abschnitt~\ref{sec:eval-validity} legt diesen Widerspruch offen und diskutiert seine Folgen für die Deutung der betroffenen Zellen.
+
 \subsection*{Die beiden Einzelrepräsentationen}
 
 Die strukturelle Variante erhält ausschließlich Zugriff auf den strukturellen Zustand.
 Sie sieht die Szene als JSON mit Kennungen, Typen, Farben, Größen und Positionen, jedoch kein Bild.
 Die visuelle Variante erhält ausschließlich eine Beschreibung der gerenderten und markierten Ansicht.
 Sie kennt die Objekte nur über ihre Marken und deren sichtbare Eigenschaften, jedoch keine exakten Koordinaten.
+
+Der zweite Punkt ist wörtlich zu nehmen und für die Einordnung aller Ergebnisse wesentlich.
+Nicht das Bild selbst gelangt in den Kontext des Agenten, sondern eine natürlichsprachliche Beschreibung, die das visuelle Modell aus dem Bild erzeugt.
+Das Sprachmodell, das die Operation wählt, sieht zu keinem Zeitpunkt ein Bild (Abschnitt~\ref{sec:grundlagen-modelle}).
+Auch die hybriden Varianten kombinieren daher nicht Bild und Daten, sondern zwei Textquellen: den JSON-Zustand und die vom visuellen Modell erzeugte Beschreibung.
+Welche Eigenschaften diese Beschreibung enthält, hängt vollständig davon ab, worauf der an das visuelle Modell gerichtete Prompt sie ausrichtet.
+Dieser Prompt ist damit ein eigener, nicht variierter Bestandteil des Aufbaus und in allen Varianten mit visueller Schicht identisch.
+Listing~\ref{lst:vlmprompt} gibt ihn im Wortlaut wieder.
+
+\begin{listing}[htbp]
+\begin{minted}[breaklines]{python}
+"Each object has a yellow numbered badge floating above it. Badges are
+labels ONLY - ignore badge color; report the actual object color. For
+each numbered object give number, shape (cube/sphere/cylinder), color,
+qualitative position, and a surface texture descriptor (e.g. 'striped'
+or 'solid'). Answer ONLY as a JSON list with keys: number, shape,
+color, position, texture."
+\end{minted}
+\caption{Prompt, mit dem das visuelle Modell die gerenderte und markierte Ansicht beschreibt. Er wird zusammen mit dem Bild übergeben und ist in allen Varianten mit visueller Schicht identisch.}
+\label{lst:vlmprompt}
+\end{listing}
+
+Zwei Eigenschaften dieses Prompts prägen die Ergebnisse und werden deshalb hier festgehalten.
+
+Erstens verlangt er genau fünf Angaben je Objekt: Nummer, Form, Farbe, qualitative Lage und einen Texturdeskriptor.
+Eine Größenangabe fordert er nicht an.
+Was die visuelle Schicht über die Größe eines Objekts berichtet, ist damit bestenfalls zufällig in der Lagebeschreibung enthalten.
+Abschnitt~\ref{sec:eval-rq1} greift das bei der Deutung des Szenarios B3 auf.
+
+Zweitens nennt der Prompt als Beispiel für einen Texturdeskriptor ausdrücklich \enquote{striped}.
+Damit enthält bereits die gemeinsame Wahrnehmungsstufe ein Wort, das in den Befehlen der perzeptuellen Szenarien vorkommt.
+Das betrifft alle Varianten mit visueller Schicht gleichermaßen und ist daher kein Vorteil einer einzelnen Variante, engt aber die Aussagekraft der Kategorie D insgesamt ein; Abschnitt~\ref{sec:eval-validity} führt den Punkt aus.
+
+Die Anbindung der Marken an die Kennungen erfolgt über eine Nummerierung.
+Jedes sichtbare Objekt erhält eine gelbe, nummerierte Marke oberhalb seiner Bildposition, und eine Zuordnungstabelle übersetzt die vom visuellen Modell genannten Nummern zurück in die Objektkennungen.
+Der Prompt weist das Modell ausdrücklich an, die Farbe der Marke zu ignorieren und die tatsächliche Objektfarbe zu berichten.
+Diese Anweisung geht auf einen in Abschnitt~\ref{sec:eval-validity} beschriebenen Störfaktor zurück.
 
 \subsection*{Die naive Kombination}
 
@@ -368,7 +419,22 @@ Wie die naive Variante gibt sie den strukturellen Zustand zuerst aus.
 Der Unterschied liegt in der ausdrücklichen Arbeitsteilung.
 Die visuelle Beschreibung dient allein dazu, zu bestimmen, welches Objekt gemeint ist, wenn die Referenz vom Aussehen abhängt.
 Die strukturelle Schicht liefert alles Numerische, also sämtliche Koordinaten, Größen, Abstände und die Kamerageometrie.
-Der Unterschied zur Priorisierung ist damit nicht die Reihenfolge, sondern die enge, gegenseitig ausschließende Zuweisung der Zuständigkeiten.
+Der Unterschied zur Priorisierung ist damit nicht allein die Reihenfolge, sondern vor allem die enge, gegenseitig ausschließende Zuweisung der Zuständigkeiten.
+
+\subsection*{Zur Entstehung der kompetenzgetrennten Variante}
+
+Diese Variante ist nicht vorab entworfen, sondern iterativ entwickelt worden, und zwar an demselben Szenarioset, an dem sie anschließend berichtet wird.
+Weil dieser Umstand die Reichweite des Befundes unmittelbar begrenzt, wird er hier offengelegt.
+
+Der Ausgangspunkt war die Beobachtung, dass die naive Kombination den visuellen Zugriff in einem Teil der perzeptuellen Szenarien verliert und die Priorisierung diesen Verlust behebt, dafür aber metrische Aufgaben schwächt.
+Aus der Analyse dieses Tauschs entstand die Instruktion, die beiden Schichten getrennte Rollen zuzuweisen statt eine von ihnen zu bevorzugen.
+Die Formulierung der Instruktion wurde dabei in mehreren Schritten geschärft, wobei die Ergebnisse der jeweils vorangegangenen Läufe bekannt waren.
+
+Ein Blick auf Listing~\ref{lst:surgical} macht die Folge sichtbar.
+Der Prompt nennt mit \enquote{striped} und \enquote{most salient} zwei Wörter, die wörtlich in den Befehlen der perzeptuellen Szenarien D1 und D2 vorkommen.
+Die Instruktion ist damit sprachlich auf genau jene Testfälle abgestimmt, an denen ihr Vorteil gemessen wird.
+Der Befund, dass die Kompetenztrennung die beiden Schichten zusammenführt, gilt deshalb für dieses Szenarioset, und seine Übertragung auf ungesehene Formulierungen ist nicht gezeigt.
+Abschnitt~\ref{sec:eval-validity} führt diesen Punkt als zentrale Grenze, Abschnitt~\ref{sec:zus-ausblick} nennt die Prüfung, die dafür nötig wäre.
 
 \begin{listing}[htbp]
 \begin{minted}{python}
@@ -391,26 +457,33 @@ def get_scene_hybrid_surgical() -> str:
 \subsection*{Übersicht der Varianten}
 
 Tabelle~\ref{tab:variants} fasst zusammen, welche Information die Varianten im Kontext erhalten und nach welcher Regel sie die Schichten gewichten.
+Die Tabelle nennt zugleich die Kurzbezeichnungen aus dem Code, die in den Ergebnistabellen des Evaluationskapitels als Spaltenköpfe erscheinen.
+Deutsche Bezeichnung und Kurzbezeichnung meinen durchgängig dasselbe; im Fließtext wird die deutsche verwendet.
 
 \begin{table}[htbp]
   \centering
-  \caption{Die fünf Repräsentationsvarianten im Vergleich.}
+  \caption{Die fünf Repräsentationsvarianten im Vergleich, mit den in den Ergebnistabellen verwendeten Kurzbezeichnungen.}
   \label{tab:variants}
   \small
   \setlength{\tabcolsep}{5pt}
   \renewcommand{\arraystretch}{1.3}
-  \begin{tabular}{@{}p{3.1cm} p{4.0cm} p{5.3cm}@{}}
+  \begin{tabular}{@{}p{3.0cm} l p{3.3cm} p{4.6cm}@{}}
     \toprule
-    Variante & Im Kontext & Regel zur Gewichtung \\
+    Variante & Kurzform & Im Kontext & Regel zur Gewichtung \\
     \midrule
-    strukturell & nur struktureller Zustand & entfällt, keine visuelle Schicht \\
-    visuell & nur visuelle Beschreibung & entfällt, keine strukturelle Schicht \\
-    naiv hybrid & Struktur, dann Bild & grobe Zuordnung ohne verbindliche Regel \\
-    priorisierend & Bild, dann Struktur & Bild maßgeblich fürs Aussehen, Struktur nur Geometrie \\
-    kompetenzgetrennt & Struktur, dann Bild & Bild nur zur Objektwahl, Struktur für alles Numerische \\
+    strukturell & \texttt{json} & nur struktureller Zustand & entfällt, keine visuelle Schicht \\
+    visuell & \texttt{vlm} & nur visuelle Beschreibung & entfällt, keine strukturelle Schicht \\
+    naiv hybrid & \texttt{hybrid} & Struktur, dann Beschreibung & grobe Zuordnung ohne verbindliche Regel \\
+    priorisierend & \texttt{guided} & Beschreibung, dann Struktur & Beschreibung maßgeblich fürs Aussehen, Struktur nur Geometrie \\
+    kompetenzgetrennt & \texttt{surgical} & Struktur, dann Beschreibung & Beschreibung nur zur Objektwahl, Struktur für alles Numerische \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+Die Spalte \enquote{Im Kontext} macht eine Nebenwirkung des Entwurfs sichtbar.
+Die priorisierende Variante unterscheidet sich von den beiden anderen hybriden Varianten nicht nur in ihrer Zuständigkeitsregel, sondern zusätzlich in der Reihenfolge, in der die beiden Schichten im Kontext erscheinen.
+Instruktion und Reihenfolge sind damit nicht getrennt variiert, sondern konfundiert.
+Abschnitt~\ref{sec:eval-validity} behandelt diesen Punkt und die daraus folgende Einschränkung von NFA5.
 
 
 % ------------------------------------------------------------
@@ -419,16 +492,28 @@ Tabelle~\ref{tab:variants} fasst zusammen, welche Information die Varianten im K
 
 Die Evaluation lief am Desktop unter kontrollierten Bedingungen.
 Um zu zeigen, dass der Ansatz auch in der eigentlichen Zielumgebung trägt, überführt ein Demonstrator die gesamte Kette in die immersive Umgebung.
-Er nutzt die kompetenzgetrennte Variante, also die in Kapitel~\ref{ch:evaluation} als am zuverlässigsten ermittelte Repräsentation.
+Er nutzt die kompetenzgetrennte Variante, also die in Kapitel~\ref{ch:evaluation} auf dem untersuchten Szenarioset als am zuverlässigsten ermittelte Repräsentation.
 Dieser Abschnitt beschreibt die Ergänzungen, die für den Betrieb in der Brille nötig waren.
+
+Vorab ist der Betriebsbegriff zu präzisieren, um ein Missverständnis zu vermeiden.
+Der Demonstrator ist lokal im Sinne der Definition aus Abschnitt~\ref{sec:ein-motivation}: alle Modelle sind selbst gehostet, kein Cloud-Dienst ist beteiligt, und keine Szenen- oder Sprachdaten verlassen das Institutsnetz.
+Er ist ausdrücklich nicht \enquote{lokal auf dem Endgerät}.
+Die Modelle rechnen auf dem Arbeitsplatzrechner, und die Brille erreicht ihn über die unten beschriebene Netzwerkkette.
 
 \subsection*{Sprachsteuerung}
 
 Der Nutzer spricht einen Befehl.
-Ein lokal betriebenes Spracherkennungsmodell wandelt die Aufnahme in Text um.
+Ein selbst gehostetes Whisper-Modell in der Größe \texttt{small} wandelt die Aufnahme in Text um.
+Es läuft auf dem lokalen Rechner auf der CPU, nimmt mit 16\,kHz auf und ist auf englische Eingaben festgelegt, passend zur Sprache der Befehle.
 Dieser Text wird in dieselbe Kommando-Warteschlange gegeben, die auch in der Evaluation den Agenten antreibt.
-Ein gesprochener Befehl durchläuft damit genau dieselbe Kette wie ein Befehl im Experiment, ergänzt lediglich um die vorgeschaltete Spracherkennung.
+Ein gesprochener Befehl durchläuft damit dieselbe Kette wie ein Befehl im Experiment, ergänzt lediglich um die vorgeschaltete Spracherkennung.
 Abbildung~\ref{fig:voicechain} zeigt diesen Ablauf.
+
+Zum Nachweisstand dieser Kette ist eine Klarstellung nötig.
+Die Sprachsteuerung ist umgesetzt und lauffähig, ihr Ablauf ist in Abbildung~\ref{fig:voicechain} dargestellt.
+Die als Begleitmaterial beigelegte Videoaufzeichnung dokumentiert jedoch die frühere Ausbaustufe mit Bedienmenü und damit nicht die Spracheingabe.
+Was das Video belegt, ist die Kette von der Befehlsauswahl über Agent und MCP-Server bis zur sichtbaren Manipulation in der Brille.
+Die vorgeschaltete Spracherkennung ist dagegen konzeptionell umgesetzt, aber nicht per Aufzeichnung belegt.
 
 \subsection*{Rollentrennung von Renderer und Commander}
 
@@ -446,21 +531,24 @@ Sie folgt der Kopfpose, rendert aber einfach statt stereoskopisch und liefert so
 
 \subsection*{Netzwerkkette}
 
-Die Modelle laufen aus Ressourcengründen auf einem entfernten Rechner, den die Brille nicht direkt erreicht.
-Die Brille verbindet sich deshalb mit einem lokalen Vermittler, der die Nachrichten über ein virtuelles privates Netz an den entfernten Rechner weiterleitet.
+Die Modelle laufen aus Ressourcengründen auf dem Arbeitsplatzrechner im Institutsnetz, den die Brille nicht direkt erreicht.
+Die Brille verbindet sich deshalb mit einem Vermittler auf einem Rechner im selben Funknetz, der die Nachrichten über ein virtuelles privates Netz an den Arbeitsplatzrechner weiterleitet.
 Ein mobiler Zugangspunkt umgeht dabei die Isolation gemeinsam genutzter Netze, die eine direkte Verbindung sonst unterbindet.
 Diese Kette ist reine Demonstrationsinfrastruktur und nicht Gegenstand der Untersuchung.
+Sie erklärt zugleich, weshalb \enquote{lokal} hier selbst gehostet und nicht gerätenah bedeutet: Die Rechenlast liegt bewusst nicht auf der Brille, wohl aber vollständig innerhalb eigener Infrastruktur.
 
 \subsection*{Ablauf und Rückmeldung}
 
 Sobald ein Befehl in die Warteschlange gelangt, arbeitet ein Worker den Agentenlauf ab und meldet der Brille den Beginn und den Abschluss der Verarbeitung.
 Die Brille zeigt diesen Status an, sodass für den Nutzer erkennbar ist, dass ein Befehl gerade bearbeitet wird.
-Ein früher erprobtes Bedienmenü in der Szene wurde zugunsten der Sprachsteuerung ersetzt, nutzte aber bereits dieselbe Kommando-Warteschlange.
+Ein früher erprobtes Bedienmenü in der Szene wurde später um die Sprachsteuerung ergänzt, nutzte aber bereits dieselbe Kommando-Warteschlange.
 Abbildung~\ref{fig:demo} zeigt diese frühe Ausbaustufe im Betrieb, aufgenommen aus der Sicht der Brille.
-Die Szene enthält drei Objekte, einen roten Würfel, einen gestreiften Würfel und eine blaue Kugel.
+Die Szene enthält drei Objekte, einen roten Würfel links, einen gestreiften Würfel in der Mitte und eine blaue Kugel rechts.
+Der gestreifte Würfel wird in diesem Standbild von der Menütafel weitgehend verdeckt; sichtbar bleibt nur sein unterer Teil unterhalb der Schaltflächen.
 In der Aufzeichnung werden die vordefinierten Befehle nacheinander ausgelöst, und die zugehörigen Manipulationen sind jeweils unmittelbar in der Szene sichtbar.
 Der gestreifte Würfel hebt sich an, die blaue Kugel wandert nach links neben den roten Würfel, und der gestreifte Würfel wird schließlich entfernt.
-Das Video belegt damit anschaulich, dass die vollständige Kette von der Befehlsauswahl bis zur ausgeführten Manipulation in der immersiven Umgebung funktioniert.
+Das Video belegt damit die Kette von der Befehlsauswahl bis zur ausgeführten Manipulation in der immersiven Umgebung.
+Es belegt nicht die Spracheingabe, die erst in der späteren Ausbaustufe hinzukam und nicht aufgezeichnet wurde.
 
 % ------------------------------------------------------------------
 % ABBILDUNG: Ablaufdiagramm der Sprach->VR-Kette (TikZ)
@@ -516,6 +604,6 @@ Das Video belegt damit anschaulich, dass die vollständige Kette von der Befehls
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\linewidth]{figures/demo_still}
-  \caption{Eine frühe Ausbaustufe des Demonstrators in Betrieb. In dieser Fassung werden die Befehle noch nicht gesprochen, sondern über ein Menü in der Szene ausgewählt, das vordefinierte Anweisungen bereitstellt. Das Standbild stammt aus einer Aufzeichnung, in der auf diese Weise unter anderem \enquote{move the striped cube up}, \enquote{put the blue sphere left of the red cube} und \enquote{delete the striped cube} ausgelöst werden. Die vollständige Aufzeichnung ist als Begleitmaterial in Anhang~\ref{anh:video} verlinkt.}
+  \caption{Eine frühe Ausbaustufe des Demonstrators in Betrieb. In dieser Fassung werden die Befehle nicht gesprochen, sondern über ein Menü in der Szene ausgewählt, das vordefinierte Anweisungen bereitstellt. Links steht der rote Würfel, rechts die blaue Kugel; der gestreifte Würfel steht in der Mitte und wird von der Menütafel weitgehend verdeckt, sodass nur sein unterer Teil sichtbar bleibt. Das Standbild stammt aus einer Aufzeichnung, in der auf diese Weise unter anderem \enquote{move the striped cube up}, \enquote{put the blue sphere left of the red cube} und \enquote{delete the striped cube} ausgelöst werden. Die vollständige Aufzeichnung ist als Begleitmaterial in Anhang~\ref{anh:video} verlinkt. Sie dokumentiert die Menüfassung und nicht die später ergänzte Sprachsteuerung.}
   \label{fig:demo}
 \end{figure}

@@ -46,10 +46,23 @@ In dieser Arbeit übernimmt ein VLM die visuelle Wahrnehmung der Szene.
 Der Unterschied zwischen beiden Modellen bestimmt ihre Rollen im System.
 Das Sprachmodell verarbeitet ausschließlich Text und ist damit auf eine textuelle Beschreibung der Szene angewiesen.
 Das Sprach-Bild-Modell kann eine gerenderte Ansicht unmittelbar interpretieren.
-Genau diese unterschiedlichen Zugänge zur Szene bilden den Ausgangspunkt der Frage, wie eine Szene einem solchen Modell am besten bereitgestellt wird.
+Diese unterschiedlichen Zugänge zur Szene bilden den Ausgangspunkt der Frage, wie eine Szene einem solchen Modell am besten bereitgestellt wird.
 
-Beide Modelle werden in dieser Arbeit lokal in einer Größenordnung von etwa sieben Milliarden Parametern betrieben.
-Die Gründe für den Einsatz lokal betriebener Modelle dieser Größe werden in der Einleitung dargelegt.
+\subsection*{Die zweistufige Pipeline dieser Arbeit}
+
+Für das Verständnis aller folgenden Kapitel ist eine architektonische Eigenschaft des hier untersuchten Systems entscheidend, die es von einem einzelnen multimodalen Modell unterscheidet.
+Die beiden Modelle sind nicht zu einem Modell verschmolzen, sondern in Reihe geschaltet.
+Das Sprach-Bild-Modell erhält das gerenderte Bild und erzeugt daraus eine natürlichsprachliche Beschreibung.
+Diese Beschreibung, und nicht das Bild, gelangt anschließend in den Kontext des Sprachmodells, das den Befehl deutet und die Operation wählt.
+Das Sprachmodell, das die eigentliche Entscheidung trifft, sieht also zu keinem Zeitpunkt ein Bild.
+
+Daraus folgt eine Präzisierung, die für die Einordnung der Ergebnisse wesentlich ist.
+Was in dieser Arbeit als \enquote{visuelle Repräsentation} bezeichnet wird, ist streng genommen keine Bildeingabe, sondern eine sprachliche Beschreibung eines Bildes.
+Wenn im Folgenden von der Gewichtung der strukturellen gegenüber der visuellen Schicht die Rede ist, konkurrieren daher nicht Bild und Text im Inneren eines multimodalen Modells, sondern zwei Textquellen im Kontext eines reinen Sprachmodells: eine exakte, aber unvollständige Datenstruktur und eine reichhaltige, aber unscharfe Beschreibung.
+Abschnitt~\ref{sec:impl-variants} zeigt die konkrete Umsetzung dieser Pipeline, Abschnitt~\ref{sec:eval-validity} ihre Folgen für die Deutung der Befunde.
+
+Beide Modelle werden in dieser Arbeit lokal im Sinne der in Abschnitt~\ref{sec:ein-motivation} gegebenen Definition und in einer Größenordnung von etwa sieben Milliarden Parametern betrieben.
+Die Gründe dafür, insbesondere Datenschutz, Latenz und Offline-Fähigkeit in der immersiven Zielumgebung, sind in Abschnitt~\ref{sec:ein-relevanz} dargelegt.
 
 
 % ------------------------------------------------------------
@@ -68,7 +81,7 @@ In dieser Arbeit wird der Agent mit dem Framework smolagents umgesetzt, das eine
 Die Werkzeuge selbst werden über das Model Context Protocol (MCP) angebunden, einen offenen Standard, der Sprachmodellen den Zugriff auf externe Werkzeuge und Datenquellen über eine einheitliche Schnittstelle ermöglicht~\cite{mcp}.
 Das Protokoll trennt die Bereitstellung der Werkzeuge von ihrer Nutzung durch den Agenten, sodass dieselben Werkzeuge unabhängig vom konkreten Modell aufgerufen werden können.
 
-Genau dieses Muster bildet die Grundlage des in dieser Arbeit umgesetzten Systems.
+Dieses Muster bildet die Grundlage des in dieser Arbeit umgesetzten Systems.
 Wie es konkret realisiert ist, beschreibt Kapitel~\ref{ch:implementierung}.
 
 
@@ -139,8 +152,19 @@ Dieser Befund stützt aus einer anderen Domäne die auch in der vorliegenden Arb
 Er betrifft allerdings abstrakte Reasoning-Aufgaben und nicht die Manipulation einer 3D-Szene und nimmt keine Aufschlüsselung nach Referenztypen vor.
 Eng verwandt sind darüber hinaus zwei Arbeiten zur Modalitäts-Dominanz.
 Sie zeigen, dass Sprach-Bild-Modelle textuelle Information gegenüber visueller Information übergewichten und bei widersprüchlichen Eingaben dem Text mehr vertrauen~\cite{deng2025, wu2025}.
-Eine dieser Arbeiten untersucht dieses Verhalten unter anderem an genau dem visuellen Modell, das auch in der vorliegenden Arbeit eingesetzt wird~\cite{wu2025}.
-Diese Beobachtung liefert die theoretische Grundlage für die Erwartung, dass eine naive Kombination beider Schichten die strukturelle Information überbewerten könnte.
+% [INFO BENOETIGT] Bitte in wu2025 die Liste der evaluierten Modelle
+% gegenpruefen und den folgenden Satz entsprechend praezisieren oder
+% streichen. Die frueher hier stehende Formulierung, die Arbeit habe
+% "genau das visuelle Modell" dieser Arbeit untersucht, wurde bewusst
+% abgeschwaecht, weil sie eine Naehe suggeriert, die die abweichende
+% Architektur nicht traegt.
+Eine der beiden Arbeiten bezieht in ihre Untersuchung auch ein Modell derselben Familie ein, aus der das hier eingesetzte visuelle Modell stammt~\cite{wu2025}.
+
+Die Übertragbarkeit dieser beiden Arbeiten auf die vorliegende Untersuchung ist allerdings begrenzt und wird hier ausdrücklich nur als Analogie in Anspruch genommen.
+Beide untersuchen die Gewichtung von Bild gegen Text \emph{innerhalb} eines multimodalen Modells, dem beide Modalitäten zugleich vorliegen.
+In der hier untersuchten zweistufigen Pipeline liegt der Fall anders: Das entscheidende Sprachmodell sieht überhaupt kein Bild, sondern zwei Textquellen (Abschnitt~\ref{sec:grundlagen-modelle}).
+Der eigentliche Konflikt ist deshalb nicht Bild gegen Text, sondern exakte Struktur gegen unscharfe Beschreibung, also der Vorrang einer präzisen, maschinell erzeugten Datenstruktur gegenüber einer sprachlich vagen Schilderung derselben Szene.
+Die genannten Arbeiten begründen damit keine direkte Erwartung für den hier untersuchten Aufbau, legen aber als strukturell ähnliches Muster nahe, dass eine naive Kombination beider Quellen die präzisere von beiden überbewerten könnte.
 
 \subsection{Ansätze mit lokalen, kleinen Modellen}
 
@@ -166,6 +190,7 @@ Es vergleicht zweitens die strukturelle, die visuelle und die hybride Repräsent
 Es schlüsselt drittens die Aufgaben nach der Art der sprachlichen Referenz auf.
 Es setzt viertens lokal betreibbare Modelle geringer Größe ein anstelle großer, cloudbasierter Modelle.
 
-Daraus ergibt sich die offene Frage, wie eine Szene einem lokal betriebenen Agenten für die natürlichsprachliche Manipulation am besten bereitgestellt werden sollte und welchen Einfluss die Wahl der Repräsentationsform auf die räumliche Korrektheit und den Ausführungserfolg hat.
-Offen ist dabei insbesondere, ob eine hybride Kombination beider Repräsentationen ihre jeweiligen Stärken vereint oder ob unter den Bedingungen eines kleinen, lokalen Modells eine Modalität die andere verdrängt.
-Aus dieser Lücke leitet die Arbeit ihre Zielsetzung ab, die in Kapitel~\ref{ch:einleitung} dargelegt wird.
+Daraus ergibt sich die offene Frage, wie eine Szene einem lokal betriebenen Agenten für die natürlichsprachliche Manipulation am besten bereitgestellt werden sollte und welchen Einfluss die Wahl der Repräsentationsform auf den Ausführungserfolg hat.
+Offen ist dabei insbesondere, ob eine hybride Kombination beider Repräsentationen ihre jeweiligen Stärken vereint oder ob unter den Bedingungen eines kleinen, lokalen Modells eine Quelle die andere verdrängt.
+An dieser Lücke setzen die beiden in Abschnitt~\ref{sec:ein-ziele} gestellten Forschungsfragen an.
+Die folgenden Kapitel entwickeln das System, mit dem sie beantwortet werden.

@@ -1,22 +1,31 @@
 %----------------------------------------------------------------------
 % Main document for the thesis template
-%
-% Please read the README.md for instructions on how to use this template.
 %----------------------------------------------------------------------
 \documentclass[
-    ieee, % Bibliography style: ieee, wmaainf
-    bachelor, % Type of thesis: master, bachelor, report
-    german, % Language: german, english
+    ieee,      % Bibliography style: ieee, wmaainf
+    bachelor,  % Type of thesis: master, bachelor, report
+    german,    % Language: german, english
     singlepage % Cover Layout: singlepage, doublepage
 ]{ohm}
-% \nocite{*} % TODO: nur vorübergehend
+% \nocite{*} % nur zu Testzwecken - bleibt deaktiviert (nur zitierte Quellen im Verzeichnis)
 \usepackage{booktabs}
 \usepackage{csquotes}
 \usepackage{tikz}
 \usepackage{qrcode}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\usetikzlibrary{positioning, arrows.meta, fit, backgrounds}%----------------------------------------------------------------------
+\usetikzlibrary{positioning, arrows.meta, fit, backgrounds}
+%----------------------------------------------------------------------
+% Verzeichnisse im Inhaltsverzeichnis auffuehren.
+% Reihenfolge: \clearpage (frische Seite) -> \phantomsection (Hyperref-Anker)
+% -> \addcontentsline (Eintrag mit korrekter Seitenzahl) -> Verzeichnis.
+%----------------------------------------------------------------------
+\newcommand{\addverzeichnis}[1]{%
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{chapter}{#1}%
+}
+%----------------------------------------------------------------------
 % Meta data section
 %----------------------------------------------------------------------
 \title{Szenenverständnis und -manipulation in immersiven Umgebungen mittels Künstlicher Intelligenz}
@@ -27,26 +36,39 @@
 \examiner{Prof.\,Dr.\,Uwe Wienkop}
 \examiner{Louis Burk}
 %----------------------------------------------------------------------
-% \subject{Artificial Intelligence and Specific Processor Architecture: TPUs, GPUs} % Optional for reports
+% Schlagwoerter (erscheinen in der Kurzdarstellung-Sektion und in den PDF-Metadaten)
+\keyword{Szenenrepräsentation}
+\keyword{Immersive Umgebungen}
+\keyword{Multimodale Agenten}
+\keyword{Lokale Sprachmodelle}
+\keyword{Vision-Language-Modelle}
 %----------------------------------------------------------------------
-% \company{Example AG} % Optional
-% \supervisor{Dr.\,rer.\,nat.\,Muster Betreuerin} % Optional, multiple supported
+\repository{https://git.informatik.fh-nuernberg.de/jobboerse/forschung/bachelorarbeiten/bachelorarbeit-sandro-jaeger}
 %----------------------------------------------------------------------
-
-%----------------------------------------------------------------------
-\repository{https://git.informatik.fh-nuernberg.de/jobboerse/forschung/bachelorarbeiten/bachelorarbeit-sandro-jaeger} % Optional
-%----------------------------------------------------------------------
+% Englischer Abstract nur bei englischer Arbeit noetig -> hier (deutsch) leer.
 \begin{abstract}
-    \emph{Only if thesis is written in English.}
 \end{abstract}
 %----------------------------------------------------------------------
 \begin{kurzdarstellung}
-    Kurze Zusammenfassung der Arbeit, höchstens halbe Seite.
-    Deutsche Fassung auch nötig, wenn die Arbeit auf Englisch angefertigt wird.
+    Damit ein KI-Agent eine dreidimensionale Szene natürlichsprachlich verändern kann, muss ihm die Szene zunächst in einer verarbeitbaren Form vorliegen.
+    Dafür stehen zwei grundlegende Wege zur Verfügung, eine strukturelle Beschreibung als exakte Daten und eine visuelle Beschreibung über ein gerendertes Bild.
+    Für selbst gehostete Modelle geringer Größe fehlte bislang ein systematischer Vergleich dieser Formen.
+
+    Die vorliegende Arbeit untersucht daher, welchen Einfluss die Repräsentationsform auf den Ausführungserfolg der Szenenmanipulation hat und ob sich eine Kombination beider Formen gezielt gestalten lässt.
+    Dazu wurde ein prototypisches System entwickelt, das dieselbe Szene strukturell, visuell und hybrid bereitstellt und fünf daraus abgeleitete Varianten unter gleichen Bedingungen an dreizehn kontrolliert aufgebauten Szenarien vergleicht.
+    Die Messung selbst fand am Desktop statt; die immersive Umgebung wird ausschließlich in einem Demonstrator gezeigt und nicht eigenständig evaluiert.
+
+    Der Vergleich zeigt eine referenztypabhängige Kompetenz ohne Gesamtsieger, wobei beide Formen jeweils einen Bereich abdecken, den die andere nicht erreicht.
+    Eine naive Kombination vereint diese Stärken nicht von selbst.
+    Erst eine ausdrückliche Trennung der Zuständigkeiten führt die beiden Schichten auf diesem Szenarioset zusammen, während eine bloße Priorisierung das Gewicht nur verschiebt.
+    Ob sich dieser Vorteil auf ungesehene Formulierungen überträgt, bleibt offen, da die Variante iterativ am vorliegenden Szenarioset entwickelt wurde.
+    Ein Demonstrator überträgt diese Variante in eine immersive Umgebung und zeigt die Machbarkeit der gesamten Kette.
 \end{kurzdarstellung}
 %----------------------------------------------------------------------
-\begin{acknowledgements} % Optional
-    \emph{Only if you want to thank someone.}
+\begin{acknowledgements}
+    Mein Dank gilt Prof.\,Dr.\,Uwe Wienkop und Louis Burk für die Betreuung dieser Arbeit und für die hilfreichen Rückmeldungen im Verlauf.
+    Dem Institut für angewandte Informatik danke ich für die Möglichkeit, diese Arbeit dort anzufertigen, sowie für die bereitgestellte Hardware, ohne die der lokale Betrieb der Modelle nicht möglich gewesen wäre.
+    Ein besonderer Dank gilt schließlich meinem Bruder und meinen Eltern für ihre Unterstützung während des Studiums.
 \end{acknowledgements}
 %----------------------------------------------------------------------
 % Import glossary and acronym definitions
@@ -65,10 +87,25 @@
 %----------------------------------------------------------------------
 \maketitle
 %----------------------------------------------------------------------
-\makeacknowledgements
-\makeabstract
+% Die Selbststaendigkeitserklaerung (SB_0009) wird nicht im Dokument
+% benoetigt und daher hier bewusst nicht eingebunden.
+%----------------------------------------------------------------------
+\makeabstract          % Kurzdarstellung + Schlagwoerter
+\makeacknowledgements  % Danksagung
 \maketableofcontents
+%----------------------------------------------------------------------
+% Verzeichnisse: vollstaendig VOR Kapitel 1 und im Inhaltsverzeichnis
+% aufgefuehrt. \addverzeichnis setzt den TOC-Eintrag samt Hyperref-Anker.
+%----------------------------------------------------------------------
+\glsaddall  % noidx-Glossare listen nur benutzte Eintraege -> alle aufnehmen
+\addverzeichnis{Abkürzungsverzeichnis}
 \makeacronyms
+\addverzeichnis{\listfigurename}
+\listoffigures
+\addverzeichnis{\listtablename}
+\listoftables
+\addverzeichnis{\listoflistingscaption}
+\listoflistings
 %----------------------------------------------------------------------
 % \mainmatter -- arabic page numbers, restarting at 1
 %----------------------------------------------------------------------
@@ -81,15 +118,17 @@
 \include{content/5_implementierung}
 \include{content/6_evaluation}
 \include{content/7_zusammenfassung}
-\include{content/ki_erklaerung}
 %----------------------------------------------------------------------
-% \backmatter
+% \backmatter -- Glossar und Literaturverzeichnis
 %----------------------------------------------------------------------
-\listoffigures
-\listoflistings
-\listoftables
+\addverzeichnis{Glossar}
 \makelexicon
+\addverzeichnis{\bibname}
 \makebibliography
+%----------------------------------------------------------------------
+% \appendix -- KI-Nutzungserklaerung und Begleitmaterial gehoeren in den Anhang
+%----------------------------------------------------------------------
 \appendix
+\include{content/ki_erklaerung}
 \include{content/a1_begleitmaterial}
 \end{document}

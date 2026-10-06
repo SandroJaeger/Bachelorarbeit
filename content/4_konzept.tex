@@ -28,7 +28,7 @@ Die konkrete technische Umsetzung dieses Konzepts beschreibt Kapitel~\ref{ch:imp
 Der Lösungsansatz beruht auf einem sprachgesteuerten Agenten.
 Der Agent nimmt einen natürlichsprachlichen Befehl entgegen, verschafft sich über eine Repräsentation ein Bild der Szene und verändert die Szene über eine feste Menge von Operationen.
 Der entscheidende Freiheitsgrad des Entwurfs liegt darin, in welcher Form dem Agenten die Szene bereitgestellt wird.
-Genau diese Form ist der Untersuchungsgegenstand der Arbeit.
+Diese Form ist der Untersuchungsgegenstand der Arbeit.
 
 Das Konzept folgt einem dreistufigen roten Faden.
 In der ersten Stufe wird der Einfluss der Repräsentationsform analysiert, indem verschiedene Formen unter gleichen Bedingungen verglichen werden.
@@ -51,10 +51,16 @@ Die visuelle Form beschreibt die Szene als gerenderte Ansicht, die von einem vis
 Sie erfasst das Aussehen der Szene, wie es sich einem Betrachter zeigt, und ist damit stark bei Eigenschaften, die nur im Bild erkennbar sind.
 Exakte Zahlenwerte wie Koordinaten liefert sie jedoch nicht.
 
+Hier ist eine Präzisierung nötig, die den Entwurfsraum wesentlich prägt.
+Die visuelle Form wird nicht als Bild an das entscheidende Modell übergeben, denn dieses Modell ist ein reines Sprachmodell.
+Der Entwurf schaltet die beiden Modelle in Reihe: Das Sprach-Bild-Modell erhält das gerenderte Bild und erzeugt daraus eine natürlichsprachliche Beschreibung, und erst diese Beschreibung gelangt in den Kontext des Sprachmodells, das den Befehl deutet (vgl.\ Abschnitt~\ref{sec:grundlagen-modelle}).
+Die visuelle Form ist im Entwurfsraum dieser Arbeit also die \emph{sprachliche Beschreibung} eines Bildes und nicht das Bild selbst.
+
 Die hybride Form stellt beide Schichten zugleich bereit.
 Sie verbindet die Möglichkeit, exakte Geometrie zu nutzen, mit der Möglichkeit, das Aussehen zu berücksichtigen.
+Was in ihr aufeinandertrifft, sind damit zwei Textquellen im Kontext desselben Sprachmodells: eine exakte, aber unvollständige Datenstruktur und eine reichhaltige, aber unscharfe Beschreibung.
 
-Genau diese drei Formen bilden den Vergleichsraum der Arbeit, weil sie die beiden Einzelmodalitäten und ihre Kombination vollständig abdecken.
+Diese drei Formen bilden den Vergleichsraum der Arbeit, weil sie die beiden Einzelquellen und ihre Kombination vollständig abdecken.
 Der Vergleich der Einzelformen zeigt, wofür jede Schicht zuständig ist, und der Vergleich mit der hybriden Form zeigt, ob eine Kombination die Stärken beider vereint.
 
 Eine bewusste Entscheidung betrifft den Inhalt der strukturellen Schicht.
@@ -95,7 +101,9 @@ Erst dadurch entsteht ein Fall, in dem die strukturelle Schicht prinzipiell blin
 
 Die hybride Form stellt beide Schichten bereit, legt aber nicht fest, wie der Agent sie gegeneinander gewichtet.
 Dem Konzept liegt die Annahme zugrunde, dass die bloße Verfügbarkeit beider Schichten nicht genügt, damit ihre Stärken auch tatsächlich zusammenwirken.
-Diese Annahme stützt sich auf Beobachtungen aus der Literatur, wonach Sprach-Bild-Modelle textuelle Information gegenüber visueller übergewichten~\cite{deng2025, wu2025}.
+Diese Annahme stützt sich auf eine Analogie zu Beobachtungen aus der Literatur, wonach multimodale Modelle bei widersprüchlichen Eingaben der textuellen Information den Vorrang geben~\cite{deng2025, wu2025}.
+Die Analogie ist dabei nicht mehr als das: Die genannten Arbeiten betrachten die Konkurrenz von Bild und Text innerhalb eines Modells, während hier zwei Textquellen im Kontext eines Sprachmodells konkurrieren, eine exakte Struktur und eine unscharfe Beschreibung (Abschnitt~\ref{sec:grundlagen-sota}).
+Die Erwartung lautet daher präziser, dass die exaktere der beiden Quellen die unschärfere überschreibt, auch wo nur die unschärfere die Antwort enthält.
 Die Art, wie die beiden Schichten dem Agenten präsentiert werden, wird deshalb selbst zu einem Entwurfsgegenstand.
 
 Das Konzept sieht dafür zwei Strategien vor.

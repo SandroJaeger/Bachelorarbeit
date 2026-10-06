@@ -302,7 +302,7 @@
 		\centering
 		\ifsinglepage
 			\footnotesize
-			\faculty\;\ifen at \else an der \fi Technische Hochschule N\"{u}rnberg\\[2ex]
+			\faculty\;\ifen at Technische Hochschule N\"{u}rnberg Georg Simon Ohm\else an der Technischen Hochschule N\"{u}rnberg Georg Simon Ohm\fi\\[2ex]
 			\normalsize
 			\vspace*{8ex}
 		\else
@@ -355,7 +355,7 @@
 			\ifen
 				\noindent This work, including its parts, \textbf{is protected by copyright}. Any use outside the narrow limits of copyright law without the consent of \ifhasCompany \thecompany~ \else the author \fi is prohibited and punishable by law. This applies in particular to reproductions, translations, microfilming and storage and processing in electronic systems.
 			\else
-				\noindent Diese Arbeit, einschließlich ihrer Teile, \textbf{ist urheberrechtlich geschützt}. Jede Verwertung außerhalb der engen Grenzen des Urheberrechtsgesetzes ohne Zustimmung von \ifhasCompany \thecompany~ \else dem Urheber \fi ist untersagt und strafbar. Dies gilt insbesondere für Vervielfältigungen, Übersetzungen, Mikroverfilmung und die Speicherung und Verarbeitung in elektronischen Systemen.
+				\noindent Diese Arbeit, einschließlich ihrer Teile, \textbf{ist urheberrechtlich geschützt}. Jede Verwertung außerhalb der engen Grenzen des Urheberrechtsgesetzes ohne Zustimmung \ifhasCompany der \thecompany~ \else des Urhebers \fi ist untersagt und strafbar. Dies gilt insbesondere für Vervielfältigungen, Übersetzungen, Mikroverfilmung und die Speicherung und Verarbeitung in elektronischen Systemen.
 			\fi
 			\singlespacing
 			\ifhasCompany
@@ -365,14 +365,14 @@
 		\else
 			\vspace*{\fill}
 			\footnotesize
-			\faculty\;\ifen at \else an der \fi Technische Hochschule N\"{u}rnberg\\
+			\faculty\;\ifen at Technische Hochschule N\"{u}rnberg Georg Simon Ohm\else an der Technischen Hochschule N\"{u}rnberg Georg Simon Ohm\fi\\
 			\textsc{N\"{u}rnberg \the\year}
 			% second page
 			\clearpage
 			\thispagestyle{empty}
 			\vspace*{7ex}
 			\Large
-			\faculty\;\ifen at \else an der \fi Technische Hochschule N\"{u}rnberg\\
+			\faculty\;\ifen at Technische Hochschule N\"{u}rnberg Georg Simon Ohm\else an der Technischen Hochschule N\"{u}rnberg Georg Simon Ohm\fi\\
 			\vspace*{4ex}
 			\@author\\
 			\ifhasStudentId
@@ -404,7 +404,7 @@
 			\ifen
 				\noindent This work, including its parts, \textbf{is protected by copyright}. Any use outside the narrow limits of copyright law without the consent of \ifhasCompany \thecompany~ \else the author \fi is prohibited and punishable by law. This applies in particular to reproductions, translations, microfilming and storage and processing in electronic systems.
 			\else
-				\noindent Diese Arbeit, einschließlich ihrer Teile, \textbf{ist urheberrechtlich geschützt}. Jede Verwertung außerhalb der engen Grenzen des Urheberrechtsgesetzes ohne Zustimmung von \ifhasCompany \thecompany~ \else dem Urheber \fi ist untersagt und strafbar. Dies gilt insbesondere für Vervielfältigungen, Übersetzungen, Mikroverfilmung und die Speicherung und Verarbeitung in elektronischen Systemen.
+				\noindent Diese Arbeit, einschließlich ihrer Teile, \textbf{ist urheberrechtlich geschützt}. Jede Verwertung außerhalb der engen Grenzen des Urheberrechtsgesetzes ohne Zustimmung \ifhasCompany der \thecompany~ \else des Urhebers \fi ist untersagt und strafbar. Dies gilt insbesondere für Vervielfältigungen, Übersetzungen, Mikroverfilmung und die Speicherung und Verarbeitung in elektronischen Systemen.
 			\fi
 			\singlespacing
 			\ifhasCompany
