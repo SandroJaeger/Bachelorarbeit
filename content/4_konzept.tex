@@ -1,24 +1,13 @@
 % ============================================================
-% KAPITEL 4 — KONZEPT  (Gesamtstand, erweitert)
-% ------------------------------------------------------------
-% ZIELDATEI: content/4_konzept.tex
-% BENOETIGTE PAKETE: booktabs, csquotes, tikz
-%
-% STAND: 4.1 Ueberblick | 4.2 Drei Repraesentationen (+ Datenmodell/keine
-%        vorberechneten Relationen) | 4.3 Entwurfsentscheidungen fuer fairen
-%        Vergleich (NEU) | 4.4 Fusionssteuerung (+ Prompt-Ebene) |
-%        4.5 Referenztyp-Differenzierung (Venn) -> AUSFORMULIERT
-% Alle Inhalte aus dokumentierten Entwurfsentscheidungen (kein Halluzinat).
+% KAPITEL 4 — KONZEPT
 % ============================================================
 
 \chapter{Konzept}
 \label{ch:konzept}
 
-Die Anforderungen aus dem vorigen Kapitel geben vor, was das System leisten muss.
-Dieses Kapitel entwickelt daraus das Lösungskonzept, also den Entwurf, der diese Anforderungen erfüllt.
-Es beschreibt zunächst den Lösungsansatz im Überblick und den Entwurfsraum der drei Repräsentationsformen.
-Anschließend legt es die Entwurfsentscheidungen offen, die einen fairen Vergleich der Formen erst ermöglichen, entwickelt die Idee zur Steuerung ihrer Kombination und begründet, warum der Erfolg nach der Art der sprachlichen Referenz betrachtet werden muss.
-Die konkrete technische Umsetzung dieses Konzepts beschreibt Kapitel~\ref{ch:implementierung}.
+Dieses Kapitel entwickelt aus den Anforderungen das Lösungskonzept.
+Nach einem Überblick beschreibt es den Entwurfsraum der drei Repräsentationsformen, die Entwurfsentscheidungen für einen fairen Vergleich, die Idee zur Steuerung der hybriden Form und die Begründung dafür, den Erfolg nach Referenztypen getrennt zu betrachten.
+Die technische Umsetzung folgt in Kapitel~\ref{ch:implementierung}.
 
 
 % ------------------------------------------------------------
@@ -26,47 +15,38 @@ Die konkrete technische Umsetzung dieses Konzepts beschreibt Kapitel~\ref{ch:imp
 \label{sec:konz-ueberblick}
 
 Der Lösungsansatz beruht auf einem sprachgesteuerten Agenten.
-Der Agent nimmt einen natürlichsprachlichen Befehl entgegen, verschafft sich über eine Repräsentation ein Bild der Szene und verändert die Szene über eine feste Menge von Operationen.
-Der entscheidende Freiheitsgrad des Entwurfs liegt darin, in welcher Form dem Agenten die Szene bereitgestellt wird.
-Diese Form ist der Untersuchungsgegenstand der Arbeit.
+Er nimmt einen natürlichsprachlichen Befehl entgegen, verschafft sich über eine Repräsentation ein Bild der Szene und verändert sie über eine feste Menge von Operationen.
+Der entscheidende Freiheitsgrad des Entwurfs ist die Form, in der dem Agenten die Szene bereitgestellt wird, und diese Form ist zugleich der Untersuchungsgegenstand.
 
-Das Konzept folgt einem dreistufigen roten Faden.
-In der ersten Stufe wird der Einfluss der Repräsentationsform analysiert, indem verschiedene Formen unter gleichen Bedingungen verglichen werden.
-In der zweiten Stufe wird untersucht, ob sich die Kombination der Repräsentationen gezielt verbessern lässt.
-In der dritten Stufe wird die beste Variante in die immersive Zielumgebung übertragen und dort als Demonstrator erprobt.
-Die ersten beiden Stufen entsprechen den beiden Forschungsfragen, die dritte Stufe dient dem Nachweis der Übertragbarkeit.
+Die Arbeit geht in drei Schritten vor.
+Zuerst werden verschiedene Repräsentationsformen unter gleichen Bedingungen verglichen, um ihren Einfluss zu bestimmen (RQ1).
+Danach wird untersucht, ob sich die Kombination der Repräsentationen gezielt verbessern lässt (RQ2).
+Zuletzt wird die beste Variante in die immersive Zielumgebung übertragen und dort als Demonstrator erprobt, um die Übertragbarkeit zu zeigen.
 
 
 % ------------------------------------------------------------
-\section{Die drei Repräsentationsformen}
+\section{Repräsentationsformen}
 \label{sec:konz-repraesentationen}
 
 Der Entwurfsraum umfasst drei Formen, in denen die Szene dem Agenten bereitgestellt werden kann.
 
 Die strukturelle Form beschreibt die Szene als exakte Daten.
-Sie kennt die Objekte mit ihren Kennungen, Typen, Positionen und Größen und ist damit stark bei allem, was sich aus diesen Daten ableiten lässt, etwa bei geometrischen Beziehungen.
-Was in den Daten nicht kodiert ist, bleibt für sie jedoch unsichtbar.
+Sie kennt die Objekte mit Kennungen, Typen, Positionen und Größen und ist damit stark bei allem, was sich aus diesen Daten ableiten lässt, etwa bei geometrischen Beziehungen.
+Was in den Daten nicht kodiert ist, bleibt ihr verborgen.
 
-Die visuelle Form beschreibt die Szene als gerenderte Ansicht, die von einem visuellen Modell interpretiert wird.
-Sie erfasst das Aussehen der Szene, wie es sich einem Betrachter zeigt, und ist damit stark bei Eigenschaften, die nur im Bild erkennbar sind.
-Exakte Zahlenwerte wie Koordinaten liefert sie jedoch nicht.
+Die visuelle Form beschreibt die Szene über eine gerenderte Ansicht, die ein visuelles Modell interpretiert.
+Sie erfasst das Aussehen der Szene und ist damit stark bei Eigenschaften, die nur im Bild erkennbar sind, liefert aber keine exakten Koordinaten.
+Wie in Abschnitt~\ref{sec:grundlagen-modelle} beschrieben, erreicht sie das entscheidende Sprachmodell nur als sprachliche Beschreibung, die das Sprach-Bild-Modell aus dem Bild erzeugt.
 
-Hier ist eine Präzisierung nötig, die den Entwurfsraum wesentlich prägt.
-Die visuelle Form wird nicht als Bild an das entscheidende Modell übergeben, denn dieses Modell ist ein reines Sprachmodell.
-Der Entwurf schaltet die beiden Modelle in Reihe: Das Sprach-Bild-Modell erhält das gerenderte Bild und erzeugt daraus eine natürlichsprachliche Beschreibung, und erst diese Beschreibung gelangt in den Kontext des Sprachmodells, das den Befehl deutet (vgl.\ Abschnitt~\ref{sec:grundlagen-modelle}).
-Die visuelle Form ist im Entwurfsraum dieser Arbeit also die \emph{sprachliche Beschreibung} eines Bildes und nicht das Bild selbst.
+Die hybride Form stellt beide Schichten zugleich bereit und erlaubt damit, exakte Geometrie und Aussehen gemeinsam zu berücksichtigen.
+Im Kontext des Sprachmodells treffen in ihr eine exakte, aber unvollständige Datenstruktur und eine reichhaltige, aber unscharfe Beschreibung aufeinander.
 
-Die hybride Form stellt beide Schichten zugleich bereit.
-Sie verbindet die Möglichkeit, exakte Geometrie zu nutzen, mit der Möglichkeit, das Aussehen zu berücksichtigen.
-Was in ihr aufeinandertrifft, sind damit zwei Textquellen im Kontext desselben Sprachmodells: eine exakte, aber unvollständige Datenstruktur und eine reichhaltige, aber unscharfe Beschreibung.
+Mit diesen drei Formen sind die beiden Einzelquellen und ihre Kombination abgedeckt.
+Der Vergleich der Einzelformen zeigt, wofür jede Schicht zuständig ist, der Vergleich mit der hybriden Form, ob eine Kombination die Stärken beider vereint.
 
-Diese drei Formen bilden den Vergleichsraum der Arbeit, weil sie die beiden Einzelquellen und ihre Kombination vollständig abdecken.
-Der Vergleich der Einzelformen zeigt, wofür jede Schicht zuständig ist, und der Vergleich mit der hybriden Form zeigt, ob eine Kombination die Stärken beider vereint.
-
-Eine bewusste Entscheidung betrifft den Inhalt der strukturellen Schicht.
-Sie enthält je Objekt die Kennung, den Typ, die Position, die Farbe und die Größe sowie die Pose der Kamera.
-Vorberechnete räumliche Beziehungen enthält sie jedoch nicht.
-Eine Relation wie links von muss der Agent aus den Koordinaten selbst ableiten.
+Bewusst festgelegt ist der Inhalt der strukturellen Schicht.
+Sie enthält je Objekt Kennung, Typ, Position, Farbe und Größe sowie die Pose der Kamera, aber keine vorberechneten räumlichen Beziehungen.
+Eine Relation wie \enquote{links von} muss der Agent selbst aus den Koordinaten ableiten.
 Andernfalls würde die Auswertung die Güte einer Vorverarbeitung messen und nicht die Eignung der Repräsentation.
 
 
@@ -74,25 +54,20 @@ Andernfalls würde die Auswertung die Güte einer Vorverarbeitung messen und nic
 \section[Entwurfsentscheidungen]{Entwurfsentscheidungen für einen fairen Vergleich}
 \label{sec:konz-fairness}
 
-Damit der Vergleich tatsächlich die Repräsentation misst und nicht einen Nebeneffekt des Aufbaus, sind mehrere Entwurfsentscheidungen nötig.
-Sie stellen sicher, dass keine Variante aus Gründen bevorzugt oder benachteiligt wird, die nichts mit ihrer Repräsentation zu tun haben.
+Damit der Vergleich die Repräsentation misst und nicht einen Nebeneffekt des Aufbaus, darf keine Variante aus Gründen bevorzugt oder benachteiligt werden, die mit ihrer Repräsentation nichts zu tun haben.
+Drei Entwurfsentscheidungen dienen diesem Zweck.
 
-Die erste Entscheidung ist ein gemeinsames Kennungssystem.
 Alle Varianten sprechen Objekte über dieselben Kennungen an.
 Eine Kennung ist dabei nur ein Adressierungsmittel und kein Bestandteil des Szenenverständnisses.
-Die visuelle Variante wird über Marken, die in das gerenderte Bild eingezeichnet werden, an dieselben Kennungen gebunden.
-Dieses Markieren folgt dem Set-of-Mark-Prinzip~\cite{yang2023}.
-So kann auch die visuelle Variante ein erkanntes Objekt benennen, ohne dass ihr daraus ein struktureller Vorteil erwächst.
+Die visuelle Variante wird über Marken, die in das gerenderte Bild eingezeichnet werden, an dieselben Kennungen gebunden, nach dem Set-of-Mark-Prinzip~\cite{yang2023}.
+So kann auch sie ein erkanntes Objekt benennen, ohne dadurch einen strukturellen Vorteil zu erhalten.
 
-Die zweite Entscheidung betrifft die Bewegungsoperationen.
-Das System stellt eine absolute und eine relative Bewegungsoperation bereit.
-Die relative Operation ist notwendig, damit sich Objekte auch ohne einen exakten Weltbezug verschieben lassen.
-Ohne sie wäre die rein visuelle Variante benachteiligt, da sie keine exakten Koordinaten kennt.
-Dieser Nachteil wäre ein Artefakt des Werkzeugzuschnitts und keine Eigenschaft der Repräsentation.
+Für Bewegungen stellt das System neben einer absoluten auch eine relative Operation bereit, mit der sich Objekte ohne exakten Weltbezug verschieben lassen.
+Fehlte sie, wäre die visuelle Variante benachteiligt, weil sie keine exakten Koordinaten kennt, und dieser Nachteil ginge auf den Zuschnitt der Werkzeuge zurück, nicht auf die Repräsentation.
 
-Die dritte Entscheidung betrifft die bewusste Auslassung von Information.
+Schließlich wird Information gezielt weggelassen.
 Die unterscheidende Eigenschaft der rein perzeptuellen Aufgaben, etwa ein Oberflächenmuster, wird absichtlich nicht in die strukturelle Schicht aufgenommen.
-Erst dadurch entsteht ein Fall, in dem die strukturelle Schicht prinzipiell blind ist und sich die exklusive Kompetenz der visuellen Schicht überhaupt zeigen kann.
+Nur so entsteht ein Fall, in dem die strukturelle Schicht prinzipiell blind ist und die exklusive Kompetenz der visuellen Schicht sichtbar werden kann.
 
 
 % ------------------------------------------------------------
@@ -100,44 +75,36 @@ Erst dadurch entsteht ein Fall, in dem die strukturelle Schicht prinzipiell blin
 \label{sec:konz-fusion}
 
 Die hybride Form stellt beide Schichten bereit, legt aber nicht fest, wie der Agent sie gegeneinander gewichtet.
-Dem Konzept liegt die Annahme zugrunde, dass die bloße Verfügbarkeit beider Schichten nicht genügt, damit ihre Stärken auch tatsächlich zusammenwirken.
-Diese Annahme stützt sich auf eine Analogie zu Beobachtungen aus der Literatur, wonach multimodale Modelle bei widersprüchlichen Eingaben der textuellen Information den Vorrang geben~\cite{deng2025, wu2025}.
-Die Analogie ist dabei nicht mehr als das: Die genannten Arbeiten betrachten die Konkurrenz von Bild und Text innerhalb eines Modells, während hier zwei Textquellen im Kontext eines Sprachmodells konkurrieren, eine exakte Struktur und eine unscharfe Beschreibung (Abschnitt~\ref{sec:grundlagen-sota}).
-Die Erwartung lautet daher präziser, dass die exaktere der beiden Quellen die unschärfere überschreibt, auch wo nur die unschärfere die Antwort enthält.
-Die Art, wie die beiden Schichten dem Agenten präsentiert werden, wird deshalb selbst zu einem Entwurfsgegenstand.
+Das Konzept geht davon aus, dass die bloße Verfügbarkeit beider Schichten nicht ausreicht, damit ihre Stärken auch zusammenwirken.
+Gestützt wird diese Annahme durch eine Analogie zu Beobachtungen, nach denen multimodale Modelle bei widersprüchlichen Eingaben der textuellen Information den Vorrang geben~\cite{deng2025, wu2025}.
+Da hier keine Bild- und Textquelle, sondern zwei Textquellen konkurrieren (Abschnitt~\ref{sec:grundlagen-sota}), lautet die Erwartung genauer, dass die exaktere Quelle die unschärfere überschreibt, auch wo nur die unschärfere die Antwort enthält.
+Wie die beiden Schichten dem Agenten präsentiert werden, wird damit selbst zum Entwurfsgegenstand.
 
 Das Konzept sieht dafür zwei Strategien vor.
-Die erste Strategie ist die Priorisierung.
-Sie erklärt eine der beiden Schichten für einen bestimmten Zweck als maßgeblich und stellt sie in den Vordergrund.
-Die zweite Strategie ist die Kompetenztrennung.
-Sie ordnet den beiden Schichten getrennte Zuständigkeiten zu, sodass jede Schicht nur für den Teil der Aufgabe herangezogen wird, für den sie geeignet ist.
+Bei der Priorisierung wird eine der beiden Schichten für einen bestimmten Zweck für maßgeblich erklärt und in den Vordergrund gestellt.
+Bei der Kompetenztrennung erhalten die beiden Schichten getrennte Zuständigkeiten, sodass jede nur für den Teil der Aufgabe herangezogen wird, für den sie geeignet ist.
 
-Beide Strategien wirken ausschließlich über die Gestaltung der Instruktion.
-Die Modelle werden nicht nachtrainiert, und ihre Gewichte bleiben unverändert.
-Diese Beschränkung auf die Instruktionsebene ist eine bewusste Entscheidung.
-Sie hält den Vergleich sauber, da sich nur der Kontext und nicht das Modell ändert, und sie entspricht der Fragestellung, die nach der Repräsentation und nicht nach einer Modellanpassung fragt.
-Die konkrete Ausformulierung der beiden Strategien wird in Kapitel~\ref{ch:implementierung} beschrieben.
+Beide Strategien wirken ausschließlich über die Instruktion; die Modelle werden nicht nachtrainiert, ihre Gewichte bleiben unverändert.
+Diese Beschränkung ist gewollt.
+Sie hält den Vergleich sauber, weil sich nur der Kontext ändert, und sie passt zur Fragestellung, die nach der Repräsentation und nicht nach einer Modellanpassung fragt.
+Wie die beiden Strategien konkret formuliert sind, beschreibt Kapitel~\ref{ch:implementierung}.
 
 
 % ------------------------------------------------------------
 \section{Differenzierung nach Referenztyp}
 \label{sec:konz-referenztyp}
 
-Ob eine Repräsentation eine Aufgabe lösen kann, hängt davon ab, wie im Befehl auf ein Objekt verwiesen wird.
-Ein Verweis über eine exakte Lage stellt andere Anforderungen als ein Verweis über eine sichtbare Eigenschaft.
-Aus dieser Beobachtung folgt der zentrale konzeptionelle Gedanke der Arbeit.
-Die beiden Repräsentationen besitzen nicht nur unterschiedlich starke, sondern teils einander ausschließende Zuständigkeiten.
+Ob eine Repräsentation eine Aufgabe lösen kann, hängt davon ab, wie der Befehl auf ein Objekt verweist.
+Ein Verweis über eine exakte Lage stellt andere Anforderungen als einer über eine sichtbare Eigenschaft.
+Die beiden Repräsentationen sind daher nicht nur unterschiedlich stark, sondern teilweise für einander ausschließende Bereiche zuständig, und dieser Gedanke trägt das gesamte Konzept.
 
-Manche Referenzen lassen sich ausschließlich über die strukturelle Schicht auflösen.
-Ein Objekt, das im Bild verdeckt ist, bleibt in den strukturellen Daten dennoch verzeichnet.
-Andere Referenzen lassen sich ausschließlich über die visuelle Schicht auflösen.
-Eine Eigenschaft wie ein Oberflächenmuster, das in den strukturellen Daten nicht vorkommt, ist nur im Bild erkennbar.
-Zwischen diesen beiden Polen liegt ein Bereich, in dem beide Schichten dieselbe Referenz auflösen können.
+Manche Referenzen lassen sich nur über die strukturelle Schicht auflösen: Ein Objekt, das im Bild verdeckt ist, bleibt in den strukturellen Daten verzeichnet.
+Andere lassen sich nur über die visuelle Schicht auflösen: Ein Oberflächenmuster, das in den strukturellen Daten nicht vorkommt, ist nur im Bild erkennbar.
+Dazwischen liegt ein Bereich, in dem beide Schichten dieselbe Referenz auflösen können.
 
-Abbildung~\ref{fig:venn} stellt diese Kompetenzverteilung dar.
-Gerade die einander ausschließenden Bereiche sind es, die eine Kombination beider Schichten überhaupt sinnvoll machen.
-Sie begründen zugleich, warum der Erfolg nach der Art der Referenz aufgeschlüsselt betrachtet werden muss und nicht als ein einzelner Gesamtwert.
-Die konkrete Einteilung der Referenztypen und die zugehörigen Szenarien werden in Kapitel~\ref{ch:evaluation} eingeführt.
+Abbildung~\ref{fig:venn} stellt diese Verteilung dar.
+Die einander ausschließenden Bereiche sind der Grund, warum eine Kombination beider Schichten überhaupt sinnvoll ist, und zugleich der Grund, den Erfolg nach Referenztypen aufzuschlüsseln statt als einen einzelnen Gesamtwert zu berichten.
+Die konkrete Einteilung der Referenztypen und die zugehörigen Szenarien führt Kapitel~\ref{ch:evaluation} ein.
 
 \begin{figure}[htbp]
   \centering
@@ -157,6 +124,6 @@ Die konkrete Einteilung der Referenztypen und die zugehörigen Szenarien werden 
     \node[align=center, font=\footnotesize] at (2.55,0)
       {Textur,\\Muster\\[2pt]visuelle\\Auffälligkeit};
   \end{tikzpicture}
-  \caption{Konzeptionelle Kompetenzverteilung der beiden Repräsentationen. Der Überlappungsbereich steht für Referenzen, die beide Schichten auflösen können, die Außenbereiche für die jeweils exklusive Kompetenz einer Schicht. Genau diese exklusiven Bereiche begründen den hybriden Ansatz.}
+  \caption{Konzeptionelle Kompetenzverteilung der beiden Repräsentationen. Der Überlappungsbereich steht für Referenzen, die beide Schichten auflösen können, die Außenbereiche für die exklusive Kompetenz jeweils einer Schicht. Aus diesen exklusiven Bereichen ergibt sich der Nutzen des hybriden Ansatzes.}
   \label{fig:venn}
 \end{figure}

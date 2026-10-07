@@ -1,14 +1,5 @@
 % ============================================================
-% KAPITEL 7 — ZUSAMMENFASSUNG UND AUSBLICK  (Gesamtstand)
-% ------------------------------------------------------------
-% ZIELDATEI: content/7_zusammenfassung.tex
-% BENOETIGTE PAKETE: csquotes (geladen)
-% STAND:
-%   7.1 Zusammenfassung ........... AUSFORMULIERT (qualitativ + 1 Kennzahl)
-%   7.2 Beantwortung der RQ ....... OFFEN (Kommentar)
-%   7.3 Wissenschaftlicher Beitrag  OFFEN (Kommentar)
-%   7.4 Grenzen der Arbeit ........ OFFEN (Kommentar)
-%   7.5 Ausblick .................. OFFEN (Kommentar)
+% KAPITEL 7 — ZUSAMMENFASSUNG UND AUSBLICK
 % ============================================================
 
 \chapter{Zusammenfassung und Ausblick}
@@ -18,37 +9,23 @@
 \section{Zusammenfassung}
 \label{sec:zus-zusammenfassung}
 
-Die Arbeit ist von einer einfachen, aber folgenreichen Frage ausgegangen.
-In welcher Form sollte einem lokal betriebenen KI-Agenten eine 3D-Szene bereitgestellt werden, damit er sie natürlichsprachlich manipulieren kann?
-Zwei Wege standen einander gegenüber, ein struktureller und ein visueller, mit jeweils eigenen Stärken und einem Bereich, den der andere Weg nicht abdeckt.
+Ausgangspunkt der Arbeit war die Frage, in welcher Form einem lokal betriebenen KI-Agenten eine 3D-Szene bereitgestellt werden sollte, damit er sie natürlichsprachlich manipulieren kann.
+Zur Wahl standen ein struktureller und ein visueller Weg, die jeweils eigene Stärken haben und jeweils einen Bereich abdecken, zu dem der andere keinen Zugang hat.
 
-Um die Frage zu beantworten, wurde ein prototypisches System entwickelt, das dieselbe Szene in drei Repräsentationsformen bereitstellt, strukturell, visuell und hybrid, und sie über ein gemeinsames Interface manipulierbar macht.
-Diese Formen wurden unter gleichen Bedingungen an kontrolliert aufgebauten Szenarien gegeneinander gemessen.
-Der Erfolg wurde dabei aus dem tatsächlichen Zustand der Szene bestimmt und jede Messung mehrfach wiederholt.
+Um die Frage zu beantworten, wurde ein prototypisches System entwickelt, das dieselbe Szene strukturell, visuell und hybrid bereitstellt und über ein gemeinsames Interface manipulierbar macht.
+Die Formen wurden unter gleichen Bedingungen an dreizehn kontrolliert aufgebauten Szenarien verglichen, jede Kombination aus Szenario und Variante in 30 Läufen, wobei der Erfolg aus dem tatsächlichen Zustand der Szene bestimmt wurde.
 
-Der Vergleich ergab kein pauschales Bild, sondern eine referenztypabhängige Kompetenz.
-Keine Einzelform ist über alle Aufgaben hinweg überlegen.
-Die strukturelle Form trägt Referenzen, die sich aus Daten ableiten lassen, und ist als einzige in der Lage, ein im Bild verdecktes Objekt anzusprechen.
-Die visuelle Form trägt Referenzen, die nur über das Aussehen bestimmbar sind, etwa ein Oberflächenmuster.
-Beide Formen besitzen damit einen exklusiven Zuständigkeitsbereich, den die jeweils andere nicht abdecken kann.
+Der Vergleich ergab eine referenztypabhängige Kompetenz ohne Gesamtsieger, und eine naive Kombination beider Schichten vereinte deren Stärken nicht von selbst.
+Erst eine Instruktion, die den Schichten getrennte Zuständigkeiten zuweist, führte sie auf dem untersuchten Szenarioset zusammen; Abschnitt~\ref{sec:zus-rq} beantwortet die beiden Forschungsfragen im Einzelnen.
 
-Die naheliegende Erwartung, eine hybride Form vereine ohne Weiteres die Stärken beider, hielt der Prüfung nicht stand.
-Die naive Kombination erbte den strukturellen Vorteil, den visuellen jedoch nicht zuverlässig.
-Erst als die Zuständigkeiten der beiden Schichten ausdrücklich getrennt wurden, wirkten sie zusammen.
-Diese kompetenzgetrennte Variante erreichte in der rein perzeptuellen Kategorie nahezu die Leistung der reinen Bildvariante, mit 19,7 von 20 Punkten gegenüber 10,7 der naiven Kombination, und behielt zugleich die Stärke der strukturellen Form.
-Eine bloße Priorisierung einer Schicht verschob das Gewicht dagegen nur, statt beide Schichten zu integrieren.
-Dieser Befund gilt für das untersuchte Szenarioset, an dem die kompetenzgetrennte Variante zugleich entwickelt wurde; Abschnitt~\ref{sec:zus-grenzen} ordnet das ein.
-
-Schließlich wurde diese Variante in die immersive Zielumgebung übertragen.
-Ein Demonstrator zeigt, dass die Kette von einem Befehl bis zur sichtbaren Manipulation in der Brille funktioniert, wobei die Modelle selbst gehostet auf einem Arbeitsplatzrechner laufen und nicht auf dem Endgerät.
-Dokumentiert ist per Aufzeichnung die Menüfassung; die ergänzte Spracheingabe ist umgesetzt, aber nicht per Video belegt.
+Diese kompetenzgetrennte Variante wurde schließlich in die immersive Zielumgebung übertragen.
+Der Demonstrator zeigt, dass die Kette von einem Befehl bis zur sichtbaren Manipulation in der Brille funktioniert, wobei die Modelle selbst gehostet auf einem Arbeitsplatzrechner laufen und nicht auf dem Endgerät.
+Per Aufzeichnung dokumentiert ist die Menüfassung; die ergänzte Spracheingabe ist umgesetzt, aber nicht per Video belegt.
 
 
 % ------------------------------------------------------------
 \section{Beantwortung der Forschungsfragen}
 \label{sec:zus-rq}
-
-Die beiden in Kapitel~\ref{ch:einleitung} gestellten Forschungsfragen lassen sich nun direkt beantworten.
 
 \subsection*{Erste Forschungsfrage}
 
@@ -56,16 +33,16 @@ Die beiden in Kapitel~\ref{ch:einleitung} gestellten Forschungsfragen lassen sic
 \textit{Welchen Einfluss hat die Form der Szenenrepräsentation, strukturell, visuell oder hybrid, auf den Ausführungserfolg der natürlichsprachlichen Szenenmanipulation durch einen lokal betriebenen Agenten, und zwar aufgeschlüsselt nach der Art der sprachlichen Referenz?}
 \end{quote}
 
-Die Repräsentationsform hat einen erheblichen und referenztypabhängigen Einfluss.
-Es gibt keine Form, die über alle Aufgaben hinweg überlegen ist.
-Der Erfolg hängt davon ab, wie im Befehl auf ein Objekt verwiesen wird.
-Referenzen, deren Merkmal in den Daten kodiert ist, sowie Referenzen auf verdeckte Objekte werden von der strukturellen Form getragen.
-Referenzen auf rein visuelle Eigenschaften werden ausschließlich von der visuellen Form getragen.
-Beide Formen besitzen damit einen exklusiven Zuständigkeitsbereich, den die jeweils andere nicht abdecken kann.
-Die naive hybride Form vereint diese Stärken nicht von selbst.
-Sie übernimmt den strukturellen Vorteil, erbt den visuellen jedoch nicht zuverlässig.
-Das spricht gegen die Erwartung, eine Kombination sei stets mindestens so gut wie die jeweils bessere Einzelform.
-Für D1, wo dieser Bruch am deutlichsten auftritt, bleibt allerdings ein Reihenfolgeeffekt bei der Objektwahl als gleichrangige Erklärung offen, sodass der Befund die Erwartung in Frage stellt, aber nicht widerlegt.
+Die Repräsentationsform hat einen erheblichen Einfluss, und dieser hängt vom Referenztyp ab.
+Keine Form ist über alle Aufgaben hinweg überlegen.
+Referenzen, deren Merkmal in den Daten kodiert ist, und Referenzen auf verdeckte Objekte trägt die strukturelle Form; nur sie kann ein im Bild verdecktes Objekt ansprechen.
+Referenzen auf rein visuelle Eigenschaften wie ein Oberflächenmuster trägt ausschließlich die visuelle Form.
+Beide haben damit einen exklusiven Zuständigkeitsbereich.
+
+Die naive hybride Form übernimmt den strukturellen Vorteil, den visuellen aber nicht zuverlässig.
+In der perzeptuellen Kategorie erreicht sie nur 10,7 von 20 möglichen Erfolgen, die visuelle Form dagegen 20 von 20.
+Das stellt die Erwartung in Frage, eine Kombination sei stets mindestens so gut wie die bessere Einzelform.
+Widerlegt ist sie damit nicht, weil für das tragende Szenario D1 ein Reihenfolgeeffekt bei der Objektwahl als gleichwertige Erklärung offen bleibt.
 
 \subsection*{Zweite Forschungsfrage}
 
@@ -73,158 +50,89 @@ Für D1, wo dieser Bruch am deutlichsten auftritt, bleibt allerdings ein Reihenf
 \textit{Lässt sich das Zusammenspiel der strukturellen und der visuellen Schicht allein durch die Gestaltung der Instruktion so steuern, dass die hybride Repräsentation die Stärken beider Schichten vereint?}
 \end{quote}
 
-Auf dem untersuchten Szenarioset lautet die Antwort ja: Das Zusammenspiel lässt sich allein über die Gestaltung der Instruktion steuern, ohne die Modelle zu verändern.
-Entscheidend ist dabei die Art der Steuerung.
-Eine bloße Priorisierung einer Schicht verschiebt das Gewicht nur und tauscht eine Kompetenz gegen eine andere.
-Erst die ausdrückliche Trennung der Zuständigkeiten, bei der die visuelle Beschreibung bestimmt, welches Objekt gemeint ist, und die strukturelle Schicht alle geometrischen Werte liefert, führt beide Schichten zusammen.
-Diese Variante ist über die gewerteten Aufgabenbereiche hinweg die beste oder eine der besten.
+Auf dem untersuchten Szenarioset ja: Das Zusammenspiel lässt sich allein über die Instruktion steuern, ohne die Modelle zu verändern.
+Es kommt dabei auf die Art der Steuerung an.
+Eine Priorisierung einer Schicht verschiebt das Gewicht nur und tauscht eine Kompetenz gegen eine andere.
+Erst die ausdrückliche Trennung der Zuständigkeiten, bei der die visuelle Beschreibung das gemeinte Objekt bestimmt und die strukturelle Schicht alle geometrischen Werte liefert, führt beide Schichten zusammen.
+Die kompetenzgetrennte Variante erreicht in der perzeptuellen Kategorie 19,7 von 20, behält die Stärke der strukturellen Form und ist in jedem gewerteten Bereich die beste oder eine der besten.
 
-Zur Einordnung dieses Befundes gehört die Art seiner Entstehung, und sie begrenzt seine Reichweite deutlich.
-Die kompetenzgetrennte Variante wurde nicht vorab entworfen, sondern iterativ aus der Analyse der naiven und der priorisierenden Variante entwickelt, und zwar in Kenntnis der Ergebnisse auf genau dem Szenarioset, an dem sie anschließend gemessen wurde.
-Ihre Instruktion enthält mit \enquote{striped} und \enquote{most salient} zwei Formulierungen, die wörtlich in den Testbefehlen vorkommen.
-Gezeigt ist damit, dass sich die Kombination beider Schichten auf diesem Szenarioset durch die Instruktion erheblich verbessern lässt.
-Nicht gezeigt ist, dass dieser Vorteil auf ungesehene Formulierungen übergeht.
-Hinzu kommt, dass sich die hybriden Varianten neben der Instruktion auch in der Reihenfolge der beiden Schichten unterscheiden, sodass der Beitrag beider Faktoren nicht getrennt ist.
-Die Antwort auf die zweite Forschungsfrage ist deshalb ein belastbarer Befund für diesen Aufbau und eine offene Frage darüber hinaus.
+Die Reichweite dieser Antwort ist allerdings deutlich begrenzt.
+Die Variante wurde iterativ und in Kenntnis der Ergebnisse auf demselben Szenarioset entwickelt, an dem sie gemessen wurde, und ihre Instruktion enthält zwei Wörter aus den Testbefehlen.
+Außerdem unterscheiden sich die hybriden Varianten neben der Instruktion auch in der Reihenfolge der Schichten.
+Für diesen Aufbau ist die Antwort belastbar, ob sie auf ungesehene Formulierungen übertragbar ist, bleibt offen.
 
 
 % ------------------------------------------------------------
 \section[Beitrag]{Wissenschaftlicher Beitrag}
 \label{sec:zus-beitrag}
 
-Über die konkreten Ergebnisse hinaus leistet die Arbeit drei Beiträge, deren Reichweite jeweils bewusst vorsichtig eingeordnet wird.
+Die Arbeit leistet drei Beiträge, deren Reichweite jeweils vorsichtig einzuordnen ist.
 
-Der erste Beitrag ist inhaltlicher Art.
-Die Arbeit zeigt an einem kontrollierten Fall, dass die Verbindung struktureller und visueller Information kein Automatismus ist.
-Die bloße Verfügbarkeit beider Schichten genügt nicht, damit ihre Stärken zusammenwirken.
-Ob eine Kombination ihre Bestandteile ergänzt oder ob eine Informationsart die andere verdrängt, hängt von der Gestaltung ihrer Zusammenführung ab.
-Dieser Befund ist an einem einzelnen Modellpaar, an dreizehn Szenarien und in einer zweistufigen Pipeline gewonnen und wird nicht als allgemein gültig behauptet.
-Er legt jedoch nahe, dass die Fusion mehrerer Informationsquellen auch in anderen Agenten als Gestaltungsproblem und nicht als selbstverständliches Mehr an Information zu behandeln ist.
+Inhaltlich zeigt sie an einem kontrollierten Fall, dass sich strukturelle und visuelle Information nicht automatisch ergänzen.
+Ob eine Kombination ihre Bestandteile zusammenführt oder ob eine Informationsart die andere verdrängt, hängt davon ab, wie die Zusammenführung gestaltet ist.
+Gewonnen ist dieser Befund an einem Modellpaar, an dreizehn Szenarien und in einer zweistufigen Pipeline, und er wird nicht als allgemein gültig behauptet.
+Er legt aber nahe, die Fusion mehrerer Informationsquellen auch in anderen Agenten als Gestaltungsaufgabe zu behandeln und nicht als selbstverständlichen Gewinn an Information.
 
-Der zweite Beitrag ist methodischer Art.
-Die Arbeit führt eine nach der Art der sprachlichen Referenz aufgeschlüsselte Betrachtung ein, die den Erfolg nicht als einen Gesamtwert, sondern getrennt nach Referenztypen misst.
-Erst diese Aufschlüsselung macht die exklusiven Zuständigkeiten der Repräsentationen sichtbar, die ein pauschaler Vergleich verdeckt hätte.
+Methodisch führt die Arbeit eine nach Referenztypen aufgeschlüsselte Auswertung ein, die den Erfolg nicht als einen Gesamtwert, sondern je Referenztyp misst.
+Erst dadurch werden die exklusiven Zuständigkeiten der Repräsentationen sichtbar, die ein pauschaler Vergleich verdeckt hätte.
 Das Schema ist nicht an das konkrete System gebunden und dürfte sich auf ähnliche Vergleiche übertragen lassen.
 
-Der dritte Beitrag ist praktischer Art.
-Die Arbeit zeigt, dass sich die gesamte Verarbeitungskette aus 3D-Umgebung, Vermittlungsschicht, Agent und zwei gleichzeitig betriebenen, selbst gehosteten Modellen umsetzen und bis in die immersive Zielumgebung betreiben lässt.
-Damit ist belegt, dass ein solcher Agent für diesen Anwendungsfall grundsätzlich machbar ist, wobei die Modelle auf einem Arbeitsplatzrechner und nicht auf dem Endgerät rechnen.
-Über die Machbarkeit hinaus wird kein Anspruch auf Produktreife erhoben, und der Demonstrator wurde nicht eigenständig evaluiert.
+Praktisch zeigt die Arbeit, dass sich die gesamte Kette aus 3D-Umgebung, Vermittlungsschicht, Agent und zwei gleichzeitig betriebenen, selbst gehosteten Modellen umsetzen und bis in die immersive Zielumgebung betreiben lässt, wobei die Modelle auf einem Arbeitsplatzrechner und nicht auf dem Endgerät rechnen.
+Ein Anspruch auf Produktreife ist damit nicht verbunden, und der Demonstrator wurde nicht eigenständig evaluiert.
 
 
 % ------------------------------------------------------------
 \section{Grenzen der Arbeit}
 \label{sec:zus-grenzen}
 
-Die Aussagekraft der Ergebnisse ist an mehrere Grenzen gebunden.
-Ein Teil dieser Grenzen wurde bereits in Abschnitt~\ref{sec:eval-validity} auf methodischer Ebene behandelt.
-Hier werden sie auf der Ebene der gesamten Arbeit gebündelt und danach geordnet, ob sie den Untersuchungsgegenstand, die Übertragbarkeit oder die Erklärungs- und Messtiefe betreffen.
+Die methodischen Grenzen sind in Abschnitt~\ref{sec:eval-validity} im Einzelnen behandelt; hier werden die wichtigsten für die Arbeit als Ganzes zusammengefasst.
 
-\subsection*{Grenzen des Untersuchungsgegenstands}
+Der Untersuchungsgegenstand ist bewusst eng gefasst.
+Die Operationen beschränken sich auf Erzeugen, Verschieben und Entfernen, die Befehle sind durchgehend klar formuliert, und Befehle mit mehreren Manipulationen wurden nicht systematisch untersucht.
+Dass die Grundinstruktion nur einen Manipulationsaufruf zulässt, machte E2 unwertbar, sodass sich der strukturell-exklusive Befund am Ende auf ein einziges Szenario stützt.
+Blickpunktabhängige Referenzen wurden ebenfalls nicht systematisch untersucht, weil das dafür vorgesehene Szenario C3 ausgeschlossen werden musste; das blickpunktbezogene Szenario C2 gehört zu den ungeklärten Fällen.
+Der Demonstrator belegt die Machbarkeit, liefert aber keine eigenen Erfolgsraten.
 
-Der Untersuchungsgegenstand wurde bewusst eng gefasst.
-Befehle, die mehrere Manipulationen zugleich verlangen, wurden nicht systematisch untersucht.
-Erschwerend kommt hinzu, dass die allen Varianten gemeinsame Grundinstruktion genau einen Manipulationsaufruf verlangt, während zwei Szenarien ihrem Soll-Ergebnis nach mehrere Objekte betreffen.
-Für das Szenario E2 führt dieser Widerspruch dazu, dass ein Erfolg nur durch Missachtung der Instruktion zustande kommen kann; die Zelle wurde deshalb nicht gewertet, sodass sich der strukturell-exklusive Befund am Ende auf ein einziges Szenario stützt.
-Warum das zweite betroffene Szenario allen hybriden Varianten dennoch gelingt, blieb ungeklärt.
+Die Übertragbarkeit ist auf ein lokales Modellpaar und auf synthetische, einfache Szenen begrenzt.
+Auch an die zweistufige Pipeline sind die Ergebnisse gebunden: Was hier als Konkurrenz von Struktur und Bild erscheint, ist die Konkurrenz einer exakten Datenstruktur mit einer sprachlichen Beschreibung, und für ein multimodales Modell, dem Bild und Daten unmittelbar vorliegen, gelten die Befunde nicht ohne Weiteres.
+Am stärksten begrenzt ist die Übertragbarkeit der besten Variante, die am Messset selbst entwickelt wurde.
 
-Die Menge der Operationen blieb auf das Erzeugen, Verschieben und Entfernen beschränkt, andere Operationen wie das Drehen oder Skalieren zur Laufzeit wurden nicht betrachtet.
-Die Befehle waren durchgehend klar formuliert, sodass offen bleibt, wie die Repräsentationen mit mehrdeutigen oder umgangssprachlichen Formulierungen umgehen.
-Blickpunktabhängige Referenzen wurden nicht systematisch untersucht: Das eigens dafür vorgesehene Szenario C3 musste ausgeschlossen werden, weil die achsenparallele Kameraausrichtung die Referenz mehrdeutig machte.
-Ganz ohne solche Bezüge blieb die Auswertung allerdings nicht, denn das Szenario C2 nimmt mit \enquote{nearest to the camera} auf die Position des Betrachters Bezug.
-Gerade dieses Szenario gehört zu den ungeklärten Fällen.
-
-Schließlich wurde der Demonstrator nicht systematisch evaluiert.
-Er belegt die Machbarkeit der Kette in der Zielumgebung, liefert aber keine eigenen Erfolgsraten.
-Belegt ist per Aufzeichnung zudem nur die Menüfassung, nicht die später ergänzte Spracheingabe.
-
-\subsection*{Grenzen der Übertragbarkeit}
-
-Alle Ergebnisse beruhen auf einem einzelnen lokalen Modellpaar.
-Ob sie sich auf größere oder anders gebaute Modelle übertragen lassen, wurde nicht geprüft.
-Die Szenen waren synthetisch und bewusst einfach gehalten.
-Eine Übertragung auf reale, komplexe Szenen ist damit nicht belegt, und auch das Verhalten der Repräsentationen bei wachsender Objektzahl bleibt offen.
-
-Eine besondere Grenze betrifft die beste gefundene Variante.
-Sie wurde an demselben Szenarioset entwickelt, an dem sie anschließend gemessen wurde, und ihre Instruktion nennt wörtlich zwei Wörter aus den Testbefehlen.
-Ihre Überlegenheit ist damit für dieses Szenarioset gezeigt, ihre Generalisierung auf ungesehene Formulierungen ist offen.
-Das betrifft nicht nur diese eine Variante, sondern die Reichweite der Antwort auf die zweite Forschungsfrage insgesamt.
-
-Hinzu kommt, dass die Ergebnisse architektonisch an eine zweistufige Pipeline gebunden sind.
-Das entscheidende Sprachmodell erhält kein Bild, sondern eine vom Sprach-Bild-Modell erzeugte Beschreibung.
-Was hier als Konkurrenz von Struktur und Bild erscheint, ist genauer die Konkurrenz einer exakten Datenstruktur mit einer unscharfen sprachlichen Beschreibung.
-Für ein einzelnes multimodales Modell, dem Bild und Daten unmittelbar vorliegen, sind diese Befunde nicht ohne Weiteres gültig.
-
-\subsection*{Grenzen der Erklärung und Messung}
-
-Der Mechanismus hinter der zentralen Beobachtung bleibt eine Hypothese, genauer: eine von dreien.
-Warum die naive Kombination den Zugriff auf die visuelle Beschreibung in bestimmten Fällen verliert, ließ sich nicht isolieren.
-Mit den Daten verträglich sind die Formulierung des Befehls, die visuelle Eindeutigkeit des Zielobjekts und ein Reihenfolgeeffekt bei der Objektwahl, bei dem das erstgenannte Objekt unabhängig von der Referenz gewählt wird.
-Der letzte Punkt wiegt besonders schwer, weil er nicht nur den Mechanismus, sondern den Befund selbst betrifft: Im tragenden Szenario ist das Zielobjekt das zweite von zwei Objekten, und das vollständige Scheitern der strukturellen Variante passt ebenso gut zu einer Positionspräferenz wie zu einer Verdrängung.
-Eine Messung mit vertauschter Objektreihenfolge, die zwischen beiden entscheiden würde, liegt nicht vor.
-
-Ebenso wenig getrennt sind Instruktion und Reihenfolge der Schichten im Kontext, da die hybriden Varianten beides zugleich variieren.
-
-Eine weitere Grenze liegt im Modell selbst, jedoch nicht überall dort, wo das zunächst so schien.
-Für die Aufgabe mit exakter metrischer Zielvorgabe ist die Deutung als Präzisionsgrenze tragfähig, da alle Varianten dort graduell und streuend scheitern.
-Für das Szenario mit dem kameranächsten Objekt ist sie es nicht: Ein Wert von exakt null bei gleichzeitig perfekter Lösung einer strukturell vergleichbaren Aufgabe deutet eher auf einen Fehler in Szenario, Soll-Vorgabe oder Werkzeug hin.
-Dieser Fall bleibt ungeklärt und wird nicht als Modellgrenze geführt.
-
-Mehrere Entscheidungen über den Zuschnitt der Auswertung fielen nach Sichtung der Ergebnisse, namentlich der Ausschluss eines Szenarios, die Neumessung eines zweiten und die Einstufung eines dritten als nicht wertbar.
-Alle drei sind inhaltlich begründet, waren aber nicht vorab festgelegt.
-
-Wie häufig die Selbstauskunft des Agenten vom tatsächlichen Folgezustand abwich, wurde nur qualitativ beobachtet und nicht quantifiziert.
-Für die Erfolgsmessung ist dies unerheblich, da sie ohnehin aus dem Folgezustand erfolgt, für eine genaue Charakterisierung des Modellverhaltens fehlt jedoch eine belastbare Zahl.
-
-Zur Absicherung der Ergebnisse wurden die je 30 Läufe einer Zelle zusammengefasst und mit Wilson-Konfidenzintervallen und exakten Tests nach Fisher ausgewertet.
-Diese Zahlen sichern die Unterschiede innerhalb einer Zelle ab, nicht jedoch die Frage, ob eine Zelle für ihren Referenztyp repräsentativ ist.
-Dort liegt die größere Unsicherheit, denn die zentralen Kategorien umfassen nur zwei Szenarien, nach dem Ausschluss von E2 im strukturell-exklusiven Fall sogar nur eines.
-Innerhalb einer Zelle sind die Zahlen dagegen belastbar: Das Sprachmodell wurde mit einer Temperatur von 0{,}8 dekodiert, sodass die 30 Läufe weitgehend unabhängig sind und die durchweg konstanten Zellen trotz und nicht wegen der Dekodierung zustande kamen.
-
-Drei kleinere Einschränkungen des Aufbaus seien abschließend genannt.
-Die Sichtbarkeitsprüfung arbeitet mit einem einzelnen Sichtstrahl und kennt daher keine Teilverdeckung.
-Der Schutz gegen unmittelbar wiederholte, identische Werkzeugaufrufe würde auch eine vom Befehl geforderte Wiederholung blockieren.
-Und die Erfolgstoleranz wurde für diesen Aufbau festgelegt, ohne dass geprüft wurde, wie empfindlich die metrischen Szenarien auf diese Wahl reagieren.
+Auf der Ebene der Erklärung bleibt offen, warum die naive Kombination den visuellen Zugriff in D1 verliert.
+Formulierung des Befehls, visuelle Eindeutigkeit und ein Reihenfolgeeffekt sind gleichermaßen mit den Daten verträglich, und der Reihenfolgeeffekt betrifft nicht nur den Mechanismus, sondern den Befund selbst.
+Ebenso wenig getrennt sind Instruktion und Reihenfolge der Schichten.
+Mehrere Entscheidungen über den Zuschnitt der Auswertung fielen nach Sichtung der Ergebnisse, waren inhaltlich begründet, aber nicht vorab festgelegt.
+Die statistischen Tests sichern die Unterschiede innerhalb einer Zelle ab, nicht jedoch, ob eine Zelle für ihren Referenztyp repräsentativ ist, und gerade die zentralen Kategorien sind schmal besetzt.
+Hinzu kommen kleinere Einschränkungen des Aufbaus wie die fehlende Teilverdeckung im Sichtbarkeitstest, der grobe Schutz gegen identische Wiederholungen und die nicht auf Empfindlichkeit geprüfte Toleranz.
 
 
 % ------------------------------------------------------------
 \section{Ausblick}
 \label{sec:zus-ausblick}
 
-Aus der Arbeit ergeben sich mehrere Ansatzpunkte für weitere Untersuchungen.
-Sie folgen demselben roten Faden und lassen sich in unmittelbare Fortführungen, wissenschaftliche Vertiefungen und eine Anwendungsperspektive gliedern.
+Am dringlichsten ist zu prüfen, ob die kompetenzgetrennte Variante ihren Vorteil auch außerhalb des Szenariosets behält, an dem sie entwickelt wurde.
+Dafür bieten sich zwei einander ergänzende Prüfungen an.
+Die erste ist eine Messung an neuen Szenarien, insbesondere mit anderen perzeptuellen Eigenschaften als einem Streifenmuster und mit anderer sprachlicher Formulierung derselben Referenz.
+Die zweite ist eine Fassung der Instruktion ohne szenariospezifische Wörter, also ohne \enquote{striped} und \enquote{most salient}, die die Trennung der Zuständigkeiten rein abstrakt formuliert.
+Erst wenn eine so formulierte Instruktion auf ungesehenen Szenarien denselben Vorteil zeigt, ließe sich von einem übertragbaren Gestaltungsprinzip sprechen statt von einer Formulierung, die für diesen Testsatz funktioniert.
 
-Die dringlichste Fortführung betrifft die Frage, ob die beste gefundene Variante ihren Vorteil auch außerhalb des Szenariosets behält, an dem sie entwickelt wurde.
-Zwei Prüfungen bieten sich dafür an, und sie ergänzen einander.
-Die erste ist eine Messung an neuen, zuvor ungesehenen Szenarien, insbesondere mit anderen perzeptuellen Eigenschaften als einem Streifenmuster und mit anderer sprachlicher Formulierung derselben Referenz.
-Die zweite ist eine Variante der Instruktion, die keine szenariospezifischen Wörter mehr enthält, also ohne \enquote{striped} und \enquote{most salient} auskommt und die Zuständigkeitstrennung rein abstrakt formuliert.
-Erst wenn eine so formulierte Instruktion auf ungesehenen Szenarien denselben Vorteil zeigt, ließe sich von einem übertragbaren Gestaltungsprinzip sprechen statt von einer für diesen Testsatz wirksamen Formulierung.
-
-Unabhängig von der inhaltlichen Ausrichtung sollte eine Wiederholung mehr mitschreiben als diese Arbeit.
-Die abgesetzten Werkzeugaufrufe mit ihren Argumenten und die erreichten Endpositionen kosten keinen zusätzlichen Messaufwand, hätten hier aber mehrere offene Deutungen entschieden, etwa ob die metrischen Szenarien knapp oder grundsätzlich scheitern und welches Objekt der Agent in den ungeklärten Fällen tatsächlich gewählt hat.
-
-Ebenso vorrangig ist eine Messung, die den in der Kategorie D verbliebenen Reihenfolgeeffekt ausschließt.
-Es genügte, die tragenden Szenarien mit vertauschter Objektreihenfolge zu wiederholen und zusätzlich die Reihenfolge der beiden Schichten im Kontext unabhängig von der Instruktion zu variieren.
+Ebenso vorrangig ist eine Messung, die den Reihenfolgeeffekt in Kategorie D ausschließt.
+Dazu genügt es, die tragenden Szenarien mit vertauschter Objektreihenfolge zu wiederholen und die Reihenfolge der beiden Schichten im Kontext unabhängig von der Instruktion zu variieren.
 Beides ist ohne neuen Aufbau möglich und würde die zentrale Deutung der Arbeit entweder absichern oder korrigieren.
+Bei jeder Wiederholung sollten außerdem die Werkzeugaufrufe mit ihren Argumenten und die erreichten Endpositionen protokolliert werden.
+Das kostet keinen zusätzlichen Messaufwand und hätte hier mehrere offene Fragen beantwortet, etwa ob die metrischen Szenarien knapp oder grundsätzlich scheitern und welches Objekt der Agent in den ungeklärten Fällen gewählt hat.
 
-Eine weitere Fortführung betrifft die Effizienz.
-Der Abruf der visuellen Schicht ist erkennbar langsamer als der des strukturellen Zustands, da er einen zusätzlichen Inferenzschritt des Sprach-Bild-Modells erfordert.
-Wie groß dieser Unterschied ausfällt, wurde in dieser Arbeit nicht gemessen, sodass über seine Größenordnung nichts ausgesagt werden kann.
-Eine systematische Erhebung von Latenz, Schrittzahl und Rechenaufwand würde den bislang nur qualitativ bekannten Trade-off zwischen den Repräsentationen belastbar machen und ist gerade für eine interaktive immersive Anwendung von Bedeutung.
-Ebenso naheliegend ist die Untersuchung der Szenenkomplexität.
-Mit wachsender Objektzahl dürfte insbesondere die visuelle Schicht an Grenzen stoßen, da die Markierung vieler Objekte unübersichtlich wird.
-Weiterhin ließe sich die Menge der Operationen erweitern, etwa um Drehungen und Skalierungen sowie um Befehle, die mehrere Manipulationen zugleich verlangen, deren eigene Schwierigkeit sich in dieser Arbeit bereits angedeutet hat.
-Schließlich sind blickpunktabhängige Referenzen zu nennen, die sich auf die Sicht des Betrachters beziehen und gerade für immersive Umgebungen charakteristisch sind.
-Dass solche observer-zentrischen Bezüge ohne einen expliziten Blickpunkt mehrdeutig sind und von einer ausdrücklichen Repräsentation des Blickwinkels profitieren, zeigt sich in jüngeren Arbeiten zur blickpunktabhängigen Segmentierung~\cite{nanri2026}.
-Eine saubere Behandlung dieses Referenztyps wäre eine lohnende Erweiterung der hier verwendeten Taxonomie.
+Weitere Fortführungen betreffen Effizienz und Umfang.
+Der Abruf der visuellen Schicht ist erkennbar langsamer als der des strukturellen Zustands, weil er einen zusätzlichen Inferenzschritt des Sprach-Bild-Modells erfordert.
+Wie groß der Unterschied ist, wurde nicht gemessen; eine systematische Erhebung von Latenz, Schrittzahl und Rechenaufwand würde diesen bislang nur qualitativ bekannten Trade-off greifbar machen und wäre gerade für eine interaktive immersive Anwendung wichtig.
+Mit wachsender Objektzahl dürfte vor allem die visuelle Schicht an Grenzen stoßen, weil die Markierung vieler Objekte unübersichtlich wird.
+Die Menge der Operationen ließe sich um Drehungen und Skalierungen erweitern sowie um Befehle mit mehreren Manipulationen, deren eigene Schwierigkeit sich hier bereits angedeutet hat.
+Schließlich sind blickpunktabhängige Referenzen zu nennen, die sich auf die Sicht des Betrachters beziehen und für immersive Umgebungen typisch sind.
+Jüngere Arbeiten zur blickpunktabhängigen Segmentierung zeigen, dass solche Bezüge ohne expliziten Blickpunkt mehrdeutig sind und von einer ausdrücklichen Repräsentation des Blickwinkels profitieren~\cite{nanri2026}; eine saubere Behandlung dieses Referenztyps wäre eine lohnende Erweiterung der Taxonomie.
 
-Auf wissenschaftlicher Ebene bieten sich zwei Vertiefungen an.
-Zum einen ließe sich prüfen, ob die gefundenen Kompetenzprofile und die Grenzen der naiven Kombination auch für größere oder anders gebaute Modelle gelten, oder ob eine größere Modellkapazität den beobachteten Bruch von selbst auflöst.
-Zum anderen könnte ein gezieltes Experiment die drei offenen Erklärungen voneinander trennen, indem es die Formulierung des Befehls, die visuelle Eindeutigkeit des Zielobjekts und die Reihenfolge der Objekte unabhängig voneinander variiert.
-Erst ein solcher Aufbau könnte aus der bislang offenen Deutung einen belegten Mechanismus machen.
-Aufschlussreich wäre schließlich ein Vergleich der zweistufigen Pipeline mit einem einzelnen multimodalen Modell, dem Bild und strukturelle Daten unmittelbar vorliegen; er würde zeigen, ob der hier beobachtete Effekt an der Architektur der Pipeline hängt oder unabhängig von ihr auftritt.
-Darüber hinaus stellt sich die Frage, ob das Prinzip der Kompetenztrennung über die Szenenmanipulation hinaus auf andere multimodale Aufgaben übertragbar ist.
+Wissenschaftlich ließe sich prüfen, ob die Kompetenzprofile und die Grenzen der naiven Kombination auch für größere oder anders gebaute Modelle gelten oder ob größere Modellkapazität den beobachteten Bruch von selbst auflöst.
+Ein gezieltes Experiment könnte die drei offenen Erklärungen trennen, indem es Formulierung, visuelle Eindeutigkeit und Objektreihenfolge unabhängig voneinander variiert und so aus der offenen Deutung einen belegten Mechanismus macht.
+Aufschlussreich wäre auch ein Vergleich der zweistufigen Pipeline mit einem einzelnen multimodalen Modell, dem Bild und strukturelle Daten unmittelbar vorliegen; er würde zeigen, ob der beobachtete Effekt an der Pipeline hängt.
+Offen ist zudem, ob sich das Prinzip der Kompetenztrennung auf andere multimodale Aufgaben übertragen lässt.
 
-Aus Anwendungssicht bleibt eine Erprobung mit echten Nutzern offen.
-Die vorliegende Bewertung ist rein systembasiert.
-Eine qualitative Nutzerstudie im Demonstrator könnte zeigen, wie Menschen die sprachgesteuerte Manipulation in der immersiven Umgebung tatsächlich erleben, und wäre ein eigenständiger nächster Schritt über diese Arbeit hinaus.
+Aus Anwendungssicht fehlt eine Erprobung mit echten Nutzern.
+Die vorliegende Bewertung ist rein systembasiert, und eine qualitative Nutzerstudie im Demonstrator könnte zeigen, wie Menschen die sprachgesteuerte Manipulation in der immersiven Umgebung tatsächlich erleben.

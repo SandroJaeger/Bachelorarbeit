@@ -1,12 +1,5 @@
 % ============================================================
-% KAPITEL 1 — EINLEITUNG  (Gesamtstand, erweitert)
-% ------------------------------------------------------------
-% ZIELDATEI: content/1_einleitung.tex
-% BENOETIGTE PAKETE: csquotes (geladen)
-% STAND: 1.1 Motivation/Problemstellung | 1.2 Relevanz |
-%        1.3 Zielsetzung + Forschungsfragen (RQ-Bloecke) |
-%        1.4 Methodisches Vorgehen (NEU) | 1.5 Aufbau (erzaehlend) -> AUSFORMULIERT
-% Prinzip: offene Frage vorne (kein Ergebnis vorwegnehmen).
+% KAPITEL 1 — EINLEITUNG
 % ============================================================
 
 \chapter{Einleitung}
@@ -17,60 +10,52 @@
 \label{sec:ein-motivation}
 
 Ein Nutzer steht in einer virtuellen Szene und sagt einen einfachen Satz: Heb den gestreiften Würfel an.
-Für einen Menschen ist die Aufgabe trivial.
-Für einen KI-Agenten beginnt hier das eigentliche Problem.
-Bevor er den Würfel anheben kann, muss er die Szene verstehen, und dazu muss ihm die Szene in einer Form vorliegen, die er verarbeiten kann.
+Für einen Menschen ist das trivial.
+Ein KI-Agent muss dafür zuerst wissen, wie die Szene aussieht, und diese Information muss ihm in einer Form vorliegen, die er verarbeiten kann.
 
-Für diese Form gibt es zwei grundverschiedene Wege.
-Der eine Weg beschreibt die Szene strukturell, als exakte Daten über Objekte, ihre Typen, Positionen und Größen.
-Der andere Weg beschreibt die Szene visuell, als gerendertes Bild, das ein visuelles Modell interpretiert.
-Beide Wege haben offensichtliche Stärken und ebenso offensichtliche blinde Flecken.
-Die strukturellen Daten kennen jede Koordinate, aber nicht das Aussehen eines Objekts.
-Das Bild zeigt das Aussehen, aber keine exakten Zahlen.
+Grundsätzlich gibt es dafür zwei Wege.
+Die Szene lässt sich strukturell beschreiben, als exakte Daten über Objekte, ihre Typen, Positionen und Größen, oder visuell, als gerendertes Bild, das ein visuelles Modell interpretiert.
+Die strukturellen Daten kennen jede Koordinate, sagen über das Aussehen eines Objekts aber nichts.
+Das Bild zeigt das Aussehen, enthält aber keine exakten Zahlen.
 
-Der gestreifte Würfel aus dem Beispiel macht den ersten blinden Fleck sichtbar.
-Er lässt sich nur über das Bild bestimmen, denn das Streifenmuster steht in keinen strukturellen Daten.
-Der umgekehrte Fall ist ebenso denkbar.
-Ein Objekt, das hinter einem anderen verborgen ist, erscheint im Bild überhaupt nicht, bleibt in den strukturellen Daten aber vollständig verzeichnet.
-Ein Befehl, der sich auf ein solches verdecktes Objekt bezieht, lässt sich nur über die strukturelle Schicht auflösen.
-Beide Wege haben also nicht nur unterschiedliche Stärken, sondern jeweils einen Bereich, den der andere Weg grundsätzlich nicht abdeckt.
+Am gestreiften Würfel aus dem Beispiel wird die erste Lücke sichtbar: Das Streifenmuster steht in keinen strukturellen Daten, der Würfel lässt sich also nur über das Bild bestimmen.
+Umgekehrt taucht ein Objekt, das hinter einem anderen steht, im Bild gar nicht auf, ist in den strukturellen Daten aber vollständig verzeichnet.
+Ein Befehl, der sich auf ein solches Objekt bezieht, lässt sich nur über die Struktur auflösen.
+Jeder der beiden Wege deckt damit einen Bereich ab, zu dem der andere grundsätzlich keinen Zugang hat.
 
-Damit stellt sich eine Frage, die am Anfang jedes solchen Systems steht und bisher ohne empirische Grundlage beantwortet werden musste.
-In welcher Form sollte einem lokal betriebenen Agenten eine Szene bereitgestellt werden, und lässt sich eine Kombination beider Wege so gestalten, dass sie die Stärken beider vereint?
-Gerade in immersiven Umgebungen, in denen ein Nutzer über natürliche Sprache mit einer Szene interagiert, ist diese Frage praktisch bedeutsam.
-Und gerade für lokal betreibbare Modelle, die aus Gründen des Datenschutzes, der Latenz und der Offline-Fähigkeit in solchen Umgebungen naheliegen, fehlt ein systematischer Vergleich dieser Wege.
+Wer einen solchen Agenten baut, muss deshalb früh entscheiden, in welcher Form er ihm die Szene bereitstellt und ob sich beide Wege so kombinieren lassen, dass ihre Stärken zusammenkommen.
+Bisher gibt es für diese Entscheidung keine empirische Grundlage.
+Praktisch wichtig ist die Frage vor allem in immersiven Umgebungen, in denen Nutzer per Sprache mit einer Szene interagieren.
+Dort liegen lokal betreibbare Modelle aus Gründen des Datenschutzes, der Latenz und der Offline-Fähigkeit nahe, und gerade für solche Modelle fehlt ein systematischer Vergleich der beiden Wege.
 
-Der Begriff \emph{lokal} wird in dieser Arbeit durchgängig in einem festgelegten Sinn verwendet und sei hier einmal definiert.
-Lokal heißt: selbst gehostet auf eigener Hardware, ohne Nutzung eines Cloud-Dienstes, sodass keine Szenen- oder Sprachdaten das eigene Netz verlassen.
-Lokal heißt ausdrücklich nicht, dass die Modelle auf dem Endgerät selbst rechnen.
-Sowohl in der Messung als auch im Demonstrator laufen sie auf einem Arbeitsplatzrechner; die Brille erreicht diesen im Demonstrator über eine Netzverbindung innerhalb des Institutsnetzes (Abschnitt~\ref{sec:impl-demonstrator}).
+Der Begriff \emph{lokal} wird in dieser Arbeit durchgängig in einem festen Sinn verwendet: selbst gehostet auf eigener Hardware, ohne Cloud-Dienst, sodass keine Szenen- oder Sprachdaten das eigene Netz verlassen.
+Er bedeutet nicht, dass die Modelle auf dem Endgerät selbst rechnen.
+In der Messung wie im Demonstrator laufen sie auf einem Arbeitsplatzrechner; die Brille erreicht diesen im Demonstrator über eine Netzverbindung innerhalb des Institutsnetzes (Abschnitt~\ref{sec:impl-demonstrator}).
 
 
 % ------------------------------------------------------------
 \section{Relevanz}
 \label{sec:ein-relevanz}
 
-Die Wahl der Repräsentationsform ist keine technische Nebensache.
-Sie entscheidet mit darüber, welche sprachlichen Anweisungen ein Agent überhaupt zuverlässig umsetzen kann.
-Eine Repräsentation, die eine ganze Klasse von Referenzen nicht abbildet, lässt die zugehörigen Befehle scheitern, unabhängig davon, wie gut der Agent im Übrigen arbeitet.
+Von der Repräsentationsform hängt ab, welche sprachlichen Anweisungen ein Agent überhaupt zuverlässig umsetzen kann.
+Bildet eine Repräsentation eine ganze Klasse von Referenzen nicht ab, scheitern die zugehörigen Befehle, ganz gleich, wie gut der Agent im Übrigen arbeitet.
 
-Bei großen, cloudbasierten Modellen lässt sich eine schwache Repräsentation teilweise durch schiere Modellgröße ausgleichen.
-Bei lokal betreibbaren Modellen geringer Größe entfällt dieser Ausgleich.
-Hier wird die Repräsentation zum eigentlichen Hebel für den Erfolg.
-Wer ein solches System entwirft, trifft die Entscheidung über die Repräsentationsform früh und mit weitreichenden Folgen, bislang jedoch ohne belastbare Grundlage.
+Große, cloudbasierte Modelle können eine schwache Repräsentation zum Teil durch ihre schiere Größe ausgleichen.
+Bei kleinen, lokal betriebenen Modellen fällt dieser Ausgleich weg, und die Repräsentation wird zum entscheidenden Hebel.
+Die Entscheidung über sie fällt früh im Entwurf, hat weitreichende Folgen und wird bislang ohne belastbare Grundlage getroffen.
 Diese Grundlage zu schaffen, ist das praktische Anliegen der Arbeit.
 
-Über den praktischen Nutzen hinaus berührt die Frage ein allgemeineres Problem.
-Wie sich strukturierte und visuelle Information in einem Agenten verbinden lassen, betrifft jede Anwendung, die beide Arten von Information kombiniert.
-Ob eine solche Kombination ihre Bestandteile ergänzt oder ob eine Informationsart die andere verdrängt, ist eine offene Frage mit Bedeutung über den hier untersuchten Fall hinaus~\cite{deng2025, wu2025}.
+Daneben berührt die Frage ein allgemeineres Problem.
+Jede Anwendung, die strukturierte und visuelle Information in einem Agenten zusammenführt, muss damit umgehen, dass sich beide Informationsarten ergänzen, aber auch gegenseitig verdrängen können.
+Welcher Fall eintritt, ist auch über den hier untersuchten Anwendungsfall hinaus offen~\cite{deng2025, wu2025}.
 
 
 % ------------------------------------------------------------
 \section{Zielsetzung und Forschungsfragen}
 \label{sec:ein-ziele}
 
-Das zentrale Ziel der Arbeit ist eine empirisch fundierte Erkenntnis darüber, welche Repräsentationsform einen lokal betriebenen Agenten bei der natürlichsprachlichen Szenenmanipulation am zuverlässigsten unterstützt.
-Die Arbeit verfolgt dieses Ziel anhand zweier Forschungsfragen.
+Ziel der Arbeit ist es, empirisch zu bestimmen, welche Repräsentationsform einen lokal betriebenen Agenten bei der natürlichsprachlichen Szenenmanipulation am zuverlässigsten unterstützt.
+Dazu dienen zwei Forschungsfragen.
 
 \begin{quote}
 \textbf{Forschungsfrage~1 (RQ1).}
@@ -81,42 +66,40 @@ Welchen Einfluss hat die Form der Szenenrepräsentation, strukturell, visuell od
 Lässt sich das Zusammenspiel der strukturellen und der visuellen Schicht allein durch die Gestaltung der Instruktion so steuern, dass die hybride Repräsentation die Stärken beider Schichten vereint?
 \end{quote}
 
-Der Ausführungserfolg ist dabei die einzige Zielgröße der Arbeit.
-Er wird binär je Lauf aus dem tatsächlichen Szenenzustand bestimmt und umfasst zwei Bedingungen, die beide erfüllt sein müssen: Es muss das gemeinte Objekt betroffen sein, und das geforderte Ergebnis muss eintreten, bei Positionsaufgaben innerhalb einer festen Toleranz.
-Ein separat berichteter, kontinuierlicher Lagefehler ist nicht Teil der Zielgröße; Abschnitt~\ref{sec:eval-metrics} legt das Maß im Einzelnen fest.
+Einzige Zielgröße ist der Ausführungserfolg.
+Er wird je Lauf binär aus dem tatsächlichen Szenenzustand bestimmt und setzt zweierlei voraus: Das gemeinte Objekt muss betroffen sein, und das geforderte Ergebnis muss eintreten, bei Positionsaufgaben innerhalb einer festen Toleranz.
+Ein kontinuierlicher Lagefehler gehört nicht zur Zielgröße und wird nicht berichtet; Abschnitt~\ref{sec:eval-metrics} legt das Maß im Einzelnen fest.
 
-Über diese beiden Fragen hinaus entsteht ein Demonstrator, der die auf dem untersuchten Szenarioset als am zuverlässigsten ermittelte Variante in die immersive Zielumgebung überträgt.
-Er beantwortet keine eigene Forschungsfrage und wird nicht eigenständig evaluiert, sondern dient dem Nachweis der praktischen Machbarkeit.
+Zusätzlich entsteht ein Demonstrator, der die auf dem untersuchten Szenarioset zuverlässigste Variante in die immersive Zielumgebung überträgt.
+Er beantwortet keine eigene Forschungsfrage, wird nicht eigenständig evaluiert und soll lediglich die praktische Machbarkeit zeigen.
 
-Die Arbeit grenzt ihren Anspruch bewusst ab.
-Sie beansprucht keine Generalisierung auf andere Modelle oder auf reale, komplexe Szenen, keine global optimale Lösung und keine Produktreife des Demonstrators.
+Der Anspruch der Arbeit ist bewusst begrenzt.
+Sie beansprucht weder eine Generalisierung auf andere Modelle oder auf reale, komplexe Szenen noch eine global optimale Lösung oder einen produktreifen Demonstrator.
 Die Ergebnisse gelten für ein lokales Modellpaar in kontrolliert aufgebauten Szenen.
-Die gesamte Messung fand am Desktop statt; die immersive Umgebung ist Zielumgebung des Demonstrators, nicht Gegenstand der Messung.
+Gemessen wurde ausschließlich am Desktop; die immersive Umgebung ist Zielumgebung des Demonstrators, nicht Gegenstand der Messung.
 
 
 % ------------------------------------------------------------
 \section{Methodisches Vorgehen}
 \label{sec:ein-vorgehen}
 
-Zur Beantwortung der Forschungsfragen verfolgt die Arbeit einen empirischen Ansatz.
+Die Arbeit geht empirisch vor.
 Grundlage ist ein prototypisches System, das dieselbe Szene in den drei zu vergleichenden Repräsentationsformen bereitstellt und über ein gemeinsames Interface manipulierbar macht.
-Auf dieser Grundlage werden die Formen unter gleichen Bedingungen an einer Reihe kontrolliert aufgebauter Szenarien gegeneinander gemessen.
-Der Erfolg jeder Manipulation wird dabei aus dem tatsächlichen Zustand der Szene bestimmt und nicht aus der Selbstauskunft des Agenten, und jede Messung wird wiederholt, um belastbare von zufälligen Unterschieden trennen zu können.
+Mit diesem System werden die Formen unter gleichen Bedingungen an kontrolliert aufgebauten Szenarien gegeneinander gemessen.
+Ob eine Manipulation gelungen ist, wird aus dem tatsächlichen Zustand der Szene bestimmt und nicht aus der Selbstauskunft des Agenten, und jede Messung wird wiederholt, um zufällige von belastbaren Unterschieden zu trennen.
 
-Aus diesem Vorgehen ergeben sich drei Beiträge, die in Abschnitt~\ref{sec:zus-beitrag} wieder aufgegriffen und in ihrer Reichweite eingeordnet werden.
-Der erste Beitrag ist inhaltlicher Art: der Befund, dass die Verbindung struktureller und visueller Information kein Automatismus ist, sondern ein Gestaltungsproblem, an einem kontrollierten Fall gezeigt.
-Der zweite Beitrag ist methodischer Art: eine nach der Art der sprachlichen Referenz aufgeschlüsselte Betrachtung, die den Erfolg getrennt nach Referenztypen misst und so exklusive Zuständigkeiten sichtbar macht, die ein pauschaler Vergleich verdeckt.
-Der dritte Beitrag ist praktischer Art: ein lauffähiger Demonstrator, der die gesamte Kette bis in die immersive Zielumgebung überträgt und deren Machbarkeit belegt.
+Daraus ergeben sich drei Beiträge, die Abschnitt~\ref{sec:zus-beitrag} wieder aufgreift und in ihrer Reichweite einordnet.
+Inhaltlich zeigt die Arbeit an einem kontrollierten Fall, dass sich strukturelle und visuelle Information nicht von selbst ergänzen und ihre Verbindung gestaltet werden muss.
+Methodisch führt sie eine nach Referenztypen aufgeschlüsselte Auswertung ein, die exklusive Zuständigkeiten der Repräsentationen sichtbar macht, die ein pauschaler Vergleich verdecken würde.
+Praktisch liefert sie einen lauffähigen Demonstrator, der die gesamte Kette bis in die immersive Zielumgebung überträgt.
 
 
 % ------------------------------------------------------------
 \section{Aufbau der Arbeit}
 \label{sec:ein-aufbau}
 
-Der Aufbau der Arbeit zeichnet den Weg von der offenen Frage zur belastbaren Antwort nach.
-Kapitel~\ref{ch:grundlagen} legt die begrifflichen Grundlagen und ordnet die Arbeit in den Stand der Technik ein, um die Forschungslücke genau zu bestimmen, die sie schließt.
-Aus dieser Lücke leitet Kapitel~\ref{ch:anforderungen} ab, was ein System leisten muss, damit sich die Frage überhaupt beantworten lässt.
-Kapitel~\ref{ch:konzept} entwickelt daraus das Lösungskonzept, insbesondere den Entwurfsraum der drei Repräsentationsformen und die Entscheidungen, die einen fairen Vergleich ermöglichen.
-Wie dieses Konzept in ein lauffähiges System übersetzt wird, beschreibt Kapitel~\ref{ch:implementierung}.
-Kapitel~\ref{ch:evaluation} führt den Vergleich durch und berichtet die Ergebnisse zu beiden Forschungsfragen.
-Kapitel~\ref{ch:zusammenfassung} fasst die Erkenntnisse zusammen, ordnet ihre Grenzen ein und zeigt, welche Fragen offen bleiben.
+Kapitel~\ref{ch:grundlagen} führt die begrifflichen Grundlagen ein, ordnet die Arbeit in den Stand der Technik ein und bestimmt die Forschungslücke.
+Kapitel~\ref{ch:anforderungen} leitet daraus ab, was ein System leisten muss, um die Forschungsfragen beantworten zu können.
+Kapitel~\ref{ch:konzept} entwickelt das Lösungskonzept, insbesondere den Entwurfsraum der drei Repräsentationsformen und die Entscheidungen, die einen fairen Vergleich ermöglichen.
+Kapitel~\ref{ch:implementierung} beschreibt die technische Umsetzung, Kapitel~\ref{ch:evaluation} den Vergleich und seine Ergebnisse zu beiden Forschungsfragen.
+Kapitel~\ref{ch:zusammenfassung} fasst die Erkenntnisse zusammen, ordnet ihre Grenzen ein und nennt offene Fragen.
