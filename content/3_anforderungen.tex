@@ -5,27 +5,27 @@
 \chapter{Anforderungen}
 \label{ch:anforderungen}
 
-Die Anforderungen an das System stammen nicht aus einem vorgegebenen Lastenheft, sondern aus dem wissenschaftlichen Ziel der Arbeit und den Bedingungen, unter denen sie entstanden ist.
-Das Kapitel legt zunächst diese Quellen offen, beschreibt dann die funktionalen und nicht-funktionalen Anforderungen und die Zielkonflikte zwischen ihnen und grenzt zuletzt ab, was bewusst nicht gefordert ist.
+Die Anforderungen an das System stammen nicht aus einem vorgegebenen Lastenheft, sondern ergeben sich aus dem wissenschaftlichen Ziel der Arbeit und den Bedingungen, unter denen sie entstanden ist.
+In diesem Kapitel werden zunächst die Quellen der Anforderungen benannt.
+Danach folgen die funktionalen und nicht-funktionalen Anforderungen sowie die Zielkonflikte zwischen ihnen, und zuletzt wird abgegrenzt, was bewusst nicht gefordert ist.
 
 
 % ------------------------------------------------------------
 \section{Herleitung der Anforderungen}
 \label{sec:anf-herleitung}
 
-Da die Arbeit kein Auftragsprojekt mit externem Auftraggeber ist, gibt es keinen klassischen Anforderungskatalog, und auch mit der Betreuung wurden keine formalen Anforderungen im Einzelnen festgelegt.
+Da die Arbeit kein Auftragsprojekt mit externem Auftraggeber ist, gibt es keinen klassischen Anforderungskatalog.
+Auch mit der Betreuung wurden keine formalen Anforderungen im Einzelnen festgelegt.
 Die Anforderungen werden deshalb aus vier Quellen abgeleitet.
 
-Den Ausgangspunkt bilden die Forschungsfragen.
-Das System soll den Einfluss der Repräsentationsform auf die natürlichsprachliche Szenenmanipulation messbar machen und muss dazu mehrere Repräsentationsformen bereitstellen und unter fairen Bedingungen vergleichbar machen.
-Hinzu kommt die Zielumgebung.
-Die Arbeit ist auf eine immersive Anwendung ausgerichtet, in der Datenschutz, geringe Latenz und Unabhängigkeit von einer Netzverbindung zählen.
-Das legt lokal betriebene Modelle nahe und verlangt, dass sich die Verarbeitungskette bis in die Brille übertragen lässt.
+Das System soll in erster Linie den Einfluss der Repräsentationsform auf die natürlichsprachliche Szenenmanipulation messbar machen.
+Aus den Forschungsfragen folgt deshalb, dass es mehrere Repräsentationsformen bereitstellen muss, die sich unter fairen Bedingungen vergleichen lassen.
+Die immersive Zielumgebung, in der Datenschutz, geringe Latenz und die Unabhängigkeit von einer Netzverbindung zählen, spricht für lokale Modelle und verlangt, dass sich die Verarbeitungskette bis in die Brille übertragen lässt.
 
-Aus der wissenschaftlichen Methodik folgt, dass die Messungen reproduzierbar und die Erfolgsbewertung objektiv sein müssen, was sich auf die Kontrolle der Szenen und die Art der Erfolgsmessung auswirkt.
-Schließlich ist die Hardware vorgegeben.
-Zur Verfügung stand ein vom Institut bereitgestellter Arbeitsplatzrechner mit einer einzelnen Grafikkarte.
-Diese Ausstattung war eine feste Randbedingung und keine Entwurfsentscheidung; sie begrenzt die Größe der einsetzbaren Modelle und prägt damit mehrere der folgenden Anforderungen.
+Damit die Ergebnisse belastbar sind, müssen die Messungen reproduzierbar und die Erfolgsbewertung objektiv sein.
+Das betrifft vor allem die Kontrolle der Szenen und die Art, wie Erfolg gemessen wird.
+Als feste Randbedingung kam die Hardware hinzu.
+Für die Arbeit stand ein vom Institut bereitgestellter Arbeitsplatzrechner mit einer einzelnen Grafikkarte zur Verfügung, der die Größe der einsetzbaren Modelle begrenzt und damit mehrere der folgenden Anforderungen prägt.
 
 
 % ------------------------------------------------------------
@@ -34,18 +34,20 @@ Diese Ausstattung war eine feste Randbedingung und keine Entwurfsentscheidung; s
 
 Zunächst muss das System einen natürlichsprachlichen Befehl entgegennehmen und in eine Veränderung der Szene umsetzen.
 Die Operationen beschränken sich dabei auf das Erzeugen, Verschieben und Entfernen von Objekten.
-Mit diesen wenigen Operationen lassen sich bereits alle für die Untersuchung nötigen Arten von Referenzen abdecken, ohne den Funktionsumfang unnötig auszuweiten.
+Diese Beschränkung ist bewusst gewählt, da sich bereits mit diesen wenigen Operationen alle für die Untersuchung nötigen Arten von Referenzen abdecken lassen.
 
-Kern der Untersuchung ist, dass das System die Szene in den drei zu vergleichenden Repräsentationsformen bereitstellt, also strukturell, visuell und hybrid.
-Damit der Vergleich fair bleibt, müssen alle Varianten Objekte über dasselbe Interface ansprechen, also über ein gemeinsames Kennungssystem.
-Warum das für die Fairness wesentlich ist, begründet Abschnitt~\ref{sec:konz-fairness} zusammen mit den übrigen Entwurfsentscheidungen.
+Die zentrale Anforderung ist, dass das System die Szene in den drei zu vergleichenden Repräsentationsformen bereitstellt, also strukturell, visuell und hybrid.
+Damit der Vergleich dabei fair bleibt, müssen alle Varianten Objekte über dasselbe Interface ansprechen, d.\,h. über ein gemeinsames Kennungssystem.
+Warum das für die Fairness so wichtig ist, wird in Abschnitt~\ref{sec:konz-fairness} zusammen mit den übrigen Entwurfsentscheidungen begründet.
 
-Der Erfolg einer Manipulation muss objektiv bestimmbar sein.
-Dazu muss das System den tatsächlichen Zustand der Szene nach einer Manipulation auslesen können, sodass sich der Erfolg unabhängig von der Selbstauskunft des Agenten ermitteln lässt.
-Hintergrund ist die Beobachtung, dass ein kleines Modell einen Erfolg melden kann, den es nicht erreicht hat; eine Messung anhand seiner eigenen Antwort wäre damit unzuverlässig.
-Außerdem muss sich jedes Testszenario reproduzierbar aufbauen und zurücksetzen lassen, damit Messungen unter identischen Bedingungen wiederholbar sind.
+Der Erfolg einer Manipulation muss sich objektiv bestimmen lassen.
+Hierfür muss das System den tatsächlichen Zustand der Szene nach einer Manipulation auslesen können, sodass der Erfolg unabhängig von der Rückmeldung des Agenten ermittelt werden kann.
+Das ist notwendig, da ein kleines Modell durchaus einen Erfolg melden kann, den es gar nicht erreicht hat.
+Eine Messung anhand seiner eigenen Antwort wäre dann unzuverlässig.
+Damit Messungen unter identischen Bedingungen wiederholt werden können, muss sich jedes Testszenario reproduzierbar aufbauen und zurücksetzen lassen.
 
-Tabelle~\ref{tab:fa} fasst die funktionalen Anforderungen zusammen; die Spalte Herkunft gibt an, ob eine Anforderung aus den Forschungsfragen oder aus methodischen Gründen folgt.
+Tabelle~\ref{tab:fa} fasst die funktionalen Anforderungen zusammen.
+Die Spalte Herkunft gibt an, ob eine Anforderung aus den Forschungsfragen oder aus methodischen Gründen folgt.
 
 \begin{table}[htbp]
   \centering
@@ -72,16 +74,15 @@ Tabelle~\ref{tab:fa} fasst die funktionalen Anforderungen zusammen; die Spalte H
 \section{Nicht-funktionale Anforderungen}
 \label{sec:anf-nichtfunktional}
 
-Die nicht-funktionalen Anforderungen betreffen Eigenschaften und Randbedingungen des Systems als Ganzes.
+Die nicht-funktionalen Anforderungen betreffen keine einzelnen Funktionen, sondern Eigenschaften und Randbedingungen des Systems als Ganzes.
 
-Aus der Zielumgebung folgt, dass die Modelle lokal betrieben werden, im Sinne der Definition aus Abschnitt~\ref{sec:ein-motivation}: selbst gehostet auf eigener Hardware und ohne Cloud-Dienst, aber nicht notwendigerweise auf dem Endgerät.
-Damit verbunden ist die Beschränkung auf die vorgegebene Hardware.
-Das System muss mit dem Grafikspeicher einer einzelnen Karte auskommen, und zwar so, dass Sprachmodell und visuelles Modell gleichzeitig im Speicher gehalten werden können.
-Das legt die Wahl auf Modelle geringer Größe fest.
+Aus der Zielumgebung folgt der lokale Betrieb der Modelle.
+Da dafür nur die vorgegebene Hardware zur Verfügung steht, muss das System mit dem Grafikspeicher einer einzelnen Karte auskommen, und zwar so, dass Sprachmodell und visuelles Modell gleichzeitig im Speicher liegen.
+Infrage kommen damit nur kleine Modelle.
 
-Damit die Untersuchung aussagekräftig ist, müssen sich unter identischer Konfiguration vergleichbare Ergebnisse einstellen, was kontrollierte und wiederholbar aufgebaute Szenen voraussetzt.
-Da die eigentliche Zielumgebung die immersive Anwendung ist, muss dieselbe Verarbeitungskette sowohl am Desktop für die Messung als auch in der Brille laufen, ohne dass ihr Kern verändert wird.
-Schließlich muss die Repräsentationsform die einzige Größe sein, die zwischen den Varianten variiert, weil sich Unterschiede nur dann eindeutig auf die Repräsentation zurückführen lassen.
+Für die Aussagekraft der Untersuchung müssen sich unter identischer Konfiguration vergleichbare Ergebnisse einstellen, was kontrollierte und wiederholbar aufgebaute Szenen voraussetzt.
+Da die eigentliche Zielumgebung die immersive Anwendung ist, muss dieselbe Verarbeitungskette außerdem sowohl am Desktop für die Messung als auch in der Brille laufen, ohne dass ihr Kern verändert wird.
+Unterschiede lassen sich nur dann eindeutig auf die Repräsentation zurückführen, wenn sie die einzige Größe ist, die sich zwischen den Varianten ändert.
 Tabelle~\ref{tab:nfa} fasst die nicht-funktionalen Anforderungen zusammen.
 
 \begin{table}[htbp]
@@ -95,7 +96,7 @@ Tabelle~\ref{tab:nfa} fasst die nicht-funktionalen Anforderungen zusammen.
     \toprule
     Nr. & Anforderung & Herkunft \\
     \midrule
-    NFA1 & Modelle lokal, das heißt selbst gehostet und ohne Cloud, betreiben & Zielumgebung \\
+    NFA1 & Modelle lokal betreiben & Zielumgebung \\
     NFA2 & Mit der vorgegebenen Hardware, einer einzelnen Grafikkarte, und Modellen geringer Größe auskommen & Hardware \\
     NFA3 & Messungen unter identischer Konfiguration reproduzierbar halten und die Konfiguration vollständig dokumentieren & Methodik \\
     NFA4 & Dieselbe Verarbeitungskette am Desktop und in der immersiven Umgebung betreiben & Zielumgebung \\
@@ -104,22 +105,22 @@ Tabelle~\ref{tab:nfa} fasst die nicht-funktionalen Anforderungen zusammen.
   \end{tabular}
 \end{table}
 
-NFA5 ließ sich in der Umsetzung nicht vollständig einhalten.
-Die priorisierende hybride Variante unterscheidet sich von den beiden anderen hybriden Varianten nicht nur in der Instruktion, sondern auch in der Reihenfolge, in der die beiden Schichten im Kontext erscheinen.
-Für den Vergleich der hybriden Varianten untereinander ist NFA5 daher nur eingeschränkt erfüllt, für den Vergleich von strukturell, visuell und hybrid dagegen vollständig (Abschnitt~\ref{sec:eval-validity}).
+NFA5 ließ sich in der Umsetzung nur teilweise einhalten, was Abschnitt~\ref{sec:eval-validity} erläutert.
 
 
 % ------------------------------------------------------------
 \section{Zielkonflikte zwischen den Anforderungen}
 \label{sec:anf-spannungen}
 
-Die Anforderungen lassen sich nicht alle zugleich maximieren.
-Am deutlichsten ist der Konflikt zwischen Leistungsfähigkeit und Ressourcen: Mit großen Modellen wären natürlichsprachliche Befehle leichter zuverlässig umzusetzen, die Vorgabe kleiner lokaler Modelle begrenzt dagegen, was das System leisten kann.
-Dieser Konflikt wird bewusst in Kauf genommen, denn untersucht werden soll ja das Verhalten unter dieser Beschränkung.
+Die genannten Anforderungen lassen sich nicht alle gleichzeitig maximieren.
+Am deutlichsten wird das bei Leistungsfähigkeit und Ressourcen.
+Große Modelle würden natürlichsprachliche Befehle natürlich zuverlässiger umsetzen als die hier vorgegebenen kleinen lokalen Modelle.
+Dieser Konflikt wird bewusst in Kauf genommen, da gerade das Verhalten unter dieser Beschränkung untersucht werden soll.
 
-Ähnlich verhält es sich mit Fairness und Reproduzierbarkeit auf der einen und Praxisnähe auf der anderen Seite.
-Das gemeinsame Kennungssystem und die einfachen, kontrolliert aufgebauten Szenen sind für einen sauberen und wiederholbaren Vergleich nötig, entfernen die Aufgabe aber ein Stück von einer realistischen Anwendung mit komplexen, realen Szenen.
-In diesen Fällen hat die wissenschaftliche Kontrolle Vorrang, weil das Ziel der Arbeit eine belastbare Erkenntnis und kein fertiges Produkt ist.
+Ähnlich sieht es bei Fairness und Reproduzierbarkeit auf der einen und Praxisnähe auf der anderen Seite aus.
+Das gemeinsame Kennungssystem und die einfachen, kontrolliert aufgebauten Szenen sind für einen sauberen und wiederholbaren Vergleich notwendig.
+Gleichzeitig entfernen sie die Aufgabe ein Stück weit von einer realistischen Anwendung mit komplexen, realen Szenen.
+In diesen Fällen hat die wissenschaftliche Kontrolle Vorrang, da das Ziel der Arbeit eine belastbare Erkenntnis und kein fertiges Produkt ist.
 Die Übertragung in die reale Umgebung bleibt dem Demonstrator vorbehalten.
 
 
@@ -127,9 +128,11 @@ Die Übertragung in die reale Umgebung bleibt dem Demonstrator vorbehalten.
 \section{Abgrenzung des Funktionsumfangs}
 \label{sec:anf-abgrenzung}
 
-Entsprechend der Abgrenzung in Abschnitt~\ref{sec:ein-ziele} ist einiges bewusst nicht gefordert.
-Das System muss keine Produktreife erreichen; es genügt, die untersuchten Repräsentationen und die Kette bis in die immersive Umgebung funktionsfähig zu machen, ohne Robustheit unter Dauerlast oder eine ausgereifte Bedienung.
-Die Manipulationen bleiben auf Erzeugen, Verschieben und Entfernen beschränkt, Drehen oder Skalieren zur Laufzeit gehören nicht zur Untersuchung.
-Ebenso wenig muss das System beliebige oder mehrdeutige Formulierungen zuverlässig auflösen: Die Befehle sind für die Untersuchung klar formuliert, Robustheit gegenüber umgangssprachlicher Vielfalt ist kein Ziel.
-Eine Nutzerstudie ist nicht vorgesehen, da die Bewertung rein systembasiert aus dem Szenenzustand erfolgt.
-Gefordert ist schließlich auch keine Übertragbarkeit auf andere Modelle oder auf reale, komplexe Szenen, da die Untersuchung auf ein Modellpaar und kontrolliert aufgebaute Szenen begrenzt ist.
+Passend zur Abgrenzung in Abschnitt~\ref{sec:ein-ziele} sind folgende Punkte bewusst nicht gefordert:
+\begin{itemize}
+  \item Produktreife: Es reicht, die untersuchten Repräsentationen und die Kette bis in die immersive Umgebung funktionsfähig umzusetzen, ohne Robustheit unter Dauerlast oder eine ausgereifte Bedienung.
+  \item Weitere Operationen: Drehen oder Skalieren zur Laufzeit gehören nicht zur Untersuchung.
+  \item Beliebige oder mehrdeutige Formulierungen: Die Befehle sind klar formuliert, Robustheit gegenüber umgangssprachlicher Vielfalt ist kein Ziel.
+  \item Eine Nutzerstudie, da die Bewertung rein systembasiert aus dem Szenenzustand erfolgt.
+  \item Übertragbarkeit auf andere Modelle oder reale, komplexe Szenen, da sich die Untersuchung auf ein Modellpaar und kontrolliert aufgebaute Szenen beschränkt.
+\end{itemize}

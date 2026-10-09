@@ -5,9 +5,8 @@
 \chapter{Evaluation}
 \label{ch:evaluation}
 
-Dieses Kapitel vergleicht die Repräsentationsformen entlang einer nach Referenztypen aufgeschlüsselten Taxonomie und bestimmt, welche Form welche Art von Referenz trägt (RQ1).
-Anschließend prüft es, ob sich die hybride Repräsentation allein über ihre Instruktion so gestalten lässt, dass sie die Stärken beider Schichten vereint (RQ2).
-Zum Schluss werden Validität und Grenzen der Ergebnisse diskutiert.
+In diesem Kapitel werden die Repräsentationsformen anhand einer nach Referenztypen aufgeschlüsselten Taxonomie verglichen, um zu bestimmen, welche Form welche Art von Referenz unterstützt (RQ1).
+Im Anschluss wird geprüft, ob sich die hybride Repräsentation allein über ihre Instruktion so gestalten lässt, dass sie die Stärken beider Schichten vereint (RQ2), bevor es um Validität und Grenzen der Ergebnisse geht.
 
 
 % ------------------------------------------------------------
@@ -15,24 +14,20 @@ Zum Schluss werden Validität und Grenzen der Ergebnisse diskutiert.
 \label{sec:eval-design}
 
 Verglichen werden die fünf Varianten aus Abschnitt~\ref{sec:impl-variants}.
-Sie nutzen dieselben Szenen, Befehle und Manipulationswerkzeuge und unterscheiden sich allein darin, in welcher Form die Szene dem Agenten bereitgestellt wird.
-Da alle Varianten Objekte über dasselbe Kennungssystem ansprechen (Abschnitt~\ref{sec:konz-fairness}), gehen gemessene Unterschiede nicht auf einen ungleichen Werkzeugzugriff zurück.
-Für die Deutung ist dabei im Blick zu behalten, dass das entscheidende Sprachmodell in keiner Variante ein Bild erhält, sondern im visuellen Fall eine Beschreibung des Bildes (Abschnitt~\ref{sec:grundlagen-modelle}).
-Streng genommen werden also eine exakte Datenstruktur und eine unscharfe sprachliche Beschreibung derselben Szene verglichen.
+Alle Varianten nutzen dieselben Szenen, Befehle und Manipulationswerkzeuge und unterscheiden sich nur darin, in welcher Form dem Agenten die Szene bereitgestellt wird.
+Ein ungleicher Werkzeugzugriff scheidet als Ursache für Unterschiede aus, da alle Varianten Objekte über dasselbe Kennungssystem ansprechen (Abschnitt~\ref{sec:konz-fairness}).
+Ob eine Manipulation erfolgreich war, entscheidet der Folgezustand der Szene, also ihr tatsächlicher Zustand nach der Ausführung, den die Auswertung mit der Soll-Vorgabe des Szenarios vergleicht (Abschnitt~\ref{sec:eval-metrics}).
 
-Ob eine Manipulation gelungen ist, wird aus dem tatsächlichen Zustand der Szene nach der Ausführung bestimmt, den die Auswertung mit der Soll-Vorgabe des Szenarios vergleicht (Abschnitt~\ref{sec:eval-metrics}).
-Die Selbstauskunft des Agenten bleibt unberücksichtigt, weil das lokale Modell wiederholt Erfolge meldete, die der Folgezustand nicht bestätigte (Abschnitt~\ref{sec:eval-validity}).
-
-Jede Kombination aus Szenario und Variante wird zehnmal ausgeführt und der gesamte Durchlauf dreimal wiederholt, sodass jede Zelle auf 30 Läufen beruht.
-Berichtet wird der Mittelwert über die drei Durchläufe mit der Spanne von Minimum und Maximum, an der sich ablesen lässt, wie stark eine Zelle zwischen den Durchläufen schwankt.
-Für die zentralen Vergleiche werden die 30 Läufe einer Zelle zusätzlich zusammengefasst und inferenzstatistisch ausgewertet.
+Jede Kombination aus Szenario und Variante wird zehnmal ausgeführt, und der gesamte Durchlauf wird dreimal wiederholt, sodass jede Zelle auf 30 Läufen beruht.
+Berichtet wird der Mittelwert über die drei Durchläufe mit der Spanne aus Minimum und Maximum, an der sich ablesen lässt, wie stark eine Zelle zwischen den Durchläufen schwankt.
+Für die zentralen Vergleiche werden die 30 Läufe einer Zelle zusätzlich statistisch ausgewertet.
 
 Ausgewertet werden dreizehn Szenarien in fünf Kategorien.
-Die Kategorien A, B und C umfassen je drei Szenarien, D und E nur je zwei, obwohl gerade diese beiden die inhaltlich zentralen Befunde tragen.
-Die Szenen bestehen aus einfachen geometrischen Grundkörpern und sind so aufgebaut, dass jedes Szenario eine bestimmte Repräsentationskompetenz isoliert.
-Gemessen wird am Desktop, weil sich die Szenen dort exakt kontrollieren und beliebig oft identisch wiederholen lassen; die immersive Umgebung ist nur Zielumgebung des Demonstrators.
-Als Sprachmodell dient Qwen2.5-7B, als visuelles Modell Qwen2.5-VL-7B, beide selbst gehostet und gemeinsam auf einer NVIDIA RTX A5000 mit 24 Gigabyte Grafikspeicher.
-Tabelle~\ref{tab:config} führt die vollständige Konfiguration auf, die nach NFA3 für eine Wiederholung der Messung nötig ist.
+Die Kategorien A, B und C enthalten jeweils drei Szenarien, D und E je zwei.
+Die Szenen bestehen aus einfachen geometrischen Grundkörpern und sind so aufgebaut, dass jedes Szenario eine bestimmte Kompetenz der Repräsentation isoliert prüft.
+Gemessen wird am Desktop, da sich die Szenen dort exakt kontrollieren und beliebig oft identisch wiederholen lassen.
+Als Sprachmodell kommt Qwen2.5-7B zum Einsatz, als visuelles Modell Qwen2.5-VL-7B, die gemeinsam auf einer NVIDIA RTX A5000 mit 24 Gigabyte Grafikspeicher laufen.
+Tabelle~\ref{tab:config} enthält die vollständige Konfiguration, die nach NFA3 für eine Wiederholung der Messung nötig ist.
 
 \begin{table}[htbp]
   \centering
@@ -59,49 +54,49 @@ Tabelle~\ref{tab:config} führt die vollständige Konfiguration auf, die nach NF
 \end{table}
 
 Beide Modelle liegen in derselben Quantisierungsstufe vor.
-Eine unterschiedlich starke Quantisierung hätte die beiden Schichten ungleich beeinträchtigt und damit neben der Repräsentationsform eine weitere Störgröße eingeführt.
-Mit 4{,}68\,GB und 6{,}04\,GB belegen die Gewichte zusammen rund 10{,}7\,GB, sodass auf der Karte Platz für den Schlüssel-Wert-Zwischenspeicher beider Modelle bleibt; erst dadurch ist der gleichzeitige Betrieb nach NFA2 möglich.
+Das ist für den Vergleich wichtig, da eine unterschiedlich starke Quantisierung die beiden Schichten ungleich beeinträchtigt und damit eine weitere Störgröße eingeführt hätte.
+Mit 4{,}68\,GB und 6{,}04\,GB belegen die Gewichte zusammen rund 10{,}7\,GB.
+Auf der Karte bleibt dadurch genug Platz für den Schlüssel-Wert-Zwischenspeicher beider Modelle, was den gleichzeitigen Betrieb nach NFA2 erst möglich macht.
 
-Knapp bemessen ist dagegen die Kontextlänge von 4096 Token, und sie trifft die Varianten ungleich.
-Zusätzlich zu Grundinstruktion, Werkzeugbeschreibungen und bisherigem Verlauf der Agentenschleife trägt die strukturelle Variante nur den JSON-Zustand im Kontext, die visuelle nur die Beschreibung, die hybriden Varianten aber beides.
-Für mehrere aufeinanderfolgende Schritte bleibt ihnen deshalb systematisch weniger Platz.
-Ob sich das in den Messungen auswirkte, etwa durch abgeschnittenen Kontext in längeren Läufen, wurde nicht überwacht und lässt sich nachträglich nicht mehr feststellen.
+Die Kontextlänge von 4096 Token ist eher knapp und trifft die Varianten unterschiedlich stark.
+Neben Grundinstruktion, Werkzeugbeschreibungen und dem bisherigen Verlauf der Agentenschleife enthält der Kontext der strukturellen Variante nur den JSON-Zustand, der der visuellen Variante nur die Beschreibung und der der hybriden Varianten beides, wodurch ihnen für mehrere aufeinanderfolgende Schritte weniger Platz bleibt.
+Ob sich das in den Messungen tatsächlich ausgewirkt hat, z.\,B. durch abgeschnittenen Kontext in längeren Läufen, wurde nicht überwacht und lässt sich im Nachhinein nicht mehr feststellen.
 
-Unterschiedlich ist auch die Dekodierung der beiden Modelle.
-Das Sprachmodell, das die Entscheidung trifft, lief mit einer Temperatur von 0{,}8, einer Einstellung, die den Antwortraum spürbar öffnet.
-Die zehn Läufe einer Zelle sind damit weitgehend unabhängige Ziehungen aus einer breiten Verteilung und keine Wiederholungen derselben Antwort.
-Eine Zelle, die bei 0 von 30 oder bei 30 von 30 liegt, kommt also nicht dadurch zustande, dass das Modell ohnehin immer dasselbe antwortet, sondern trotz des Spielraums in der Dekodierung.
-Die vielen Zellen ohne Streuung sind unter dieser Bedingung ein Befund und kein Artefakt einer zu niedrigen Temperatur: Der jeweilige Effekt wirkt stärker als das Rauschen.
+Auch bei der Dekodierung unterscheiden sich die beiden Modelle.
+Das Sprachmodell, das die Entscheidung trifft, lief mit einer Temperatur von 0{,}8.
+Diese Einstellung lässt dem Modell spürbar Spielraum bei der Antwort, sodass die zehn Läufe einer Zelle weitgehend unabhängige Ziehungen sind und nicht einfach Wiederholungen derselben Antwort.
+Liegt eine Zelle trotzdem bei 0 von 30 oder bei 30 von 30, dann nicht, weil das Modell ohnehin immer gleich antwortet, sondern weil der Effekt stärker wirkt als das Rauschen der Dekodierung.
 
-Das visuelle Modell lief dagegen mit einer Temperatur von 0{,}1 und damit nahezu deterministisch, sodass die Beschreibung einer gegebenen Szene über die Läufe hinweg weitgehend gleich ausfällt.
-Das ist gewollt, denn die Wahrnehmungsstufe ist Eingabe und nicht Untersuchungsgegenstand, und eine stark schwankende Beschreibung hätte eine zusätzliche Störgröße zwischen Repräsentationsform und Ergebnis geschoben.
-Die Streuung einer Zelle geht damit fast vollständig auf das Sprachmodell zurück, also auf die Stufe, die verglichen wird.
-Eine Restabhängigkeit zwischen den Läufen bleibt, weil alle Läufe einer Zelle dieselbe, nahezu unveränderliche Szenenbeschreibung nutzen; sie betrifft aber die Eingabe und nicht die gemessene Entscheidung.
+Beim visuellen Modell lag die Temperatur bei 0{,}1, sodass die Beschreibung einer Szene über die Läufe hinweg weitgehend gleich ausfällt.
+Das war so gewollt, weil die Wahrnehmung hier nur als Eingabe dient und eine stark schwankende Beschreibung eine zusätzliche Störgröße zwischen Repräsentationsform und Ergebnis gebracht hätte.
+Die Streuung innerhalb einer Zelle geht so fast vollständig auf das Sprachmodell zurück.
+Dass alle Läufe einer Zelle dieselbe, kaum veränderte Szenenbeschreibung nutzen, betrifft die Eingabe und nicht die gemessene Entscheidung.
 
 
 % ------------------------------------------------------------
 \section{Referenztyp-Taxonomie}
 \label{sec:eval-taxonomy}
 
-Welche Repräsentation eine Aufgabe trägt, hängt davon ab, worauf sich der Befehl bezieht.
+Welche Repräsentation für eine Aufgabe geeignet ist, hängt davon ab, worauf sich der Befehl bezieht.
 Ein Verweis auf die Farbe eines Objekts stellt andere Anforderungen als ein Verweis auf seine Lage oder auf ein Objekt, das im Bild gar nicht zu sehen ist.
-Eine pauschale Antwort auf die Frage nach der besten Repräsentation gibt es deshalb nicht.
-Die Evaluation zerlegt die natürlichsprachliche Referenz stattdessen in fünf Typen und prüft für jeden einzeln, welche Repräsentation ihn auflösen kann.
-Tabelle~\ref{tab:taxonomy} zeigt, in welcher Schicht die dafür nötige Information jeweils verfügbar ist.
+Deshalb wird die sprachliche Referenz in fünf Typen unterteilt, und für jeden Typ wird einzeln geprüft, welche Repräsentation ihn auflösen kann.
+Tabelle~\ref{tab:taxonomy} zeigt, in welcher Schicht die dafür nötige Information jeweils vorhanden ist.
 
-Kategorie A ist die Kontrollbedingung.
-Der Befehl benennt das Zielobjekt direkt über seine Kennung, sodass die Aufgabe unabhängig von der Repräsentationsform lösbar ist; sie prüft also den Messaufbau und vergleicht nicht inhaltlich.
-In Kategorie B wird ein Objekt über ein Attribut wie Farbe oder Größe angesprochen, in Kategorie C über eine räumliche Relation zu einem anderen Objekt, etwa \enquote{links von}.
-Bei beiden lässt sich das gemeinte Objekt aus Eigenschaften oder Koordinaten bestimmen, die in den strukturellen Daten stehen.
+Kategorie A bildet die Kontrollbedingung.
+Hier nennt der Befehl das Zielobjekt direkt über seine Kennung, sodass die Aufgabe unabhängig von der Repräsentationsform lösbar ist.
+Die Kategorie dient damit zur Prüfung des Messaufbaus und nicht zum inhaltlichen Vergleich.
+In Kategorie B wird ein Objekt über ein Attribut wie die Farbe oder die Größe angesprochen, in Kategorie C über eine räumliche Relation zu einem anderen Objekt, z.\,B. \enquote{links von}.
+In beiden Fällen lässt sich das gemeinte Objekt aus Eigenschaften oder Koordinaten bestimmen, die in den strukturellen Daten stehen.
 
 Die Kategorien D und E bilden das eigentliche Gegensatzpaar.
-In D bezieht sich der Befehl auf eine rein perzeptuelle Eigenschaft, etwa ein Oberflächenmuster, das in den strukturellen Daten nicht vorkommt; das Objekt lässt sich nur über das Bild bestimmen.
-In E ist das Objekt im Bild verdeckt, in den strukturellen Daten aber vollständig verzeichnet, sodass es sich nur über die Struktur bestimmen lässt.
-An diesen beiden Polen hat jeweils nur eine Schicht Zugang zur Antwort, und an ihnen zeigt sich, ob eine Repräsentation eine Kompetenz besitzt, die der anderen grundsätzlich fehlt.
+In Kategorie D bezieht sich der Befehl auf eine rein perzeptuelle Eigenschaft, z.\,B. auf ein Oberflächenmuster, das in den strukturellen Daten nicht vorkommt.
+Ein solches Objekt lässt sich nur über das Bild bestimmen.
+In Kategorie E ist das Objekt im Bild verdeckt und nur in den strukturellen Daten verzeichnet, weshalb es sich nur über die Struktur bestimmen lässt.
+In beiden Kategorien hat also nur eine der beiden Schichten Zugang zur Antwort.
 
-Die Unterscheidung nach Referenztypen knüpft an bestehende Arbeiten an, die Referenzen etwa nach ihrer Abhängigkeit vom Blickwinkel oder nach der Eindeutigkeit des Zielobjekts einteilen~\cite{achlioptas2020, chen2020}.
-Neu sind in der vorliegenden Taxonomie die rein perzeptuelle und die verdeckte Referenz als eigene Typen, ohne die sich die exklusiven Zuständigkeiten der beiden Repräsentationen nicht prüfen ließen.
-Tabelle~\ref{tab:scenarios} führt die konkreten Szenarien je Referenztyp auf.
+Die Unterscheidung nach Referenztypen baut auf bestehenden Arbeiten auf, die Referenzen z.\,B. nach ihrer Abhängigkeit vom Blickwinkel oder nach der Eindeutigkeit des Zielobjekts einteilen~\cite{achlioptas2020, chen2020}.
+Neu sind in dieser Taxonomie die rein perzeptuelle und die verdeckte Referenz als eigene Typen, mit denen sich die exklusiven Zuständigkeiten der beiden Repräsentationen prüfen lassen.
+Die konkreten Szenarien für jeden Referenztyp sind in Tabelle~\ref{tab:scenarios} aufgeführt.
 
 \begin{table}[ht]
   \centering
@@ -172,42 +167,41 @@ Tabelle~\ref{tab:scenarios} führt die konkreten Szenarien je Referenztyp auf.
 \section{Metriken}
 \label{sec:eval-metrics}
 
-Die Erfolgs- und Genauigkeitsmaße orientieren sich an etablierten Metriken aus der Literatur zum sprachlichen Auffinden von Objekten in 3D-Szenen~\cite{chen2020, achlioptas2020}.
-Primäre Kennzahl ist der Ausführungserfolg.
-Er ist je Lauf binär und ergibt sich allein aus dem Folgezustand der Szene, den die Auswertung nach der Manipulation mit der Soll-Vorgabe des Szenarios vergleicht.
+Die verwendeten Erfolgsmaße orientieren sich an etablierten Metriken aus der Literatur zum sprachlichen Auffinden von Objekten in 3D-Szenen~\cite{chen2020, achlioptas2020}.
+Die wichtigste Kennzahl ist der Ausführungserfolg.
+Er ist für jeden Lauf binär und ergibt sich allein aus dem Folgezustand der Szene, den die Auswertung nach der Manipulation mit der Soll-Vorgabe des Szenarios vergleicht.
 Berichtet wird die Zahl der Erfolge aus zehn Läufen, gemittelt über die drei Durchläufe mit der zugehörigen Spanne.
 
-Was als erfüllte Vorgabe gilt, hängt vom Aufgabentyp ab.
-In jedem Fall muss das richtige Objekt betroffen sein: Wird ein anderes als das gemeinte Objekt verändert, ist der Lauf ein Misserfolg, auch wenn die Zielkoordinate sonst getroffen wäre.
-Dieses Kriterium erfasst, ob die Referenz korrekt aufgelöst wurde.
-Bei Aufgaben mit Zielposition muss außerdem die erreichte Position innerhalb einer festen Toleranz $\tau$ um den Sollwert liegen.
-Bei relationalen Aufgaben muss die geforderte Lagebeziehung im Folgezustand gelten, etwa dass ein Objekt einen kleineren x-Wert besitzt als ein anderes, und beim Entfernen oder Erzeugen muss das Objekt im Folgezustand fehlen beziehungsweise vorhanden sein.
-Ein Lauf zählt nur als Erfolg, wenn das jeweils maßgebliche Kriterium vollständig erfüllt ist.
+Wann eine Vorgabe als erfüllt gilt, hängt vom Aufgabentyp ab.
+Grundsätzlich muss bei jeder Aufgabe zuerst das richtige Objekt betroffen sein.
+Wird ein anderes als das gemeinte Objekt verändert, zählt der Lauf als Misserfolg, auch wenn die Zielkoordinate ansonsten getroffen wäre.
+Über dieses Kriterium wird erfasst, ob die Referenz korrekt aufgelöst wurde.
+Bei Aufgaben mit einer Zielposition muss außerdem die erreichte Position innerhalb einer festen Toleranz $\tau$ um den Sollwert liegen.
+Bei relationalen Aufgaben muss die geforderte Lagebeziehung im Folgezustand gelten, z.\,B. dass ein Objekt einen kleineren x-Wert hat als ein anderes.
+Bei Aufgaben, die ein Objekt entfernen oder erzeugen, muss das Objekt im Folgezustand entsprechend fehlen oder vorhanden sein.
+Als Erfolg zählt ein Lauf nur dann, wenn das jeweils maßgebliche Kriterium vollständig erfüllt ist.
 
-Die Toleranz ist auf $\tau = 0{,}1$ Einheiten gesetzt.
-Sie ist nicht aus einer externen Vorgabe übernommen, sondern für diesen Aufbau festgelegt und an zwei Größen ausgerichtet.
-Sie liegt deutlich unter der kleinsten in den Szenarien geforderten Verschiebung von einer Einheit, sodass eine grob danebenliegende Bewegung nicht als Treffer zählt, und über der Genauigkeit, mit der die Engine Positionen zurückmeldet, sodass numerisches Rauschen keinen korrekten Lauf verwirft.
-Ein Zehntel der kleinsten geforderten Distanz erfüllt beides.
-Wie empfindlich die Ergebnisse auf diese Wahl reagieren, wurde nicht untersucht.
+Die Toleranz liegt bei $\tau = 0{,}1$ Einheiten, also einem Zehntel der kleinsten geforderten Verschiebung.
+Festgelegt wurde der Wert für diesen Aufbau, damit eine grob danebenliegende Bewegung nicht als Treffer gilt und numerisches Rauschen der Engine trotzdem keinen korrekten Lauf verwirft.
 
-Einen kontinuierlichen Lagefehler, also den Abstand zwischen erreichter und geforderter Position, berichtet die Arbeit nicht; $\tau$ geht nur als Schwelle in das binäre Kriterium ein.
-Nachträglich lässt er sich auch nicht mehr berechnen, weil für die metrischen Szenarien C2 und C4 die erreichten Endpositionen nicht mehr vorliegen.
-Das ist bedauerlich, denn gerade dort scheitern alle Varianten am binären Kriterium, und erst der Lagefehler würde zeigen, ob sie knapp danebenliegen oder die Aufgabe grundsätzlich verfehlen.
+Ein kontinuierlicher Lagefehler, also der Abstand zwischen erreichter und geforderter Position, wird in dieser Arbeit nicht berichtet.
+Die Toleranz $\tau$ geht nur als Schwelle in das binäre Kriterium ein.
+Nachträglich lässt er sich auch nicht mehr berechnen, da für die metrischen Szenarien C2 und C4 die erreichten Endpositionen nicht mehr vorliegen.
+Das ist bedauerlich, weil gerade dort alle Varianten scheitern und erst der Lagefehler zeigen würde, ob sie knapp danebenliegen oder die Aufgabe grundsätzlich verfehlen.
 
 \subsection*{Statistische Auswertung}
 
-Mittelwert und Spanne über drei Durchläufe beschreiben, wie stabil eine Zelle ist, taugen als Entscheidungsgrundlage aber nur begrenzt.
-Drei Durchläufe sind eine schmale Basis, und nicht überlappende Spannen als belastbar zu werten, wäre eine Heuristik ohne Fehlerkontrolle.
-Für die inhaltlich zentralen Vergleiche werden deshalb die je 30 Einzelläufe einer Zelle zusammengefasst und inferenzstatistisch ausgewertet.
+Mittelwert und Spanne über drei Durchläufe beschreiben, wie stabil eine Zelle ist.
+Da drei Durchläufe für eine Entscheidung zu wenig sind, werden für die zentralen Vergleiche zusätzlich die jeweils 30 Einzelläufe einer Zelle zusammengefasst und statistisch ausgewertet.
 
-Da jeder Lauf binär ausgeht, ist eine Zelle durch die Zahl $k$ der Erfolge aus $n = 30$ Läufen vollständig beschrieben.
+Da jeder Lauf binär ausgeht, lässt sich eine Zelle vollständig über die Zahl $k$ der Erfolge aus $n = 30$ Läufen beschreiben.
 Für jede Zelle wird die Erfolgsrate $k/n$ mit einem Wilson-Konfidenzintervall zum Niveau 95\,\% angegeben.
-Das Wilson-Intervall ist hier dem Normalapproximationsintervall vorzuziehen, weil viele Zellen bei null oder bei allen Erfolgen liegen, wo die Normalapproximation ein Intervall der Breite null liefern würde.
-Zwei Zellen werden mit dem exakten Test nach Fisher auf der zugehörigen Vierfeldertafel verglichen, der keine Annahmen über erwartete Zellhäufigkeiten voraussetzt und auch bei extremen Anteilen gültig bleibt.
+Das Wilson-Intervall ist hier besser geeignet als das übliche Intervall nach der Normalapproximation, da viele Zellen bei null oder bei allen Erfolgen liegen.
+In diesen Fällen würde die Normalapproximation ein Intervall der Breite null liefern.
+Verglichen werden zwei Zellen mit dem exakten Test nach Fisher auf der zugehörigen Vierfeldertafel, der keine Annahmen über erwartete Zellhäufigkeiten braucht und auch bei extremen Anteilen gültig bleibt.
 
-Die dafür nötige Annahme unabhängiger Läufe ist wegen der in Abschnitt~\ref{sec:eval-design} beschriebenen Dekodierung im Wesentlichen erfüllt.
-Das Niveau wird nicht für multiples Testen korrigiert.
-Die zentralen Unterschiede sind allerdings so groß, dass keiner an einer Entscheidungsgrenze liegt; die schwächsten Vergleiche, die beiden in D2 mit $p = 0{,}0046$, blieben auch bei einer konservativen Korrektur bestehen.
+Die dafür nötige Annahme unabhängiger Läufe ist durch die in Abschnitt~\ref{sec:eval-design} beschriebene Dekodierung weitgehend erfüllt.
+Eine Korrektur für multiples Testen wurde nicht vorgenommen, die schwächsten Vergleiche (die beiden in D2 mit $p = 0{,}0046$) würden auch eine konservative Korrektur überstehen.
 
 
 % ------------------------------------------------------------
@@ -215,8 +209,9 @@ Die zentralen Unterschiede sind allerdings so groß, dass keiner an einer Entsch
 \label{sec:eval-rq1}
 
 Tabelle~\ref{tab:results-scenario} zeigt die Ergebnisse je Szenario als Mittelwert über drei Durchläufe mit der Spanne [Minimum--Maximum], wobei jede Zelle für zehn mögliche Erfolge steht.
-Tabelle~\ref{tab:results-category} fasst diese Werte je Kategorie zusammen.
-Die Tabellen~\ref{tab:stats} und~\ref{tab:fisher} enthalten keine zusätzlichen Messungen, sondern fassen die inhaltlich tragenden Zellen als Erfolge aus je 30 Läufen mit Wilson-Konfidenzintervall zusammen und geben die exakten Tests für die Vergleiche an, auf denen die Argumentation dieses und des folgenden Abschnitts beruht.
+In Tabelle~\ref{tab:results-category} sind diese Werte je Kategorie zusammengefasst.
+Die Tabellen~\ref{tab:stats} und~\ref{tab:fisher} enthalten keine zusätzlichen Messungen.
+Sie fassen die wichtigsten Zellen als Erfolge aus je 30 Läufen mit Wilson-Konfidenzintervall zusammen und geben die exakten Tests für die Vergleiche an, auf denen die Argumentation in diesem und im folgenden Abschnitt beruht.
 
 % Werte: Mittelwert [Min--Max] ueber 3 Durchlaeufe, je 10 moegliche Erfolge.
 % (1) C2 = separat neu gemessener, entkonfundierter Wert (siehe Validitaet).
@@ -255,7 +250,7 @@ Die Tabellen~\ref{tab:stats} und~\ref{tab:fisher} enthalten keine zusätzlichen 
   \texttt{json} strukturell, \texttt{vlm} visuell, \texttt{hybrid} naiv hybrid,
   \texttt{guided} priorisierend, \texttt{surgical} kompetenzgetrennt.\\[2pt]
   \textsuperscript{(1)}~C2 wurde nach Entdeckung eines Störfaktors mit seitlich
-  versetztem Aufbau neu gemessen; die Werte stammen aus dieser zweiten Messung
+  versetztem Aufbau neu gemessen. Die Werte stammen aus dieser zweiten Messung
   und sind nicht mit den übrigen Zeilen im selben Durchlauf erhoben
   (Abschnitt~\ref{sec:eval-validity}).\\[2pt]
   \textsuperscript{(2)}~E2 ist kein reiner Verdeckungstest. Das Soll-Ergebnis
@@ -356,80 +351,71 @@ Die Tabellen~\ref{tab:stats} und~\ref{tab:fisher} enthalten keine zusätzlichen 
 
 \subsection*{Kategorie A: Kontrollbedingung}
 
-Bevor sich Unterschiede zwischen den Repräsentationen deuten lassen, muss feststehen, dass der Aufbau misst, was er messen soll.
-In Kategorie A nennt der Befehl Zielobjekt und Zielkoordinaten direkt über die \texttt{id}, eine Deutung der Szene ist nicht nötig, und bei sauberem Aufbau darf die Repräsentationsform keinen Unterschied machen.
-So ist es auch: Alle fünf Varianten lösen jedes der drei Szenarien in allen 30 Läufen.
-Kennungssystem und Werkzeugzugriff erzeugen also für sich keine variantenspezifischen Unterschiede.
-Abweichungen in den übrigen Kategorien lassen sich damit auf die Repräsentationsform zurückführen, soweit nicht die in Abschnitt~\ref{sec:eval-validity} genannten Restkonfundierungen greifen.
+Mit Kategorie A wird geprüft, ob der Aufbau selbst Unterschiede zwischen den Varianten erzeugt.
+Der Befehl nennt Zielobjekt und Zielkoordinaten direkt über die \texttt{id}, eine Deutung der Szene ist nicht nötig.
+Alle fünf Varianten lösen jedes der drei Szenarien in allen 30 Läufen, Kennungssystem und Werkzeugzugriff erzeugen also für sich genommen keine Unterschiede.
 
 \subsection*{Kategorie B: Attribut-Referenzen}
 
-In Kategorie B wird ein Objekt über eine Eigenschaft wie Farbe oder Größe angesprochen.
-Bis auf die visuelle lösen alle Varianten jedes Szenario vollständig, die visuelle erreicht 19,7 von 30.
-Die kleine Abweichung in B2 (9,7 von 10) liegt innerhalb der beobachteten Streuung; fast der gesamte Rückstand entsteht in B3.
-Dort soll das größte Objekt bewegt werden, und die visuelle Variante scheitert in allen 30 Läufen, während alle übrigen alle 30 lösen ($p = 1{,}7\cdot10^{-17}$, Tabelle~\ref{tab:fisher}).
+In Kategorie B wird ein Objekt über eine Eigenschaft wie die Farbe oder die Größe angesprochen.
+Bis auf die visuelle Variante lösen hier alle Varianten jedes Szenario vollständig, während die visuelle Variante nur 19,7 von 30 erreicht.
+Die kleine Abweichung in B2 (9,7 von 10) liegt dabei innerhalb der beobachteten Streuung, sodass fast der gesamte Rückstand aus B3 stammt.
+In diesem Szenario soll das größte Objekt bewegt werden, und die visuelle Variante scheitert in allen 30 Läufen, während alle anderen Varianten alle 30 lösen ($p = 1{,}7\cdot10^{-17}$, Tabelle~\ref{tab:fisher}).
 
-Eine perspektivische Erklärung läge nahe, da ein weiter entferntes Objekt im Bild kleiner wirkt, als es ist.
-Sie wird hier aber nicht gebraucht, denn die Ursache liegt im Aufbau der Pipeline.
-Das Sprachmodell erhält nur die Beschreibung des visuellen Modells, und der Wahrnehmungs-Prompt fordert darin Nummer, Form, Farbe, qualitative Lage und Textur an, aber keine Größe (Listing~\ref{lst:vlmprompt}).
-Der visuellen Variante fehlt in B3 also nicht die Wahrnehmungsfähigkeit, sondern die Information, nach der gefragt wird, und unter dieser Bedingung ist ein vollständiges Scheitern zu erwarten.
-Das Ergebnis sagt damit etwas über den Zuschnitt des Prompts aus und nichts über eine grundsätzliche Grenze visueller Repräsentationen.
-Ein Prompt, der auch die Größe abfragt, hätte vermutlich anders abgeschnitten; geprüft wurde das nicht.
-Für diesen Aufbau bleibt festzuhalten, dass eine Referenz auf die absolute Größe über die strukturelle Schicht zuverlässig und über die visuelle gar nicht aufgelöst wird.
+Eine Erklärung über die Perspektive (ein weiter entferntes Objekt wirkt im Bild kleiner) braucht es dafür nicht.
+Sieht man sich den Wahrnehmungs-Prompt an, ist das Ergebnis nicht weiter verwunderlich.
+Er fragt Nummer, Form, Farbe, qualitative Lage und Textur ab, nach der Größe fragt er nicht (Listing~\ref{lst:vlmprompt}), sodass der visuellen Variante in B3 schlicht die Information fehlt, nach der gefragt wird.
+Ein vollständiges Scheitern ist unter dieser Bedingung zu erwarten und sagt mehr über den Zuschnitt des Prompts aus als über visuelle Repräsentationen im Allgemeinen.
 
 \subsection*{Kategorie C: Räumlich-relationale Referenzen}
 
 In Kategorie C wird ein Objekt in Bezug auf ein anderes ausgewählt oder platziert.
-Über die Kategorie hinweg bricht die visuelle Variante mit 2,4 von 30 fast vollständig ein, während die strukturelle und die hybriden Varianten mit rund 12 bis 14 von 30 deutlich davor liegen.
-Relationale Aufgaben brauchen exakte Koordinaten, und die stehen nur in der strukturellen Schicht.
+Über die gesamte Kategorie hinweg bricht die visuelle Variante mit 2,4 von 30 fast vollständig ein.
+Die strukturelle und die hybriden Varianten liegen mit rund 12 bis 14 von 30 deutlich davor, da relationale Aufgaben exakte Koordinaten benötigen, die nur in der strukturellen Schicht stehen.
 
-Am klarsten zeigt das C1, wo die Kugel links vom Würfel platziert werden soll.
-Gefordert ist nur die Richtung der Relation, also ein negativer x-Abstand zum Würfel, kein exakter Zielwert.
-Die strukturelle und die hybriden Varianten lösen das zuverlässig oder weitgehend, die visuelle scheitert fast durchgehend.
+Gut sichtbar ist das in C1, wo die Kugel links vom Würfel platziert werden soll.
+Gefordert ist hier nur die Richtung der Relation, also ein negativer x-Abstand zum Würfel, und kein exakter Zielwert.
+Die strukturelle und die hybriden Varianten lösen diese Aufgabe zuverlässig oder größtenteils, die visuelle Variante fast nie.
 
-C4 verschärft dieselbe Aufgabe zu einer metrischen Vorgabe: Die Kugel soll exakt zwei Einheiten links vom Würfel liegen.
-Jetzt scheitern alle Varianten, und keine kommt über rund drei von zehn hinaus, gleich in welcher Form die Szene vorliegt.
-Solange nur die Richtung einer Relation zählt, entscheidet also die Repräsentation über den Erfolg; wird ein exakter metrischer Wert verlangt, wird die Präzision des Modells zur Grenze.
-Dazu passt, dass das Scheitern in C4 graduell ist: Alle Varianten liegen zwischen 2 und 10 Erfolgen aus 30, keine bei exakt null.
+In C4 wird dieselbe Aufgabe zu einer metrischen Vorgabe verschärft, die Kugel soll exakt zwei Einheiten links vom Würfel liegen.
+Hier kommt keine Variante über rund drei von zehn hinaus, egal in welcher Form die Szene vorliegt.
+Solange nur die Richtung einer Relation zählt, entscheidet also die Repräsentation über den Erfolg, bei einem exakten Wert die Präzision des Modells.
+Entsprechend graduell fällt das Scheitern in C4 aus, alle Varianten liegen zwischen 2 und 10 Erfolgen aus 30 und keine bei exakt null.
 
-Für C2 trägt diese Lesart nicht ohne Weiteres.
-Der Befehl verlangt, den zur Kamera nächstgelegenen Würfel um eine Einheit anzuheben, und alle Varianten bleiben schwach; die strukturelle erreicht 0 von 30.
-Aus den strukturellen Daten heraus ist die Aufgabe aber nicht schwer.
+Interessant ist der Fall C2, in dem der Würfel, der der Kamera am nächsten ist, um eine Einheit angehoben werden soll.
+Alle Varianten schneiden schwach ab, die strukturelle sogar mit 0 von 30, obwohl die Aufgabe aus den strukturellen Daten heraus nicht schwer ist.
 Die drei Würfel liegen bei $(-2,0,2)$, $(0,0,5)$ und $(2,0,8)$, also gestaffelt entlang der z-Achse.
-Steht die Kamera wie in Listing~\ref{lst:state} bei negativem z und blickt entlang der positiven z-Achse, ist der kameranächste Würfel derjenige mit dem kleinsten z-Wert, und diese Ordnung stimmt mit der euklidischen Distanzordnung überein.
-Das Zielobjekt ließe sich also durch den Vergleich dreier Zahlen bestimmen, ohne jede Wurzelrechnung.
-Zudem löst dieselbe Variante B1, eine ähnlich einfache Anhebe-Aufgabe, in 30 von 30 Läufen.
-Ein deterministisches Null neben deterministischer Perfektion in einer verwandten Aufgabe spricht eher für eine systematische Ursache als für ein Präzisionsproblem.
+Steht die Kamera wie in Listing~\ref{lst:state} bei negativem z und blickt entlang der positiven z-Achse, ist der Würfel mit dem kleinsten z-Wert der Kamera am nächsten, und diese Reihenfolge stimmt mit der euklidischen Distanz überein.
+Das Zielobjekt ließe sich also schon durch den Vergleich von drei Zahlen bestimmen, ganz ohne Wurzelrechnung.
+Dieselbe Variante löst B1, eine ähnlich einfache Aufgabe zum Anheben, in 30 von 30 Läufen, was eher für eine systematische Ursache spricht als für ein Problem mit der Präzision.
 
-Drei Ursachen kommen in Betracht.
-Das Modell könnte die Referenz tatsächlich falsch auflösen, etwa indem es Kameranähe mit einer anderen Ordnung verwechselt oder die Blickrichtung ignoriert.
-Die Soll-Vorgabe der Auswertung könnte ein anderes Objekt als korrekt führen, als die Szenengeometrie nahelegt; ein solcher Fehler würde jeden Lauf verwerfen und das beobachtete Muster erzeugen.
-Schließlich könnte ein Werkzeug- oder Aufbaufehler vorliegen, etwa eine nicht übernommene Anhebung.
-Nur die erste Erklärung wäre ein Befund über das Modell, die beiden anderen wären Fehler des Aufbaus.
-Entscheiden lässt sich das nachträglich nicht, weil für C2 keine verwertbaren Aufzeichnungen der einzelnen Läufe mehr vorliegen, aus denen hervorginge, welches Objekt der Agent mit welchen Argumenten manipuliert hat.
-C2 wird deshalb als ungeklärter Fall geführt und nicht als Beleg für eine Modellgrenze.
+Möglich ist, dass das Modell die Referenz tatsächlich falsch auflöst, z.\,B. weil es die Nähe zur Kamera mit einer anderen Reihenfolge verwechselt oder die Blickrichtung ignoriert.
+Ebenso könnte die Soll-Vorgabe der Auswertung ein anderes Objekt als korrekt führen, als die Geometrie der Szene nahelegt, was jeden Lauf verwerfen und das beobachtete Muster erzeugen würde.
+Und schließlich kommt ein Fehler im Werkzeug oder im Aufbau infrage, etwa eine Anhebung, die nicht übernommen wird.
+Nur im ersten Fall läge ein Befund über das Modell vor.
+Entscheiden lässt sich das im Nachhinein nicht, weil für C2 keine verwertbaren Aufzeichnungen der einzelnen Läufe mehr vorliegen, aus denen hervorginge, welches Objekt der Agent mit welchen Argumenten manipuliert hat.
+C2 bleibt deshalb ein ungeklärter Fall und wird nicht als Beleg für eine Grenze des Modells gewertet.
 
 \subsection*{Kategorie D: Rein perzeptuelle Referenzen}
 
-In Kategorie D kehrt sich das Verhältnis um.
-Der Befehl spricht ein Objekt über ein Oberflächenmuster an, das in den strukturellen Daten nicht vorkommt, und wer nur Koordinaten und Objekttypen kennt, kann ein gestreiftes Objekt nicht von einem einfarbigen unterscheiden.
-Entsprechend löst die visuelle Variante alle Läufe, 20 von 20, während die strukturelle mit 0,3 von 20 fast vollständig scheitert.
-War in Kategorie C die visuelle Schicht blind, so ist es hier die strukturelle.
+In Kategorie D dreht sich das Verhältnis um.
+Hier spricht der Befehl ein Objekt über ein Oberflächenmuster an, das in den strukturellen Daten nicht vorkommt.
+Wer nur Koordinaten und Objekttypen kennt, kann ein gestreiftes Objekt nicht von einem einfarbigen unterscheiden.
+Entsprechend löst die visuelle Variante alle Läufe (20 von 20), während die strukturelle Variante mit 0,3 von 20 fast vollständig scheitert.
+War in Kategorie C noch die visuelle Schicht blind, ist es hier die strukturelle.
 
-Da der hybriden Repräsentation beide Schichten vorliegen, wäre zu erwarten, dass sie mindestens so gut abschneidet wie die bessere Einzelvariante.
-Das ist nicht der Fall.
-Die naive hybride Variante erreicht nur 10,7 von 20, und in D1 steht sie mit 2 von 30 der visuellen Variante mit 30 von 30 gegenüber ($p = 8{,}4\cdot10^{-15}$, Tabelle~\ref{tab:fisher}).
-Den Vorteil der visuellen Beschreibung übernimmt die Kombination dort also nicht, sie verliert ihn.
+Auffallend ist, dass die naive hybride Variante, der beide Schichten vorliegen, nur 10,7 von 20 erreicht und in D1 sogar nur 2 von 30, während die visuelle Variante dort alle 30 Läufe löst ($p = 8{,}4\cdot10^{-15}$, Tabelle~\ref{tab:fisher}).
+Sie schneidet damit schlechter ab als die bessere der beiden Einzelvarianten.
 
-Wie dieser Verlust zu deuten ist, lässt der Aufbau offen.
-Naheliegend ist, dass die strukturelle Information die visuelle verdrängt, statt sie zu ergänzen.
-Mit den Daten ebenso vereinbar ist aber ein schlichter Reihenfolgeeffekt.
-In D1 stehen zwei graue Würfel bei $(-1,0,3)$ und $(1,0,3)$, und der gestreifte ist der \emph{zweite}.
-Wählt der Agent systematisch das erste aufgeführte Objekt, ohne die Referenz überhaupt aufzulösen, entsteht dasselbe Muster.
-Dafür spricht, dass auch die strukturelle Variante 0 von 30 erreicht, obwohl blindes Raten zwischen zwei Kandidaten etwa 15 von 30 ergäbe.
-Bei einer Temperatur von 0{,}8 hätte ein auch nur teilweise zufälliges Wahlverhalten über 30 Läufe mit hoher Wahrscheinlichkeit wenigstens einen Treffer erzeugt; ein Wert von exakt null deutet daher auf eine Systematik hin, und eine Positionspräferenz ist die einfachste Systematik, die zu null führt.
-Auch die 2 von 30 der naiven hybriden Variante passen dazu.
-Zwischen Verdrängung und Reihenfolgeeffekt ließe sich nur mit einer Messung entscheiden, in der der gestreifte Würfel an erster Stelle steht, und eine solche Messung wurde nicht durchgeführt.
+Für diesen Verlust kommen zwei Erklärungen infrage.
+Entweder verdrängt die strukturelle Information die visuelle, oder es handelt sich um einen einfachen Reihenfolgeeffekt.
+In D1 stehen zwei graue Würfel bei $(-1,0,3)$ und $(1,0,3)$, wobei der gestreifte Würfel der \emph{zweite} ist.
+Wählt der Agent immer das erste aufgeführte Objekt, ohne die Referenz überhaupt aufzulösen, entsteht dasselbe Muster.
+Dafür spricht, dass auch die strukturelle Variante 0 von 30 erreicht, obwohl blindes Raten zwischen zwei Objekten etwa 15 von 30 ergeben würde.
+Bei einer Temperatur von 0{,}8 hätte ein auch nur teilweise zufälliges Wahlverhalten über 30 Läufe mit hoher Wahrscheinlichkeit mindestens einen Treffer erzeugt.
+Ein Wert von exakt null deutet deshalb auf ein systematisches Verhalten hin, und eine Vorliebe für eine bestimmte Position ist die einfachste Erklärung, die zu null führt.
+Auch die 2 von 30 der naiven hybriden Variante passen in dieses Bild.
+Unterscheiden ließen sich beide Erklärungen mit einer Messung, in der der gestreifte Würfel an erster Stelle steht, die in dieser Arbeit nicht durchgeführt wurde.
 
 % [INFO BENOETIGT] D1: welches Objekt hat die strukturelle Variante gewaehlt?
 % Diese eine Angabe aus den vorhandenen Logs wuerde zwischen den beiden
@@ -441,32 +427,32 @@ Zwischen Verdrängung und Reihenfolgeeffekt ließe sich nur mit einer Messung en
 % Wahl dagegen auf beide Objekte, spricht das gegen den Reihenfolgeeffekt.
 % Dasselbe fuer die naive hybride Variante waere aufschlussreich.
 
-In D2 löst dieselbe naive Variante dagegen alle 30 Läufe.
-Dort steht der gestreifte Würfel bei $(1,0,4)$ zwischen vier grauen Würfeln, also weder am Rand noch an erster Stelle einer nach der x-Koordinate geordneten Aufzählung.
-Eine reine Präferenz für das erste Objekt erklärt diesen Erfolg nicht, was die Reihenfolgehypothese schwächt, ohne sie für D1 auszuräumen.
-Ob die Reihenfolge im übergebenen JSON dieser räumlichen Ordnung entspricht, geht allerdings aus der Szenariodefinition nicht hervor und wäre den Protokollen zu entnehmen.
+In D2 löst dieselbe naive Variante alle 30 Läufe.
+Dort steht der gestreifte Würfel bei $(1,0,4)$ zwischen vier grauen Würfeln, also weder am Rand noch an erster Stelle einer nach der x-Koordinate sortierten Aufzählung.
+Eine reine Vorliebe für das erste Objekt erklärt diesen Erfolg nicht, was die Erklärung über die Reihenfolge schwächt, ohne sie für D1 auszuschließen.
+Ob die Reihenfolge im übergebenen JSON dieser räumlichen Ordnung entspricht, geht aus der Szenariodefinition nicht hervor und müsste den Protokollen entnommen werden.
 
-Unabhängig von der Deutung zeigt die Kategorie, dass die bloße Verfügbarkeit beider Schichten nicht über den Erfolg entscheidet, sondern die Art, wie sie kombiniert werden.
-Dass sich der verlorene Zugriff auf die visuelle Beschreibung über die Instruktion zurückgewinnen lässt, deuten die instruierten Varianten bereits an; Abschnitt~\ref{sec:eval-rq2} geht dem nach.
+Dass sich der verlorene Zugriff auf die visuelle Beschreibung über die Instruktion zurückgewinnen lässt, deuten die Werte der beiden anderen hybriden Varianten bereits an (Abschnitt~\ref{sec:eval-rq2}).
 
 \subsection*{Kategorie E: Verdeckte Referenzen}
 
-Kategorie E prüft den umgekehrten Fall: ein Objekt, das im gerenderten Bild verdeckt, in den strukturellen Daten aber vollständig verzeichnet ist.
-In E1 verbirgt eine große Wand einen grünen Würfel, der angehoben werden soll.
-Alle Varianten mit struktureller Schicht lösen die Aufgabe in allen 30 Läufen, die visuelle in keinem, weil sie ein Objekt, das im Bild nicht erscheint, nicht ansprechen kann.
-E1 ist damit das Gegenstück zu Kategorie D: Dort trägt allein die visuelle Schicht, hier allein die strukturelle, und erst diese Symmetrie macht eine Kombination beider Schichten überhaupt sinnvoll.
+Kategorie E prüft den umgekehrten Fall, nämlich ein Objekt, das im gerenderten Bild verdeckt, in den strukturellen Daten aber vollständig verzeichnet ist.
+In E1 verdeckt eine große Wand einen grünen Würfel, der angehoben werden soll.
+Alle Varianten mit struktureller Schicht lösen diese Aufgabe in allen 30 Läufen, die visuelle Variante in keinem, da sie ein Objekt, das im Bild nicht erscheint, auch nicht ansprechen kann.
+E1 ist damit das Gegenstück zu Kategorie D.
 
-E2 verlangt, alle Würfel der Szene anzuheben, auch den verdeckten.
-Die strukturelle Variante löst das in 30 von 30 Läufen, die hybriden Varianten scheitern nahezu vollständig, die visuelle ganz.
-Als Repräsentationsbefund lässt sich diese Zelle aber nicht werten, weil der Aufbau sich hier selbst widerspricht.
-Die gemeinsame Grundinstruktion verlangt, die Aufgabe mit einem einzigen Manipulationsaufruf zu lösen und danach abzuschließen (Abschnitt~\ref{sec:impl-variants}), drei Würfel anzuheben erfordert aber drei Aufrufe.
-Erfolgreich ist der Agent also nur, wenn er die Instruktion übergeht, und gemessen wird in erster Linie, wie bereitwillig eine Variante das tut.
-Dass die strukturelle Variante es zuverlässig tut, sagt etwas über ihr Instruktionsverhalten und nichts über ihre Repräsentationskompetenz.
+In E2 sollen alle Würfel der Szene angehoben werden, also auch der verdeckte.
+Die strukturelle Variante löst das in 30 von 30 Läufen, die hybriden Varianten scheitern fast vollständig, und die visuelle Variante löst keinen Lauf.
+Als Befund über die Repräsentation taugt diese Zelle nicht, weil sich der Aufbau hier selbst widerspricht.
+Die gemeinsame Grundinstruktion verlangt, die Aufgabe mit einem einzigen Manipulationsaufruf zu lösen und danach abzuschließen (Abschnitt~\ref{sec:impl-variants}).
+Um drei Würfel anzuheben, braucht es drei Aufrufe.
+Erfolgreich ist der Agent also nur, wenn er die Instruktion missachtet, sodass hier vor allem gemessen wird, wie bereitwillig eine Variante das tut.
+Dass die strukturelle Variante das zuverlässig macht, sagt etwas über ihr Verhalten gegenüber der Instruktion aus und nichts über ihre Repräsentationskompetenz.
 
-Auch B2 betrifft mit \enquote{delete all red cubes} zwei Objekte, gelingt den hybriden Varianten aber in 30 von 30 Läufen.
-Die zunächst plausible Erklärung, der größere Kontext der hybriden Varianten erschwere mehrere aufeinanderfolgende Schritte, passt deshalb nicht; träfe sie zu, müsste B2 ähnliche Schwierigkeiten bereiten wie E2.
-Die Ursache des Einbruchs in E2 bleibt ungeklärt, und die Zelle wird weder als Verdeckungstest noch als Mehrschritt-Befund gewertet.
-Die Aussagen der Kategorie E stützen sich damit allein auf E1.
+Auch B2 betrifft mit \enquote{delete all red cubes} zwei Objekte und wird von den hybriden Varianten trotzdem in 30 von 30 Läufen gelöst.
+Die zunächst naheliegende Erklärung, dass der größere Kontext der hybriden Varianten mehrere aufeinanderfolgende Schritte erschwert, passt deshalb nicht.
+Wäre sie richtig, müsste B2 ähnliche Probleme verursachen wie E2.
+Die Ursache des Einbruchs in E2 bleibt ungeklärt, die Zelle wird nicht gewertet, und für Kategorie E bleibt nur E1.
 
 % [INFO BENOETIGT] B2 und E2: wie viele Aufrufe waren noetig?
 % Zur Aufloesung dieses Widerspruchs waere aus Code oder Logs zu klaeren:
@@ -480,57 +466,49 @@ Die Aussagen der Kategorie E stützen sich damit allein auf E1.
 
 \subsection*{Zwischenfazit}
 
-Einen Gesamtsieger gibt es nicht.
-Die strukturelle Schicht trägt attributive, qualitativ-relationale und verdeckte Referenzen, die visuelle Schicht perzeptuelle.
-Welche Repräsentation erfolgreich ist, hängt vom Referenztyp ab.
-Die Annahme, eine hybride Repräsentation vereine ohne Weiteres die Stärken beider, bestätigt sich nicht: In D1 bleibt die naive Kombination mit 2 von 30 weit hinter der visuellen Einzelvariante mit 30 von 30 zurück ($p = 8{,}4\cdot10^{-15}$).
-Ob dahinter eine Verdrängung der visuellen durch die strukturelle Information steht oder ein Reihenfolgeeffekt, ist offen.
-In jedem Fall reicht es nicht, beide Schichten bereitzustellen, und an dieser Stelle setzt die zweite Forschungsfrage an.
+Aus den Ergebnissen lässt sich schließen, dass es keine Repräsentation gibt, die über alle Aufgaben hinweg am besten abschneidet.
+Die strukturelle Schicht eignet sich für Referenzen über Attribute, qualitative Relationen und verdeckte Objekte, die visuelle für perzeptuelle Referenzen.
+Eine hybride Repräsentation vereint die Stärken beider nicht automatisch, wie D1 zeigt.
 
 
 % ------------------------------------------------------------
 \section[Ergebnisse zu RQ2]{Ergebnisse zur Gestaltung der hybriden Repräsentation (RQ2)}
 \label{sec:eval-rq2}
 
-Die naive hybride Variante stellt beide Schichten bereit, nutzt den visuellen Vorteil aber nicht zuverlässig: In D1 löst sie 2 von 30 Läufen, in D2 alle 30.
-Die zweite Forschungsfrage prüft, ob sich dieses Verhalten allein über die Gestaltung der Instruktion steuern lässt, ohne die Modelle zu verändern.
+In D1 löst die naive hybride Variante nur 2 von 30 Läufen, in D2 alle 30.
+Ob sich dieses Verhalten allein über die Instruktion steuern lässt, ohne die Modelle zu verändern, ist Gegenstand der zweiten Forschungsfrage.
 
 \subsection*{Ausgangslage}
 
-Warum die naive Variante in D1 scheitert und in D2 nicht, lässt sich aus den Erfolgsraten allein nicht bestimmen.
-Drei Erklärungen kommen in Betracht, und auf diese drei beziehen sich auch die folgenden Abschnitte und Kapitel~\ref{ch:zusammenfassung}.
-Die erste betrifft die Formulierung des Befehls.
-In D1 benennt \enquote{striped} eine Objekteigenschaft, wie sie sonst in der strukturellen Schicht steht, sodass das Modell dort nach einem unterscheidenden Merkmal suchen könnte, wo keines ist; die beiden grauen Würfel unterscheiden sich im strukturellen Zustand nicht.
-\enquote{Most salient} in D2 verweist dagegen auf etwas, das nur in der visuellen Beschreibung vorkommt.
-Die zweite Erklärung betrifft die visuelle Eindeutigkeit des Zielobjekts: Ein gestreiftes Objekt unter vier grauen hebt sich in der Beschreibung stärker ab als eines neben nur einem einfarbigen.
-Die dritte ist der in Abschnitt~\ref{sec:eval-rq1} beschriebene Reihenfolgeeffekt in D1.
-
-Die Beobachtung ähnelt dem aus der Literatur bekannten Muster der Modalitäts-Dominanz, allerdings nur mit den in Abschnitt~\ref{sec:grundlagen-sota} genannten Einschränkungen.
+Warum die naive Variante in D1 scheitert und in D2 nicht, lässt sich aus den Erfolgsraten allein nicht ablesen.
+Eine mögliche Ursache ist die Formulierung des Befehls.
+In D1 beschreibt \enquote{striped} eine Objekteigenschaft, wie sie sonst in der strukturellen Schicht steht, sodass das Modell dort nach einem Merkmal suchen könnte, wo es keines gibt, denn im strukturellen Zustand unterscheiden sich die beiden grauen Würfel nicht.
+\enquote{Most salient} in D2 verweist auf etwas, das nur in der visuellen Beschreibung vorkommt.
+Denkbar ist auch, dass die visuelle Eindeutigkeit des Zielobjekts eine Rolle spielt, da ein gestreiftes Objekt unter vier grauen in der Beschreibung stärker auffällt als eines neben nur einem einfarbigen.
+Als dritte Möglichkeit bleibt der Reihenfolgeeffekt aus Abschnitt~\ref{sec:eval-rq1}.
 
 \subsection*{Priorisierende Variante}
 
-Die priorisierende Variante stellt die visuelle Beschreibung voran und erklärt sie für das Aussehen als maßgeblich.
-Dort, wo die naive Kombination scheitert, gewinnt sie deutlich: In D1 steigt der Erfolg von 2 auf 25 von 30 Läufen ($p = 1{,}4\cdot10^{-9}$), über die Kategorie D von 10,7 auf 15,6 von 20.
-Da sich die Variante von der naiven aber auch in der Reihenfolge der Schichten unterscheidet (Tabelle~\ref{tab:variants}), bleibt offen, ob der Gewinn auf die Instruktion oder auf die Voranstellung der Beschreibung zurückgeht; das gilt für alle Vergleiche zwischen den hybriden Varianten.
+Bei der priorisierenden Variante wird die visuelle Beschreibung vorangestellt und für das Aussehen als maßgeblich erklärt.
+Dort, wo die naive Kombination scheitert, verbessert sich das Ergebnis dadurch deutlich.
+In D1 steigt der Erfolg von 2 auf 25 von 30 Läufen ($p = 1{,}4\cdot10^{-9}$), über die gesamte Kategorie D von 10,7 auf 15,6 von 20.
 
-In D2 fällt die priorisierende Variante zudem auf 22 von 30 zurück, wo die naive alle 30 Läufe löst ($p = 0{,}0046$).
-D2 verlangt neben der visuellen Zuordnung eine Verschiebung an eine feste Zielkoordinate.
-Wird das Gewicht zur visuellen Beschreibung verschoben, dürften gerade Aufgaben leiden, die zugleich die strukturellen Koordinaten präzise nutzen müssen.
-Die Priorisierung tauscht damit eine Kompetenz gegen eine andere, statt beide zu vereinen.
+In D2 fällt die priorisierende Variante dafür auf 22 von 30 zurück, während die naive Variante dort alle 30 Läufe löst ($p = 0{,}0046$).
+D2 verlangt neben der Zuordnung über die visuelle Beschreibung auch eine Verschiebung an eine feste Zielkoordinate.
+Verschiebt man das Gewicht in Richtung der visuellen Beschreibung, leiden vermutlich gerade solche Aufgaben, bei denen gleichzeitig die strukturellen Koordinaten präzise genutzt werden müssen.
+Die Priorisierung tauscht so eine Kompetenz gegen eine andere ein.
 
 \subsection*{Kompetenzgetrennte Variante}
 
-Die kompetenzgetrennte Variante trennt stattdessen die Zuständigkeiten: Die visuelle Beschreibung bestimmt, welches Objekt gemeint ist, die strukturelle Schicht liefert die Koordinaten.
-Wie in Abschnitt~\ref{sec:impl-variants} beschrieben, wurde sie iterativ am selben Szenarioset entwickelt, und ihre Instruktion enthält die Testwörter \enquote{striped} und \enquote{most salient}.
-Die folgenden Ergebnisse gelten deshalb zunächst nur für dieses Set (Abschnitt~\ref{sec:eval-validity}).
+Die kompetenzgetrennte Variante teilt die Zuständigkeiten stattdessen klar auf.
+Die visuelle Beschreibung bestimmt, welches Objekt gemeint ist, und die strukturelle Schicht liefert die zugehörigen Koordinaten.
 
-Auf diesem Set erreicht sie in Kategorie D 19,7 von 20 und kommt damit nahe an die visuelle Variante heran.
-In D1 löst sie 29 von 30 Läufen, wo die naive Variante 2 von 30 erreichte ($p = 2{,}3\cdot10^{-13}$), und in D2 hält sie 30 von 30, wo die priorisierende auf 22 von 30 zurückfiel ($p = 0{,}0046$).
-Sie verbindet also den Zugriff auf die visuelle Beschreibung aus D1 mit der strukturellen Präzision aus D2, woran die Priorisierung gescheitert war.
-Abbildung~\ref{fig:kategorieD} zeigt diese Entwicklung über die fünf Varianten.
-In den übrigen Kategorien bleibt sie auf dem besten erreichten Niveau: 30 von 30 in A und B, gleichauf an der Spitze in C und 30 von 30 in E1.
-Nur in der nicht gewerteten Zelle E2 liegt die strukturelle Variante vor allen hybriden.
-In jeder gewerteten Zelle ist die kompetenzgetrennte Variante die beste oder eine der besten.
+In Kategorie D erreicht die Variante 19,7 von 20 und kommt damit nah an die visuelle Variante heran.
+In D1 löst sie 29 von 30 Läufen, wo die naive Variante nur 2 von 30 schaffte ($p = 2{,}3\cdot10^{-13}$).
+In D2 bleibt sie bei 30 von 30, während die priorisierende Variante dort auf 22 von 30 abfiel ($p = 0{,}0046$).
+Sie verbindet den Zugriff auf die visuelle Beschreibung aus D1 mit der strukturellen Präzision aus D2, woran die Priorisierung gescheitert war (Abbildung~\ref{fig:kategorieD}).
+In den übrigen Kategorien bleibt sie auf dem besten erreichten Niveau, mit 30 von 30 in A und B, gemeinsam an der Spitze in C und 30 von 30 in E1.
+Schlechter als die strukturelle Variante ist sie nur in der nicht gewerteten Zelle E2.
 
 \begin{figure}[htbp]
   \centering
@@ -560,40 +538,39 @@ In jeder gewerteten Zelle ist die kompetenzgetrennte Variante die beste oder ein
 
 \subsection*{Bewertung}
 
-Gefordert war, dass eine Gestaltung dort belastbar verbessert, wo die naive Kombination scheitert, ohne in den übrigen Kategorien zu verlieren.
-Die kompetenzgetrennte Variante erfüllt beides: Sie hebt D1 von 2 auf 29 von 30 Läufen und hält das Niveau in allen anderen gewerteten Kategorien.
-Für dieses Szenarioset ist die zweite Forschungsfrage damit positiv beantwortet.
-Die beiden Quellen ergänzen sich nicht von selbst, ihr Zusammenspiel lässt sich aber allein über die Instruktion steuern.
-Einschränkend kommt hinzu, dass die Variante am Messset entwickelt wurde und Instruktion und Reihenfolge der Schichten nicht getrennt variiert sind; Abschnitt~\ref{sec:eval-validity} führt beides aus.
+Nach dem Maßstab aus Abschnitt~\ref{sec:ein-ziele} muss eine gestaltete Instruktion dort deutlich besser abschneiden, wo die naive Kombination scheitert, ohne in den übrigen Kategorien schlechter zu werden.
+Die kompetenzgetrennte Variante verbessert D1 von 2 auf 29 von 30 Läufen und hält gleichzeitig das Niveau in allen anderen gewerteten Kategorien.
+Für das untersuchte Szenarioset lässt sich die zweite Forschungsfrage damit mit Ja beantworten.
 
-Als Leitlinie für einen lokalen Agenten mit gemischter Repräsentation lässt sich daraus ableiten, die Quellen nicht nur nebeneinanderzustellen, sondern jeder Schicht den Referenzbereich zuzuweisen, für den sie nach RQ1 exklusiv zuständig ist.
-Die visuelle Beschreibung beantwortet dann, welches Objekt gemeint ist, die Struktur, wo es sich befindet.
-Da diese Leitlinie auf zwei Szenarien einer Kategorie und einer an diesen Szenarien entwickelten Instruktion beruht, ist sie eine Empfehlung und kein nachgewiesenes Prinzip.
-Die kompetenzgetrennte Variante bildet auch die Grundlage des Demonstrators aus Abschnitt~\ref{sec:impl-demonstrator}.
+Für einen lokalen Agenten mit gemischter Repräsentation folgt daraus die Empfehlung, die Quellen nicht einfach nebeneinanderzustellen, sondern jede Schicht für den Bereich einzusetzen, den sie nach RQ1 exklusiv abdeckt.
+Die visuelle Beschreibung beantwortet dann, welches Objekt gemeint ist, und die Struktur, wo es sich befindet.
 
 
 % ------------------------------------------------------------
 \section{Validität und Grenzen}
 \label{sec:eval-validity}
 
-Die Ergebnisse sind nur so belastbar wie die Kontrolle der Bedingungen, unter denen sie entstanden.
-Dieser Abschnitt beschreibt, welche Störfaktoren erkannt und beseitigt wurden, welche Einflüsse bestehen bleiben und wo die Aussagekraft endet.
+Dieser Abschnitt beschreibt die Störfaktoren, die während der Arbeit beseitigt wurden, und die Einschränkungen, die bestehen bleiben.
 
 \subsection*{Beseitigte Störfaktoren und nachträgliche Entscheidungen}
 
-Mehrere zunächst plausible Befunde erwiesen sich bei genauerer Prüfung als Artefakte des Aufbaus und wurden vor der Wertung beseitigt.
-Die Farbe der Marker beeinflusste die Farbwahrnehmung des visuellen Modells, das teils die Farbe des Markers statt die des Objekts nannte; die Marker wurden daraufhin versetzt und die Anweisung angepasst.
-In Szenarien, in denen ein Referenzobjekt im Koordinatenursprung stand, fielen relative und absolute Zielangabe zusammen, sodass eine relationale Aufgabe auch ohne Verständnis der Relation lösbar war; diese Aufbauten wurden entkonfundiert.
-Im ursprünglichen, achsenkollinearen Aufbau von C2 erhielten verdeckte Objekte durch den Sichtbarkeitstest keinen Marker, wodurch das kameranächste Objekt als einziges markiert erschien und die Aufgabe trivial wurde; C2 wurde mit seitlich versetztem Aufbau neu gemessen.
-Ein scheinbar deutlicher Nachteil der hybriden Varianten schließlich entpuppte sich als Terminierungsartefakt des Frameworks und verschwand mit dem serverseitigen Schutz gegen identische Wiederholungen (Abschnitt~\ref{sec:impl-agent}).
+Mehrere Befunde, die zunächst plausibel wirkten, stellten sich bei genauerer Prüfung als Fehler im Aufbau heraus und wurden vor der Auswertung beseitigt.
+Anfangs nannte das visuelle Modell teilweise die Farbe des Markers statt der des Objekts.
+Deshalb wurden die Marker versetzt und die Anweisung im Prompt angepasst.
+In Szenarien, in denen ein Referenzobjekt im Koordinatenursprung stand, fielen relative und absolute Zielangabe zusammen, sodass eine relationale Aufgabe auch ohne Verständnis der Relation lösbar war.
+Diese Aufbauten wurden geändert.
+Bei C2 lagen die Objekte ursprünglich auf einer Achse.
+Verdeckte Objekte bekamen durch den Sichtbarkeitstest keine Marke, sodass das kameranächste Objekt als einziges markiert und die Aufgabe damit trivial war.
+Dieser Aufbau wurde verworfen und C2 mit seitlich versetzten Objekten neu gemessen.
+Dazu kam die doppelte Ausführung von Manipulationen, die zunächst wie ein Nachteil der hybriden Varianten aussah (Abschnitt~\ref{sec:impl-agent}).
 
-Dass alle Varianten in der Kontrollkategorie A das Maximum erreichen, zeigt, dass der Messaufbau selbst keine variantenspezifischen Unterschiede erzeugt.
-Vollständigkeit lässt sich daraus nicht ableiten: Die genannten Störfaktoren sind die markantesten, nicht notwendigerweise die einzigen.
+Dass alle Varianten in der Kontrollkategorie A das Maximum erreichen, zeigt, dass der Messaufbau selbst keine Unterschiede zwischen den Varianten erzeugt.
 
-Einige dieser Eingriffe erfolgten erst, nachdem die zugehörigen Ergebnisse vorlagen.
-C3 wurde aus der Auswertung genommen, weil die achsenparallele Kameraausrichtung die aus Sicht der Kamera formulierte Referenz mehrdeutig machte; C2 wurde wegen des oben beschriebenen Markerproblems nicht ausgeschlossen, sondern mit verändertem Aufbau neu gemessen; und E2 wurde als nicht wertbar eingestuft, weil sein Soll-Ergebnis der Grundinstruktion widerspricht, was beim Entwurf nicht bedacht worden war.
-In allen drei Fällen lag ein benennbarer Störfaktor vor, nicht bloß ein unerwünschtes Ergebnis.
-Vorab festgelegt waren die Entscheidungen aber nicht, und ein solches Vorgehen erhöht grundsätzlich das Risiko, dass die berichtete Auswahl zugunsten der erzählten Deutung ausfällt.
+Einige dieser Anpassungen wurden erst vorgenommen, nachdem die zugehörigen Ergebnisse bereits vorlagen.
+Szenario C3 wurde aus der Auswertung genommen, da die achsenparallele Ausrichtung der Kamera die aus Sicht der Kamera formulierte Referenz mehrdeutig machte.
+C2 wurde wegen des beschriebenen Problems mit den Markern nicht ausgeschlossen, sondern mit verändertem Aufbau neu gemessen.
+E2 wurde als nicht wertbar eingestuft, da sein Soll-Ergebnis der Grundinstruktion widerspricht, was beim Entwurf nicht bedacht worden war.
+In allen drei Fällen gab es einen konkreten Störfaktor, vorab festgelegt waren die Entscheidungen trotzdem nicht.
 
 % [INFO BENOETIGT] Ergebnisse der urspruenglichen Fassungen von C2 und C3
 % Falls die Messwerte der ersten, spaeter verworfenen Fassungen von C2
@@ -605,78 +582,60 @@ Vorab festgelegt waren die Entscheidungen aber nicht, und ein solches Vorgehen e
 
 \subsection*{Abhängigkeit vom Szenarioset}
 
-An zwei Stellen sind die Testfälle in den Aufbau selbst eingeflossen.
-Die erste ist der Wahrnehmungs-Prompt (Listing~\ref{lst:vlmprompt}).
-Er bestimmt, was die visuelle Schicht überhaupt berichten kann, und begrenzt damit, was sich über ihre Schwächen sagen lässt.
-Das Scheitern in B3 geht darauf zurück, dass der Prompt keine Größe abfragt; Kategorie B zeigt deshalb nicht, dass Attributreferenzen grundsätzlich strukturelle Daten erfordern, sondern nur, dass sie es unter diesem Prompt tun.
-Umgekehrt nennt der Prompt als Beispiel für einen Texturdeskriptor \enquote{striped}, also das Merkmal, über das D1 und D2 ihr Zielobjekt ansprechen.
-Weil alle Varianten mit visueller Schicht denselben Prompt nutzen, verzerrt das den Vergleich \emph{zwischen} ihnen nicht.
-Gezeigt ist in Kategorie D aber nur, dass die visuelle Schicht eine Eigenschaft erkennt, auf die ihr Prompt sie ausdrücklich hinweist; ob sie ein unerwartetes Oberflächenmerkmal ebenso zuverlässig berichtet hätte, ist offen.
+Die Testfälle sind an zwei Stellen in den Aufbau selbst eingeflossen.
+Das betrifft zum einen den Wahrnehmungs-Prompt (Listing~\ref{lst:vlmprompt}), der festlegt, was die visuelle Schicht überhaupt berichten kann.
+Wenn die visuelle Variante in B3 scheitert, weil der Prompt keine Größe abfragt, zeigt Kategorie B eben nicht, dass Referenzen über Attribute grundsätzlich strukturelle Daten brauchen, sondern nur, dass das unter diesem Prompt so ist.
+In die andere Richtung wirkt das Beispielwort \enquote{striped} im Prompt, denn über dieses Merkmal sprechen D1 und D2 ihr Zielobjekt an.
+Den Vergleich \emph{zwischen} den Varianten mit visueller Schicht verzerrt das nicht, da alle denselben Prompt nutzen.
+Für Kategorie D ist damit gezeigt, dass die visuelle Schicht eine Eigenschaft erkennt, auf die ihr Prompt ausdrücklich hinweist, und nicht, ob sie ein unerwartetes Oberflächenmerkmal genauso zuverlässig erkannt hätte.
 
-Die zweite und gewichtigere Stelle betrifft die kompetenzgetrennte Variante.
-Sie entstand nicht aus einer vorab formulierten Theorie, sondern aus der Analyse der naiven und der priorisierenden Variante auf demselben Szenarioset, auf dem sie danach gemessen wird, und ihre Instruktion enthält mit \enquote{striped} und \enquote{most salient} zwei Formulierungen aus den Befehlen von D1 und D2 (Listing~\ref{lst:surgical}).
-Gezeigt ist damit, dass sich die Kombination beider Schichten auf diesem Set durch die Instruktion erheblich verbessern lässt.
-Nicht gezeigt ist, dass die Variante bei ungesehenen Formulierungen ebenso überlegen wäre.
-Ein Teil ihres Vorteils könnte darauf beruhen, dass die Instruktion die Wörter des Testbefehls schon enthält und dem Modell die Zuordnung abnimmt, statt eine allgemeine Kompetenz zu vermitteln.
-Zwischen beiden Möglichkeiten kann die Arbeit nicht entscheiden; Abschnitt~\ref{sec:zus-ausblick} nennt die Prüfungen, die dafür nötig wären.
+Schwerer wiegt die Entstehung der kompetenzgetrennten Variante, die aus der Analyse der naiven und der priorisierenden Variante auf demselben Szenarioset hervorging, auf dem sie danach gemessen wurde, und deren Instruktion zwei Formulierungen aus den Befehlen von D1 und D2 enthält (Abschnitt~\ref{sec:impl-variants}).
+Belegt ist damit, dass sich die Kombination beider Schichten auf diesem Szenarioset durch die Instruktion deutlich verbessern lässt.
+Ob das auch für neue Formulierungen gilt, ist offen.
+Ein Teil des Vorteils könnte daher kommen, dass die Instruktion die Wörter aus dem Testbefehl schon enthält und dem Modell so die Zuordnung abnimmt.
+Welche Prüfungen das klären könnten, steht in Abschnitt~\ref{sec:zus-ausblick}.
 
 \subsection*{Nicht getrennte Einflussgrößen}
 
-Die hybriden Varianten unterscheiden sich nicht nur in ihrer Zuständigkeitsregel.
-Die priorisierende stellt zusätzlich die visuelle Beschreibung voran, während die naive und die kompetenzgetrennte mit dem strukturellen Zustand beginnen (Tabelle~\ref{tab:variants}).
-Instruktion und Reihenfolge variieren damit gemeinsam, und ihr jeweiliger Beitrag lässt sich nicht trennen.
-Für den Vergleich der hybriden Varianten untereinander ist NFA5 insoweit nicht erfüllt; für den Vergleich von strukturell, visuell und hybrid gilt sie, da sich diese Bedingungen in der Repräsentation selbst unterscheiden.
+Die hybriden Varianten unterscheiden sich nicht nur in ihrer Regel zur Zuständigkeit.
+Bei der priorisierenden Variante steht zusätzlich die visuelle Beschreibung am Anfang, während die naive und die kompetenzgetrennte Variante mit dem strukturellen Zustand beginnen (Tabelle~\ref{tab:variants}).
+Instruktion und Reihenfolge ändern sich also gemeinsam, und welchen Anteil jeder der beiden Faktoren hat, lässt sich nicht trennen.
+Für den Vergleich der hybriden Varianten untereinander ist NFA5 in diesem Punkt nicht erfüllt.
+Für den Vergleich zwischen strukturell, visuell und hybrid gilt die Anforderung weiterhin, da sich diese Bedingungen in der Repräsentation selbst unterscheiden.
 
-Ungeklärt bleibt auch, warum die naive Kombination den Zugriff auf die visuelle Beschreibung in D1 verliert.
-Formulierung des Befehls, visuelle Eindeutigkeit des Zielobjekts und Reihenfolge der Objekte (Abschnitt~\ref{sec:eval-rq2}) sind mit den Daten verträglich und lassen sich in diesem Aufbau nicht voneinander trennen.
-Besonders schwer wiegt der Reihenfolgeeffekt, weil er nicht nur den Mechanismus, sondern den Befund selbst betrifft: Das Scheitern der strukturellen Variante mit 0 von 30 passt zu einer Positionspräferenz ebenso gut wie zu einer Verdrängung.
-Die Deutung, die exakte strukturelle Information verdränge die unschärfere Beschreibung, ist deshalb eine mögliche Erklärung und kein nachgewiesener Mechanismus.
-Die Ähnlichkeit zu Befunden über die Übergewichtung von Text in multimodalen Modellen~\cite{deng2025, wu2025} stützt sie nicht, denn dort konkurrieren Bild und Text innerhalb eines Modells, hier zwei Textquellen (Abschnitt~\ref{sec:grundlagen-sota}).
-
-Ein weiterer Konflikt besteht zwischen der Grundinstruktion und den Mehrobjekt-Szenarien.
-Die Grundinstruktion verlangt einen einzigen Manipulationsaufruf, die Soll-Ergebnisse von B2 und E2 betreffen aber mehrere Objekte.
-Für E2 macht das die Zelle unwertbar, weil ein Erfolg nur durch Missachtung der Instruktion möglich ist.
-Warum B2 den hybriden Varianten trotzdem durchgängig gelingt, ist ungeklärt und hängt davon ab, ob das Löschwerkzeug mehrere Objekte in einem Aufruf annimmt.
-Damit bleibt auch offen, ob das knappe Kontextfenster von 4096 Token, das die hybriden Varianten stärker belastet (Abschnitt~\ref{sec:eval-design}), irgendwo wirksam wurde.
-Für E2 läge diese Erklärung nahe, B2 spricht aber dagegen, und eine Protokollierung der Kontextauslastung je Lauf, die das klären könnte, wurde nicht vorgenommen.
+Ebenfalls ungeklärt bleibt, warum die naive Kombination in D1 den Zugriff auf die visuelle Beschreibung verliert.
+Die drei Erklärungen aus Abschnitt~\ref{sec:eval-rq2} lassen sich in diesem Aufbau nicht trennen, und der Reihenfolgeeffekt betrifft dabei nicht nur die Erklärung, sondern den Befund selbst.
+Dass die exakte Struktur die unschärfere Beschreibung verdrängt, ist deshalb eine mögliche Deutung und kein nachgewiesener Mechanismus.
+Die Arbeiten zur Modalitäts-Dominanz~\cite{deng2025, wu2025} stützen sie nicht, da sie einen anderen Aufbau untersuchen (Abschnitt~\ref{sec:grundlagen-sota}).
 
 \subsection*{Messung und Auswertung}
 
-Der Erfolg wird ausschließlich aus dem Folgezustand bestimmt, weil das lokale Modell ein instabiles Abschlussverhalten zeigte.
-Es meldete wiederholt Erfolge, die der Folgezustand nicht bestätigte, nannte teils nicht vorhandene Objektkennungen und führte einzelne Manipulationen doppelt aus.
-Wie häufig Selbstauskunft und Folgezustand auseinanderfielen, wurde nicht quantifiziert; die Beobachtung beruht auf wiederholten Einzelfällen in den Protokollen.
-Für die Gültigkeit der Ergebnisse genügt das, weil ein falsch gemeldeter Erfolg die Erfolgszahl nicht beeinflusst.
+Dass der Erfolg nur aus dem Folgezustand bestimmt wird, hat einen praktischen Grund.
+Das lokale Modell meldete immer wieder Erfolge, die der Folgezustand nicht bestätigte, nannte teilweise Objektkennungen, die es gar nicht gab, und führte einzelne Manipulationen doppelt aus.
+Wie oft das passierte, wurde nicht systematisch erfasst, die Beobachtung stützt sich auf wiederholte Einzelfälle in den Protokollen.
+Für die Ergebnisse spielt das keine Rolle, da ein falsch gemeldeter Erfolg die gemessene Erfolgszahl nicht verändert.
 
-Innerhalb einer festen Konfiguration erwies sich die Messung als stabil.
-Die meisten Zellen zeigen über die drei Durchläufe eine Spanne von null oder eins, nennenswerte Streuung tritt nur in wenigen Szenarien auf, vor allem in C1 und C4 sowie in D1 und D2 der priorisierenden Variante.
-Wie in Abschnitt~\ref{sec:eval-design} ausgeführt, kommt diese Stabilität trotz einer Temperatur von 0{,}8 zustande.
-Die Spannen dienen nur noch der Beschreibung der Durchlaufstabilität; die in einer früheren Fassung verwendete Heuristik, nicht überlappende Spannen als belastbaren Unterschied zu werten, wurde durch die Auswertung aus Abschnitt~\ref{sec:eval-metrics} ersetzt.
+Bei fester Konfiguration war die Messung stabil.
+Die meisten Zellen zeigen über die drei Durchläufe eine Spanne von null oder eins, nennenswerte Streuung gibt es vor allem in C1 und C4 sowie in D1 und D2 der priorisierenden Variante.
+Für Vergleiche zwischen Varianten gilt die statistische Auswertung aus Abschnitt~\ref{sec:eval-metrics}, die Spannen dienen nur der Beschreibung.
 
-Die Konfidenzintervalle in Tabelle~\ref{tab:stats} quantifizieren allerdings nur die Unsicherheit innerhalb einer Zelle, nicht die Frage, ob diese Zelle für ihren Referenztyp repräsentativ ist.
-Diese zweite Unsicherheit ist die größere und lässt sich hier nicht quantifizieren.
-Den bild-exklusiven Bereich belegen zwei Szenarien, den strukturell-exklusiven nach dem Ausschluss von E2 nur eines, und das erlaubt keine Aussage darüber, wie sich der Effekt über die Breite möglicher Referenzen verhält.
+Die Konfidenzintervalle in Tabelle~\ref{tab:stats} beschreiben die Unsicherheit innerhalb einer Zelle und nicht, ob eine Zelle für ihren Referenztyp repräsentativ ist.
+Bei zwei Szenarien für den Bereich der visuellen Schicht und nach dem Ausschluss von E2 nur einem für den der strukturellen dürfte diese zweite Unsicherheit die größere sein.
 
-Auch die Aufzeichnung der Läufe begrenzt die Analyse.
-Für C2 und C4 liegen keine verwertbaren Protokolle mehr vor, sodass sich weder der Lagefehler bestimmen noch nachvollziehen lässt, welches Objekt der Agent in C2 tatsächlich manipuliert hat (Abschnitt~\ref{sec:eval-rq1}).
-Werkzeugaufrufe mit Argumenten und erreichte Endpositionen mitzuschreiben, hätte keinen zusätzlichen Messaufwand bedeutet und mehrere der offenen Fragen dieser Arbeit beantwortet; bei einer Wiederholung ist das vorzusehen.
-Schließlich wurde nicht geprüft, wie empfindlich insbesondere C2 und C4 auf die Toleranz $\tau = 0{,}1$ reagieren.
-Eine großzügigere Toleranz könnte die dortigen Erfolgsraten anheben, ohne dass sich die Rangfolge der Varianten ändern muss.
+Werkzeugaufrufe mit Argumenten und erreichte Endpositionen mitzuschreiben, hätte keinen zusätzlichen Messaufwand bedeutet und die offenen Fragen zu C2 und C4 beantwortet (Abschnitt~\ref{sec:eval-rq1}).
+Wie empfindlich diese beiden Szenarien auf die Toleranz von $\tau = 0{,}1$ reagieren, wurde ebenfalls nicht geprüft.
 
 \subsection*{Technische Einschränkungen}
 
-Die Sichtbarkeitsprüfung arbeitet mit einem einzelnen Sichtstrahl auf den Objektmittelpunkt und kennt nur sichtbar und verdeckt (Abschnitt~\ref{sec:impl-scene}).
-Für die verwendeten Szenen genügt das, in dichteren Szenen mit Teilverdeckung nicht.
-Der Schutz gegen identische Wiederholungen würde auch eine vom Befehl geforderte Wiederholung blockieren (Abschnitt~\ref{sec:impl-agent}); in den ausgewerteten Szenarien kommt das nicht vor, bei Mehrschritt-Befehlen wäre es aber möglich.
+Die Prüfung der Sichtbarkeit arbeitet mit einem einzelnen Sichtstrahl zum Objektmittelpunkt und kennt deshalb nur die Zustände sichtbar und verdeckt (Abschnitt~\ref{sec:impl-scene}).
+Für die verwendeten Szenen reicht das aus, für dichtere Szenen mit teilweise verdeckten Objekten nicht.
+Der Schutz gegen identische Wiederholungen würde auch eine vom Befehl gewollte Wiederholung blockieren (Abschnitt~\ref{sec:impl-agent}), was in den ausgewerteten Szenarien nicht vorkommt.
 
 \subsection*{Reichweite}
 
-Alle Befunde beruhen auf einem einzelnen lokalen Modellpaar und auf synthetischen Szenen aus einfachen Grundkörpern.
-Innerhalb dieses Rahmens sind sie repliziert und intern konsistent, eine Übertragung auf größere oder anders gebaute Modelle und auf reale, komplexe Szenen wurde aber nicht geprüft.
-Für RQ2 kommt hinzu, dass die beste Variante am Szenarioset selbst entwickelt wurde.
+Alle Ergebnisse beruhen auf einem einzelnen lokalen Modellpaar und auf synthetischen Szenen aus einfachen Grundkörpern, eine Übertragung auf größere oder anders aufgebaute Modelle sowie auf reale, komplexe Szenen wurde nicht geprüft.
 
-Ein Teil der Befunde betrifft eher das Modell als die Repräsentation.
-Für C4 ist die Deutung als Präzisionsgrenze tragfähig, denn die Koordinaten liegen vor, die geforderte Rechengenauigkeit wird aber nur manchmal erreicht, und daran ändert keine Repräsentation etwas.
-Für C2 ist eine Modellgrenze dagegen nicht belegt (Abschnitt~\ref{sec:eval-rq1}).
-C2 enthält zudem mit \enquote{nearest to the camera} eine blickpunktbezogene Referenz; dass blickpunktabhängige Referenzen nicht ausgewertet wurden, gilt also nur für das dafür vorgesehene und ausgeschlossene Szenario C3.
-
-Die Aussagekraft der Arbeit liegt damit in der kontrollierten Isolation der Repräsentationskompetenzen und nicht in einer allgemeinen Gültigkeit über Modelle und Szenen hinweg.
+Manche Ergebnisse sagen eher etwas über das Modell als über die Repräsentation.
+In C4 liegen die Koordinaten vor, und trotzdem wird die geforderte Genauigkeit nur manchmal erreicht, was zu einer Grenze der Präzision passt, an der keine Repräsentation etwas ändert.
+Für C2 ist eine solche Grenze nicht belegt (Abschnitt~\ref{sec:eval-rq1}).
+C2 bezieht sich mit \enquote{nearest to the camera} übrigens auf den Blickpunkt, blickpunktabhängige Referenzen fehlen in der Auswertung also nicht ganz, auch wenn das dafür vorgesehene Szenario C3 ausgeschlossen wurde.

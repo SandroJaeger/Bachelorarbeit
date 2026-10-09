@@ -5,37 +5,36 @@
 \chapter{Grundlagen und Stand der Technik}
 \label{ch:grundlagen}
 
-Dieses Kapitel führt zunächst die eingesetzten Modelle, das Agenten-Paradigma und die Formen der Szenenrepräsentation ein und ordnet die Arbeit anschließend in den Stand der Technik ein.
+In diesem Kapitel werden zunächst die eingesetzten Modelle, das Prinzip werkzeugnutzender Agenten und die Formen der Szenenrepräsentation eingeführt.
+Im Anschluss wird die Arbeit in den Stand der Technik eingeordnet und die Forschungslücke abgeleitet.
 
 
 % ------------------------------------------------------------
 \section{Große Sprach- und Sprach-Bild-Modelle}
 \label{sec:grundlagen-modelle}
 
-Die Arbeit setzt zwei Arten vortrainierter Modelle als Bausteine ein, die unverändert genutzt und nicht weiterentwickelt werden.
+In der Arbeit kommen zwei Arten vortrainierter Modelle mit jeweils etwa sieben Milliarden Parametern zum Einsatz, die beide unverändert genutzt und nicht weiterentwickelt werden.
 
-Ein großes Sprachmodell, im Folgenden als LLM (Large Language Model) bezeichnet, ist ein auf umfangreichen Textmengen trainiertes neuronales Modell, das zu einer Eingabe fortlaufend Text erzeugt.
-Durch zusätzliches Training auf Instruktionen lässt es sich anweisen, eine Aufgabe zu bearbeiten, und gibt seine Antwort wiederum als Text aus.
-In dieser Arbeit übernimmt ein LLM die Rolle des Agenten, der einen Befehl interpretiert und die passende Operation auswählt.
+Als großes Sprachmodell (Large Language Model, LLM) bezeichnet man ein neuronales Modell, das auf umfangreichen Textmengen trainiert wurde und zu einer Eingabe fortlaufend Text erzeugt.
+Durch ein zusätzliches Training auf Instruktionen lässt sich ein solches Modell anweisen, eine bestimmte Aufgabe zu bearbeiten, wobei die Antwort wieder als Text ausgegeben wird.
+In dieser Arbeit übernimmt das LLM die Rolle des Agenten, der einen Befehl interpretiert und die passende Operation auswählt.
 % CITATION: Grundlagenreferenz zu LLMs bzw. Instruction-Tuning ergaenzen (Survey/Lehrbuch).
 
-Ein Sprach-Bild-Modell, im Folgenden als VLM (Vision-Language Model) bezeichnet, erweitert dieses Prinzip um eine visuelle Eingabe.
+Ein Sprach-Bild-Modell (Vision-Language Model, VLM) erweitert dieses Prinzip um eine visuelle Eingabe.
 Es verarbeitet ein Bild zusammen mit einem Text und erzeugt daraus eine textuelle Antwort, etwa eine Beschreibung des Bildinhalts oder die Antwort auf eine Frage zum Bild.
-In dieser Arbeit übernimmt ein VLM die visuelle Wahrnehmung der Szene.
+In dieser Arbeit ist das VLM für die visuelle Wahrnehmung der Szene zuständig.
 % CITATION: Grundlagenreferenz zu VLMs ergaenzen (Survey).
 
-Die beiden Modelle sind im hier untersuchten System nicht zu einem multimodalen Modell verschmolzen, sondern hintereinandergeschaltet.
+Für das Verständnis der weiteren Kapitel ist wichtig, wie die beiden Modelle im System zusammenarbeiten.
+Sie sind nicht zu einem multimodalen Modell verschmolzen, sondern hintereinandergeschaltet.
 Das Sprach-Bild-Modell erhält das gerenderte Bild und erzeugt daraus eine natürlichsprachliche Beschreibung.
-Erst diese Beschreibung gelangt in den Kontext des Sprachmodells, das den Befehl deutet und die Operation wählt.
-Das Modell, das die eigentliche Entscheidung trifft, sieht also zu keinem Zeitpunkt ein Bild.
+Erst diese Beschreibung gelangt in den Kontext des Sprachmodells, das anschließend den Befehl deutet und die Operation wählt.
+Das Modell, das die eigentliche Entscheidung trifft, bekommt also zu keinem Zeitpunkt ein Bild zu sehen.
 
-Diese Eigenschaft des Aufbaus ist für die Deutung aller späteren Ergebnisse wichtig.
-Was in dieser Arbeit \enquote{visuelle Repräsentation} heißt, ist streng genommen keine Bildeingabe, sondern die sprachliche Beschreibung eines Bildes.
-Ist später von der Gewichtung der strukturellen gegenüber der visuellen Schicht die Rede, konkurrieren daher nicht Bild und Text im Inneren eines multimodalen Modells, sondern zwei Textquellen im Kontext eines reinen Sprachmodells: eine exakte, aber unvollständige Datenstruktur und eine reichhaltige, aber unscharfe Beschreibung.
-Die konkrete Umsetzung zeigt Abschnitt~\ref{sec:impl-variants}, die Folgen für die Befunde diskutiert Abschnitt~\ref{sec:eval-validity}.
-
-Beide Modelle werden lokal im Sinne der Definition aus Abschnitt~\ref{sec:ein-motivation} betrieben und haben eine Größe von jeweils etwa sieben Milliarden Parametern.
-Die Gründe für den lokalen Betrieb nennt Abschnitt~\ref{sec:ein-relevanz}.
+Was in dieser Arbeit als \enquote{visuelle Repräsentation} bezeichnet wird, ist deshalb streng genommen keine Bildeingabe, sondern die sprachliche Beschreibung eines Bildes.
+Wenn später von der Gewichtung der strukturellen gegenüber der visuellen Schicht die Rede ist, konkurrieren somit zwei Textquellen im Kontext eines reinen Sprachmodells.
+Die Datenstruktur ist exakt und unvollständig, die Beschreibung reichhaltig und unscharf.
+Das gilt für alle folgenden Kapitel, auch wenn es dort nicht jedes Mal wiederholt wird.
 
 
 % ------------------------------------------------------------
@@ -45,14 +44,15 @@ Die Gründe für den lokalen Betrieb nennt Abschnitt~\ref{sec:ein-relevanz}.
 Die Interaktion mit der Szene folgt dem Muster eines werkzeugnutzenden Agenten.
 Darunter versteht man ein Sprachmodell, das nicht nur Text erzeugt, sondern in einer Schleife aus Wahrnehmung und Handlung Werkzeuge aufruft, um eine Aufgabe zu lösen.
 
-Ein Werkzeug ist eine benannte Funktion mit einer kurzen Beschreibung ihrer Wirkung und ihrer Parameter.
+Ein Werkzeug ist hierbei eine benannte Funktion mit einer kurzen Beschreibung ihrer Wirkung und ihrer Parameter.
 Anhand dieser Beschreibung entscheidet das Sprachmodell, welches Werkzeug es mit welchen Argumenten aufruft.
-Das Ergebnis des Aufrufs fließt in den Kontext zurück, und das Modell wählt den nächsten Schritt, bis es die Aufgabe als abgeschlossen meldet.
-So verbindet der Agent die sprachliche Interpretation eines Befehls mit konkreten Aktionen in der Umgebung.
+Das Ergebnis des Aufrufs fließt danach in den Kontext zurück, und das Modell wählt den nächsten Schritt, bis es die Aufgabe als abgeschlossen meldet.
+Auf diese Weise verbindet der Agent die sprachliche Interpretation eines Befehls mit konkreten Aktionen in der Umgebung.
 
 Umgesetzt wird der Agent mit dem Framework smolagents, das einen werkzeugaufrufenden Agenten bereitstellt~\cite{smolagents}.
-Die Werkzeuge sind über das Model Context Protocol (MCP) angebunden, einen offenen Standard, über den Sprachmodelle auf externe Werkzeuge und Datenquellen über eine einheitliche Schnittstelle zugreifen~\cite{mcp}.
-Das Protokoll trennt die Bereitstellung der Werkzeuge von ihrer Nutzung, sodass dieselben Werkzeuge unabhängig vom konkreten Modell aufgerufen werden können.
+Angebunden sind die Werkzeuge über das Model Context Protocol (MCP), einen offenen Standard, über den Sprachmodelle mit einer einheitlichen Schnittstelle auf externe Werkzeuge und Datenquellen zugreifen können~\cite{mcp}.
+Positiv ist, dass das Protokoll die Bereitstellung der Werkzeuge von ihrer Nutzung trennt.
+So können dieselben Werkzeuge unabhängig vom konkreten Modell aufgerufen werden.
 Wie das System dieses Muster umsetzt, beschreibt Kapitel~\ref{ch:implementierung}.
 
 
@@ -60,91 +60,86 @@ Wie das System dieses Muster umsetzt, beschreibt Kapitel~\ref{ch:implementierung
 \section[Szenenrepräsentation]{Szenenrepräsentation für Sprachmodelle}
 \label{sec:grundlagen-repraesentation}
 
-Damit ein Sprachmodell eine Szene verändern kann, muss es sie zunächst erfassen, und da es auf Text arbeitet, muss die dreidimensionale Szene in eine dafür zugängliche Form gebracht werden.
-Dafür gibt es zwei grundlegende Ansätze.
+Damit ein Sprachmodell eine Szene verändern kann, muss es sie zuerst erfassen.
+Da ein Sprachmodell auf Text arbeitet, muss die dreidimensionale Szene dafür in eine passende Form gebracht werden.
+Hierfür gibt es zwei grundlegende Ansätze.
 
-Der strukturelle Ansatz beschreibt die Szene als Daten.
-Die Objekte werden mit Eigenschaften wie Typ, Position, Größe und Farbe in textueller Form aufgeführt, etwa als JSON oder als Szenengraph.
-Diese Darstellung ist exakt und für ein Sprachmodell unmittelbar lesbar, gibt aber nur wieder, was in den Daten kodiert ist.
+Beim strukturellen Ansatz wird die Szene als Daten beschrieben.
+Die Objekte werden mit ihren Eigenschaften wie Typ, Position, Größe und Farbe in Textform aufgeführt, z.\,B. als JSON oder als Szenengraph.
+Diese Darstellung ist exakt, für ein Sprachmodell direkt lesbar und auf das beschränkt, was in den Daten kodiert ist.
 
-Der visuelle Ansatz stellt die Szene als gerendertes Bild bereit, das ein Sprach-Bild-Modell interpretiert.
-Er erfasst das Aussehen der Szene, wie es sich einem Betrachter zeigt, liefert aber keine exakten Koordinaten.
-Hinzu kommt, dass ein Modell ein im Bild erkanntes Objekt benennen können muss, um es danach gezielt anzusprechen.
+Beim visuellen Ansatz wird die Szene als gerendertes Bild bereitgestellt, das ein Sprach-Bild-Modell interpretiert.
+Erfasst wird damit das Aussehen der Szene, so wie es sich einem Betrachter zeigt, ohne exakte Koordinaten.
+Damit das Modell ein im Bild erkanntes Objekt später gezielt ansprechen kann, muss es dieses benennen können.
 Verbreitet ist dafür das Set-of-Mark-Prompting, bei dem sichtbare Objekte im Bild mit nummerierten Marken versehen werden~\cite{yang2023}.
 Das Modell kann sich dann auf eine Marke beziehen, deren Nummer sich eindeutig einem Objekt zuordnen lässt.
 
-Wie schwierig eine Aufgabe ist, hängt unabhängig von der Repräsentationsform auch davon ab, wie der Befehl auf ein Objekt verweist.
-Bestehende Arbeiten unterscheiden Referenzen etwa danach, ob sie vom Blickwinkel des Betrachters abhängen oder ob das Zielobjekt in der Szene eindeutig ist~\cite{achlioptas2020, chen2020}.
-Von solchen Einteilungen geht die feinere Aufschlüsselung nach Referenztypen aus, die Abschnitt~\ref{sec:eval-taxonomy} einführt.
+Unabhängig von der Repräsentationsform hängt die Schwierigkeit einer Aufgabe auch davon ab, wie der Befehl auf ein Objekt verweist.
+Bestehende Arbeiten unterscheiden Referenzen bereits nach verschiedenen Eigenschaften, z.\,B. danach, ob eine Referenz vom Blickwinkel des Betrachters abhängt oder ob das Zielobjekt in der Szene eindeutig ist~\cite{achlioptas2020, chen2020}.
+Auf diesen Einteilungen baut die feinere Aufschlüsselung nach Referenztypen auf, die in Abschnitt~\ref{sec:eval-taxonomy} eingeführt wird.
 
 
 % ------------------------------------------------------------
 \section{Stand der Technik}
 \label{sec:grundlagen-sota}
 
-Die einzelnen Bausteine der Arbeit sind gut erforscht.
-Dieser Abschnitt ordnet die Arbeit in vier angrenzende Forschungsfelder ein und zeigt jeweils, wo sich deren Fragestellung von der hier untersuchten unterscheidet.
+Die einzelnen Bausteine dieser Arbeit sind für sich bereits gut erforscht.
+Im Folgenden wird die Arbeit in vier angrenzende Forschungsfelder eingeordnet, wobei jeweils gezeigt wird, an welcher Stelle sich deren Fragestellung von der hier untersuchten unterscheidet.
 
 \subsection{Strukturelle Szenenmanipulation in immersiven Umgebungen}
 
-Ein erstes Feld befasst sich mit der sprachgesteuerten Manipulation von Szenen in virtuellen und gemischten Realitäten.
+Mehrere Arbeiten beschäftigen sich mit der sprachgesteuerten Manipulation von Szenen in virtuellen und gemischten Realitäten.
 LLMR erzeugt und verändert interaktive Mixed-Reality-Szenen zur Laufzeit, indem es mehrere Sprachmodelle orchestriert und die Szene als strukturierten Graphen führt~\cite{delatorre2024}.
-VR Mover manipuliert Objekte in der virtuellen Realität über natürliche Sprache und kodiert die Szene dazu als strukturierte Objektdaten~\cite{wang2025}.
-Beide Arbeiten zeigen, dass sich Szenen in immersiven Umgebungen sprachlich verändern lassen, nutzen dafür aber ausschließlich die strukturelle Repräsentation und große, cloudbasierte Modelle.
-Verschiedene Repräsentationsformen vergleichen sie nicht.
+VR Mover manipuliert Objekte in der virtuellen Realität über natürliche Sprache und kodiert die Szene dafür als strukturierte Objektdaten~\cite{wang2025}.
+Beide Arbeiten zeigen, dass sich Szenen in immersiven Umgebungen sprachlich verändern lassen, und setzen dafür auf die strukturelle Repräsentation und große, cloudbasierte Modelle, ohne verschiedene Repräsentationsformen zu vergleichen.
 
 \subsection{Hybrides Grounding}
 
-Ein zweites Feld verbindet strukturelle und visuelle Information, um ein Objekt in einer Szene zu bestimmen.
-SeeGround stellt eine Szene als Kombination aus einer gerenderten Ansicht und einer räumlich angereicherten textuellen Beschreibung dar und verknüpft beide über visuelle Marken~\cite{li2025}.
-Konzeptionell steht dieser Ansatz der vorliegenden Arbeit am nächsten, verfolgt aber ein anderes Ziel: Er dient dem Auffinden eines Objekts, nicht seiner Manipulation, setzt ein großes Modell ein und stellt die Repräsentationsformen nicht als gleichwertige Bedingungen einander gegenüber.
+Strukturelle und visuelle Information gemeinsam zu nutzen, um ein Objekt in einer Szene zu bestimmen, ist kein neuer Gedanke.
+SeeGround stellt eine Szene als Kombination aus einer gerenderten Ansicht und einer räumlich angereicherten Textbeschreibung dar und verknüpft beide über visuelle Marken~\cite{li2025}.
+Konzeptionell kommt dieser Ansatz der vorliegenden Arbeit am nächsten.
+Ziel ist dort das Auffinden eines Objekts und nicht seine Manipulation, es wird ein großes Modell eingesetzt, und die Repräsentationsformen werden nicht als gleichwertige Bedingungen gegenübergestellt.
 
-Ähnlich geht SceneGraphGrounder vor, das das Auffinden eines Objekts als strukturiertes Graph-Matching formuliert~\cite{sun2026}.
-Ein visuelles Modell leitet dabei über eine Marker-Strategie die Beziehungen zwischen Objekten aus zweidimensionalen Ansichten ab, die anschließend in einen persistenten Szenengraphen überführt werden.
-Die Autoren berichten, dass eine explizite strukturelle Repräsentation die Grounding-Genauigkeit verbessert, was zeigt, dass die Verbindung beider Informationsarten aktiv verfolgt wird.
-Wie SeeGround bleibt die Arbeit aber beim Auffinden von Objekten und setzt strukturelle und visuelle Information von vornherein gemeinsam ein, statt sie als getrennte Repräsentationsformen gegeneinander zu prüfen.
+Einen ähnlichen Weg geht SceneGraphGrounder, das das Auffinden eines Objekts als strukturiertes Graph-Matching formuliert~\cite{sun2026}.
+Hierbei leitet ein visuelles Modell über eine Marker-Strategie die Beziehungen zwischen Objekten aus zweidimensionalen Ansichten ab, die anschließend in einen persistenten Szenengraphen überführt werden.
+Laut den Autoren verbessert eine explizite strukturelle Repräsentation die Grounding-Genauigkeit.
+Auch hier geht es um das Auffinden von Objekten, und strukturelle und visuelle Information werden von Anfang an gemeinsam eingesetzt, statt sie als getrennte Repräsentationsformen zu prüfen.
 
 \subsection{Modalitäts-Ablationen und Modalitäts-Dominanz}
 
-Ein drittes Feld untersucht, wie sich verschiedene Eingabemodalitäten auf die Leistung auswirken.
+Wie sich verschiedene Eingabemodalitäten auf die Leistung auswirken, wurde bereits in mehreren Ablationsstudien untersucht.
 Die Arbeit zum Embodied Agent Interface vergleicht unter anderem eine rein strukturelle, eine rein visuelle und eine kombinierte Eingabe und zeigt, dass strukturierter Input reine Bildeingabe deutlich übertrifft~\cite{li2025a}.
-Der Vergleich betrifft allerdings die Handlungsplanung, nicht die Szenenmanipulation, und schlüsselt die Aufgaben nicht nach Referenztypen auf.
-In eine ähnliche Richtung weist SIRI-Bench, ein Benchmark für räumliches Schließen~\cite{song2026}.
-In einer kontrollierten Ablation werden dort baugleiche Modelle einmal mit textueller und einmal mit visueller Eingabe derselben Aufgabe verglichen.
-Die textbasierten Varianten übertreffen ihre videobasierten Gegenstücke deutlich; die Modelle stützen sich übermäßig auf textuelle Hinweise und gewinnen räumliche Information nur schwer aus dem visuellen Eingang.
-Das stützt aus einer anderen Domäne die auch in dieser Arbeit beobachtete Tendenz, dass strukturierte Information bei räumlichen Aufgaben gegenüber rein visueller im Vorteil ist, betrifft aber abstrakte Reasoning-Aufgaben statt der Manipulation einer 3D-Szene und unterscheidet keine Referenztypen.
+Untersucht wird dort die Handlungsplanung, nicht die Szenenmanipulation, und eine Unterscheidung nach Referenztypen gibt es nicht.
+Erwähnenswert ist außerdem SIRI-Bench, ein Benchmark für räumliches Schließen~\cite{song2026}.
+Dort werden in einer kontrollierten Ablation baugleiche Modelle einmal mit textueller und einmal mit visueller Eingabe derselben Aufgabe verglichen.
+Die textbasierten Varianten schneiden dabei deutlich besser ab als ihre videobasierten Gegenstücke, und die Untersuchung stellt fest, dass sich die Modelle übermäßig auf textuelle Hinweise stützen und räumliche Information nur schwer aus dem visuellen Eingang gewinnen.
+Dieser Befund aus dem Bereich abstrakter Reasoning-Aufgaben passt zu der auch in dieser Arbeit beobachteten Tendenz, dass strukturierte Information bei räumlichen Aufgaben gegenüber rein visueller im Vorteil ist.
 
 Eng verwandt sind zwei Arbeiten zur Modalitäts-Dominanz.
-Sie zeigen, dass Sprach-Bild-Modelle textuelle gegenüber visueller Information übergewichten und bei widersprüchlichen Eingaben eher dem Text vertrauen~\cite{deng2025, wu2025}.
+Sie zeigen, dass Sprach-Bild-Modelle textuelle Information gegenüber visueller übergewichten und bei widersprüchlichen Eingaben eher dem Text vertrauen~\cite{deng2025, wu2025}.
 % [INFO BENOETIGT] Bitte in wu2025 die Liste der evaluierten Modelle
 % gegenpruefen und den folgenden Satz entsprechend praezisieren oder
 % streichen.
-Eine der beiden Arbeiten untersucht dabei auch ein Modell derselben Familie, aus der das hier eingesetzte visuelle Modell stammt~\cite{wu2025}.
+Eine der beiden Arbeiten bezieht dabei auch ein Modell derselben Familie ein, aus der das hier eingesetzte visuelle Modell stammt~\cite{wu2025}.
 
-Auf die vorliegende Untersuchung lassen sich diese Befunde allerdings nur als Analogie übertragen.
-Beide Arbeiten betrachten die Gewichtung von Bild gegen Text \emph{innerhalb} eines multimodalen Modells, dem beide Modalitäten zugleich vorliegen.
-In der hier verwendeten zweistufigen Pipeline sieht das entscheidende Sprachmodell dagegen gar kein Bild, sondern zwei Textquellen (Abschnitt~\ref{sec:grundlagen-modelle}).
-Der Konflikt besteht also zwischen einer präzisen, maschinell erzeugten Datenstruktur und einer sprachlich vagen Schilderung derselben Szene.
-Eine direkte Erwartung für diesen Aufbau begründen die Arbeiten daher nicht; sie legen aber als strukturell ähnliches Muster nahe, dass eine naive Kombination beider Quellen die präzisere von beiden überbewerten könnte.
-Wo sich spätere Kapitel auf diese Literatur beziehen, gilt diese Einschränkung.
+Beide Arbeiten betrachten Bild gegen Text \emph{innerhalb} eines multimodalen Modells, während hier zwei Textquellen konkurrieren (Abschnitt~\ref{sec:grundlagen-modelle}).
+Als Analogie legen sie nahe, dass eine naive Kombination beider Quellen die präzisere überbewerten könnte.
 
 \subsection{Ansätze mit lokalen, kleinen Modellen}
 
-Ein viertes Feld setzt lokal betreibbare Modelle geringer Größe ein, meist aus Gründen des Datenschutzes, der Latenz oder der Offline-Fähigkeit.
-Ein Ansatz zur Handlungsplanung nutzt ein lokales Modell mit sieben Milliarden Parametern und zeigt, dass sich solche Aufgaben grundsätzlich auch mit kleinen Modellen bearbeiten lassen~\cite{wu2023}.
-Ein weiterer löst das Auffinden von Objekten in 3D-Szenen mit einem kleinen visuellen Modell~\cite{dinh2026}.
-Beide belegen die Machbarkeit unter Ressourcenbeschränkung, vergleichen aber nicht mehrere Repräsentationsformen für die Szenenmanipulation.
-Welche Repräsentation eine natürlichsprachliche Manipulation unter diesen Bedingungen am zuverlässigsten trägt, ist damit offen.
+Kleine, lokal betreibbare Modelle werden vor allem dort eingesetzt, wo Datenschutz, Latenz oder Offline-Fähigkeit eine Rolle spielen.
+Ein Ansatz zur Handlungsplanung nutzt z.\,B. ein lokales Modell mit sieben Milliarden Parametern und zeigt, dass sich solche Aufgaben grundsätzlich auch mit kleinen Modellen bearbeiten lassen~\cite{wu2023}.
+Ein weiterer Ansatz löst das Auffinden von Objekten in 3D-Szenen mit einem kleinen visuellen Modell~\cite{dinh2026}.
+Beide Arbeiten belegen die Machbarkeit unter begrenzten Ressourcen, mehrere Repräsentationsformen für die Szenenmanipulation vergleichen sie nicht.
 
 
 % ------------------------------------------------------------
 \section{Forschungslücke}
 \label{sec:grundlagen-luecke}
 
-Strukturelle und visuelle Repräsentation sind jeweils für sich etabliert.
-Es gibt Arbeiten zur sprachgesteuerten Manipulation von Szenen, zum hybriden Auffinden von Objekten, zur Wirkung einzelner Modalitäten und zum Einsatz kleiner, lokal betreibbarer Modelle.
-Keine bekannte Arbeit verbindet jedoch die folgenden vier Eigenschaften: Sie befasst sich mit der natürlichsprachlichen Manipulation einer Szene und nicht nur mit deren Verständnis, dem Auffinden von Objekten oder der Erzeugung von Szenen; sie vergleicht strukturelle, visuelle und hybride Repräsentation als gleichwertige Bedingungen; sie schlüsselt die Aufgaben nach der Art der sprachlichen Referenz auf; und sie setzt kleine, lokal betreibbare Modelle statt großer Cloud-Modelle ein.
+Es gibt also Arbeiten zur sprachgesteuerten Manipulation von Szenen, zum hybriden Auffinden von Objekten, zur Wirkung einzelner Modalitäten und zum Einsatz kleiner, lokal betreibbarer Modelle.
+Dem Autor dieser Arbeit ist jedoch keine Arbeit bekannt, die die natürlichsprachliche Manipulation einer Szene untersucht (und nicht nur ihr Verständnis, das Auffinden von Objekten oder ihre Erzeugung), dabei strukturelle, visuelle und hybride Repräsentation als gleichwertige Bedingungen vergleicht, die Aufgaben nach der Art der sprachlichen Referenz aufschlüsselt und dafür kleine, lokal betreibbare Modelle einsetzt.
 
 Offen ist damit, wie eine Szene einem lokal betriebenen Agenten für die natürlichsprachliche Manipulation bereitgestellt werden sollte und welchen Einfluss die Repräsentationsform auf den Ausführungserfolg hat.
-Insbesondere ist unklar, ob eine hybride Kombination die Stärken beider Repräsentationen vereint oder ob bei einem kleinen, lokalen Modell eine Quelle die andere verdrängt.
-Hier setzen die beiden Forschungsfragen aus Abschnitt~\ref{sec:ein-ziele} an.
+Vor allem ist unklar, ob eine hybride Kombination die Stärken beider Repräsentationen vereint oder ob bei einem kleinen, lokalen Modell eine Quelle die andere verdrängt.
+An dieser Stelle setzen die beiden Forschungsfragen aus Abschnitt~\ref{sec:ein-ziele} an.
